@@ -14,16 +14,18 @@
   <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-database-compat.js"></script>
   <style>
     *{box-sizing:border-box;margin:0;padding:0;}
-    body{background:#07071a;color:#e0e0f0;font-family:'DM Sans',sans-serif;min-height:100vh;}
-    ::-webkit-scrollbar{width:6px;height:6px;}
-    ::-webkit-scrollbar-track{background:#0a0a1a;}
-    ::-webkit-scrollbar-thumb{background:#2a2a5a;border-radius:3px;}
+    body{background:#0d0d0d;color:#f0f0f0;font-family:'DM Sans',sans-serif;min-height:100vh;}
+    ::-webkit-scrollbar{width:5px;height:5px;}
+    ::-webkit-scrollbar-track{background:#1a1a1a;}
+    ::-webkit-scrollbar-thumb{background:#d11a2a;border-radius:3px;}
     button{cursor:pointer;font-family:'DM Sans',sans-serif;}
-    input{font-family:'DM Sans',sans-serif;}
-    #loading{position:fixed;inset:0;background:#07071a;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:16px;z-index:9999;}
-    #loading .spinner{width:40px;height:40px;border:3px solid #1a1a4a;border-top-color:#00C9FF;border-radius:50%;animation:spin 0.8s linear infinite;}
-    #loading .txt{font-family:'DM Sans',sans-serif;font-size:13px;color:#444;letter-spacing:2px;}
+    input,select{font-family:'DM Sans',sans-serif;}
+    #loading{position:fixed;inset:0;background:#0d0d0d;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:16px;z-index:9999;}
+    #loading .spinner{width:44px;height:44px;border:3px solid #2a0a0a;border-top-color:#d11a2a;border-radius:50%;animation:spin 0.8s linear infinite;}
+    #loading .txt{font-family:'DM Sans',sans-serif;font-size:12px;color:#555;letter-spacing:3px;text-transform:uppercase;}
     @keyframes spin{to{transform:rotate(360deg);}}
+    @keyframes fadeIn{from{opacity:0;transform:translateY(8px);}to{opacity:1;transform:translateY(0);}}
+    .d11-card{animation:fadeIn .25s ease;}
   </style>
 </head>
 <body>
@@ -169,26 +171,32 @@ function fmtDate(ds){return new Date(ds).toLocaleDateString("en-IN",{weekday:"sh
 
 // ─── SHARED UI ───────────────────────────────────────────────────────────────
 const Btn=({onClick,children,variant="primary",style={},disabled=false,small=false})=>{
-  const v={primary:{background:"#00C9FF",color:"#000"},danger:{background:"#ff4444",color:"#fff"},
-    ghost:{background:"#1e1e38",color:"#888"},success:{background:"#A8FF3E",color:"#000"},
-    warning:{background:"#FFB830",color:"#000"},orange:{background:"#FF6B35",color:"#fff"}};
-  return <button onClick={onClick} disabled={disabled} style={{padding:small?"5px 12px":"8px 18px",border:"none",
-    borderRadius:8,cursor:disabled?"not-allowed":"pointer",fontFamily:"'Bebas Neue',cursive",
-    fontSize:small?12:14,letterSpacing:1,transition:"all .15s",opacity:disabled?.45:1,...v[variant],...style}}>
+  const v={
+    primary:{background:"linear-gradient(135deg,#d11a2a,#ff2d3d)",color:"#fff",boxShadow:"0 2px 12px #d11a2a44"},
+    danger:{background:"#1a0a0a",color:"#ff4444",border:"1px solid #ff444433"},
+    ghost:{background:"#1a1a1a",color:"#888",border:"1px solid #2a2a2a"},
+    success:{background:"linear-gradient(135deg,#00c853,#69f0ae)",color:"#000",boxShadow:"0 2px 12px #00c85344"},
+    warning:{background:"linear-gradient(135deg,#FFB830,#ffce00)",color:"#000",boxShadow:"0 2px 8px #FFB83044"},
+    orange:{background:"linear-gradient(135deg,#FF6B35,#ff9a00)",color:"#fff"}
+  };
+  return <button onClick={onClick} disabled={disabled} style={{padding:small?"5px 14px":"9px 20px",border:"none",
+    borderRadius:24,cursor:disabled?"not-allowed":"pointer",fontFamily:"'Bebas Neue',cursive",
+    fontSize:small?12:14,letterSpacing:1.5,transition:"all .2s",opacity:disabled?.4:1,
+    textTransform:"uppercase",...v[variant],...style}}>
     {children}
   </button>;
 };
 const Card=({children,style={}})=>(
-  <div style={{background:"#11112a",border:"1px solid #1e1e40",borderRadius:12,padding:18,...style}}>{children}</div>
+  <div className="d11-card" style={{background:"#181818",border:"1px solid #2a2a2a",borderRadius:16,padding:18,...style}}>{children}</div>
 );
 const Lbl=({children,style={}})=>(
-  <div style={{fontSize:10,color:"#555",letterSpacing:1.5,textTransform:"uppercase",marginBottom:4,...style}}>{children}</div>
+  <div style={{fontSize:10,color:"#666",letterSpacing:2,textTransform:"uppercase",marginBottom:5,fontWeight:600,...style}}>{children}</div>
 );
 const Inp=({value,onChange,placeholder="",type="text",style={}})=>(
   <input value={value} onChange={onChange} placeholder={placeholder} type={type}
-    style={{background:"#0a0a1e",border:"1px solid #2a2a4a",color:"#fff",borderRadius:6,
-      padding:"6px 10px",fontSize:13,outline:"none",fontFamily:"'DM Sans',sans-serif",
-      width:"100%",...style}}/>
+    style={{background:"#111",border:"1px solid #333",color:"#fff",borderRadius:10,
+      padding:"8px 12px",fontSize:13,outline:"none",fontFamily:"'DM Sans',sans-serif",
+      width:"100%",transition:"border .2s",...style}}/>
 );
 function LiveBadge(){
   const [on,setOn]=useState(true);
@@ -214,7 +222,7 @@ function TeamChip({code,large}){
     {large&&<span style={{fontSize:10,color:"#666",textAlign:"center",maxWidth:72,lineHeight:1.2}}>{t.name}</span>}
   </div>;
 }
-const thS={padding:"8px 12px",textAlign:"center",fontSize:10,color:"#444",letterSpacing:1,textTransform:"uppercase",borderBottom:"1px solid #1a1a35"};
+const thS={padding:"10px 12px",textAlign:"center",fontSize:10,color:"#555",letterSpacing:1.5,textTransform:"uppercase",borderBottom:"1px solid #222",fontWeight:600,background:"#111"};
 
 // ─── D5 2025 HISTORY ─────────────────────────────────────────────────────────
 function D5History(){
@@ -232,10 +240,11 @@ function D5History(){
     return{team:t,total:grand[t]||0,wins:wins[t]||0,matches:tm.length,best,bestMatch,avg:tm.length?Math.round((grand[t]||0)/tm.length):0};
   });
   const SubTab=({k,children})=>(
-    <button onClick={()=>setView(k)} style={{padding:"8px 18px",border:"none",cursor:"pointer",
-      background:view===k?"#A8FF3E22":"transparent",color:view===k?"#A8FF3E":"#555",
-      fontFamily:"'Bebas Neue',cursive",fontSize:14,letterSpacing:1,
-      borderBottom:view===k?"3px solid #A8FF3E":"3px solid transparent",transition:"all .2s"}}>
+    <button onClick={()=>setView(k)} style={{padding:"8px 16px",border:"none",cursor:"pointer",
+      background:"transparent",color:view===k?"#fff":"#555",
+      fontFamily:"'Bebas Neue',cursive",fontSize:13,letterSpacing:1.5,
+      borderBottom:view===k?"2px solid #d11a2a":"2px solid transparent",
+      transition:"all .2s",outline:"none"}}>
       {children}
     </button>
   );
@@ -244,7 +253,7 @@ function D5History(){
     const sorted=Object.entries(m.totals).sort((a,b)=>b[1]-a[1]);
     return(
       <div style={{maxWidth:1200,margin:"0 auto",padding:"20px 24px"}}>
-        <button onClick={()=>setSelMatch(null)} style={{background:"#1a1a38",border:"none",color:"#00C9FF",
+        <button onClick={()=>setSelMatch(null)} style={{background:"#222",border:"none",color:"#00C9FF",
           padding:"6px 14px",borderRadius:6,cursor:"pointer",fontSize:12,marginBottom:16,
           fontFamily:"'Bebas Neue',cursive",letterSpacing:1}}>← Back</button>
         <div style={{fontFamily:"'Bebas Neue',cursive",fontSize:26,marginBottom:4}}>Match — <span style={{color:"#A8FF3E"}}>{m.sheet}</span></div>
@@ -255,13 +264,13 @@ function D5History(){
             const players=m.teams[team]||[];
             return(
               <Card key={team} style={{border:\`1px solid \${cfg.color}\${i===0?"88":"22"}\`,
-                background:i===0?\`linear-gradient(135deg,\${cfg.color}15,#11112a)\`:"#11112a",position:"relative",overflow:"hidden"}}>
+                background:i===0?\`linear-gradient(135deg,\${cfg.color}15,#181818)\`:"#181818",position:"relative",overflow:"hidden"}}>
                 {i===0&&<div style={{position:"absolute",top:0,right:0,fontSize:60,opacity:.05,lineHeight:1}}>🏆</div>}
                 <div style={{fontFamily:"'Bebas Neue',cursive",fontSize:18,color:cfg.color,marginBottom:2}}>{["🥇","🥈","🥉","🏅"][i]} {team}</div>
                 <div style={{fontFamily:"'Bebas Neue',cursive",fontSize:48,color:"#fff",lineHeight:1.1}}>{pts}</div>
-                <div style={{borderTop:"1px solid #1a1a38",paddingTop:8,marginTop:8}}>
+                <div style={{borderTop:"1px solid #222",paddingTop:8,marginTop:8}}>
                   {players.map((p,pi)=>(
-                    <div key={pi} style={{display:"flex",justifyContent:"space-between",alignItems:"center",padding:"4px 0",borderBottom:pi<players.length-1?"1px solid #0f0f25":"none"}}>
+                    <div key={pi} style={{display:"flex",justifyContent:"space-between",alignItems:"center",padding:"4px 0",borderBottom:pi<players.length-1?"1px solid #1a1a1a":"none"}}>
                       <div style={{flex:1}}>
                         <span style={{fontSize:12,color:p.cap?cfg.color:"#ccc"}}>{p.cap?"★ ":""}{p.n}</span>
                         <div style={{fontSize:10,color:"#444"}}>{p.r>0?\`\${p.r}r \`:""}{p.w>0?\`\${p.w}w \`:""}{p.c>0?\`\${p.c}c \`:""}{p.d>0?"duck":""}</div>
@@ -283,11 +292,11 @@ function D5History(){
   }
   return(
     <div>
-      <div style={{background:"linear-gradient(90deg,#0a0a20,#150a30,#0a0a20)",borderBottom:"1px solid #2a1a5a",padding:"14px 0 0"}}>
+      <div style={{background:"#111",borderBottom:"2px solid #d11a2a",padding:"14px 0 0"}}>
         <div style={{maxWidth:1200,margin:"0 auto",padding:"0 24px"}}>
           <div style={{display:"flex",alignItems:"center",gap:16,marginBottom:12,flexWrap:"wrap"}}>
             <div>
-              <div style={{fontFamily:"'Bebas Neue',cursive",fontSize:22,letterSpacing:2,color:"#A8FF3E"}}>D5 IPL 2025 — HISTORY</div>
+              <div style={{fontFamily:"'Bebas Neue',cursive",fontSize:22,letterSpacing:2,color:"#fff"}}>D5 IPL 2025 — <span style={{color:"#d11a2a"}}>HISTORY</span></div>
               <div style={{fontSize:10,color:"#444",letterSpacing:2}}>{matches.length} MATCHES · 9 TEAMS</div>
             </div>
             <div style={{display:"flex",gap:6,flexWrap:"wrap"}}>
@@ -308,7 +317,7 @@ function D5History(){
               {teamStats.filter(s=>MAIN_TEAMS.includes(s.team)).sort((a,b)=>b.total-a.total).map((s,i)=>{
                 const cfg=D5_TEAM_CONFIG[s.team]||{color:"#888"};
                 return(
-                  <Card key={s.team} style={{border:\`1px solid \${cfg.color}\${i===0?"77":"33"}\`,background:\`linear-gradient(135deg,\${cfg.color}\${i===0?"14":"0a"},#11112a)\`,textAlign:"center",padding:"20px 14px",position:"relative",overflow:"hidden"}}>
+                  <Card key={s.team} style={{border:\`1px solid \${cfg.color}\${i===0?"77":"33"}\`,background:\`linear-gradient(135deg,\${cfg.color}\${i===0?"14":"0a"},#181818)\`,textAlign:"center",padding:"20px 14px",position:"relative",overflow:"hidden"}}>
                     <div style={{position:"absolute",top:-8,right:4,fontFamily:"'Bebas Neue',cursive",fontSize:90,color:\`\${cfg.color}07\`,lineHeight:1}}>{i+1}</div>
                     <div style={{fontSize:28,marginBottom:4}}>{["🥇","🥈","🥉","🏅"][i]}</div>
                     <div style={{fontFamily:"'Bebas Neue',cursive",fontSize:22,color:cfg.color}}>{s.team}</div>
@@ -330,7 +339,7 @@ function D5History(){
                   <thead><tr>{["#","Team","M","W","Total","Avg","Best"].map(h=><th key={h} style={{...thS,textAlign:h==="#"?"center":"left"}}>{h}</th>)}</tr></thead>
                   <tbody>
                     {teamStats.map((s,i)=>{const cfg=D5_TEAM_CONFIG[s.team]||{color:"#888"};return(
-                      <tr key={s.team} style={{borderBottom:"1px solid #0f0f25",cursor:"pointer"}} onClick={()=>{setFilterTeam(s.team);setView("matches");}}>
+                      <tr key={s.team} style={{borderBottom:"1px solid #1a1a1a",cursor:"pointer"}} onClick={()=>{setFilterTeam(s.team);setView("matches");}}>
                         <td style={{padding:"10px 12px",textAlign:"center",fontFamily:"'Bebas Neue',cursive",fontSize:20,color:"#333"}}>{i+1}</td>
                         <td style={{padding:"10px 12px"}}><div style={{display:"flex",alignItems:"center",gap:8}}><div style={{width:10,height:10,borderRadius:"50%",background:cfg.color}}/><span style={{fontFamily:"'Bebas Neue',cursive",fontSize:16,color:cfg.color}}>{s.team}</span>{i===0&&<span style={{fontSize:10}}>👑</span>}</div></td>
                         <td style={{padding:"10px 12px",fontSize:13,color:"#888"}}>{s.matches}</td>
@@ -359,7 +368,7 @@ function D5History(){
                       const ms=mainTeams.map(t=>m.totals[t]||null);
                       const mx=Math.max(...ms.filter(Boolean));
                       return(
-                        <tr key={m.id} style={{borderBottom:"1px solid #0f0f25",cursor:"pointer"}} onClick={()=>setSelMatch(m)}>
+                        <tr key={m.id} style={{borderBottom:"1px solid #1a1a1a",cursor:"pointer"}} onClick={()=>setSelMatch(m)}>
                           <td style={{padding:"6px 12px",fontSize:11,color:"#666",fontFamily:"'Bebas Neue',cursive"}}>{m.sheet}</td>
                           <td style={{padding:"6px 12px",fontSize:10,color:"#444"}}>{m.date}</td>
                           {mainTeams.map(t=>{const pts=m.totals[t];const cfg=D5_TEAM_CONFIG[t]||{color:"#888"};const win=pts===mx&&pts!=null;
@@ -386,7 +395,7 @@ function D5History(){
               <div style={{fontFamily:"'Bebas Neue',cursive",fontSize:22}}>All Matches ({filteredMatches.length})</div>
               <div style={{display:"flex",gap:6,flexWrap:"wrap",alignItems:"center"}}>
                 {["ALL",...allTeams].map(t=>{const cfg=D5_TEAM_CONFIG[t]||{color:"#888"};return(
-                  <button key={t} onClick={()=>setFilterTeam(t)} style={{padding:"4px 12px",borderRadius:20,border:\`1px solid \${filterTeam===t?(cfg.color||"#00C9FF"):"#2a2a4a"}\`,background:filterTeam===t?\`\${(cfg.color||"#00C9FF")}18\`:"transparent",color:filterTeam===t?(cfg.color||"#00C9FF"):"#444",cursor:"pointer",fontSize:11,fontFamily:"'Bebas Neue',cursive",letterSpacing:1}}>
+                  <button key={t} onClick={()=>setFilterTeam(t)} style={{padding:"4px 12px",borderRadius:20,border:\`1px solid \${filterTeam===t?(cfg.color||"#00C9FF"):"#333"}\`,background:filterTeam===t?\`\${(cfg.color||"#00C9FF")}18\`:"transparent",color:filterTeam===t?(cfg.color||"#00C9FF"):"#444",cursor:"pointer",fontSize:11,fontFamily:"'Bebas Neue',cursive",letterSpacing:1}}>
                     {t}
                   </button>
                 );})}
@@ -397,9 +406,9 @@ function D5History(){
                 const sorted=Object.entries(m.totals).sort((a,b)=>b[1]-a[1]);
                 const top=sorted[0];const topCfg=D5_TEAM_CONFIG[top?.[0]]||{color:"#888"};
                 return(
-                  <div key={m.id} onClick={()=>setSelMatch(m)} style={{background:"#11112a",border:"1px solid #1e1e40",borderRadius:12,overflow:"hidden",cursor:"pointer",transition:"all .2s"}}
+                  <div key={m.id} onClick={()=>setSelMatch(m)} style={{background:"#181818",border:"1px solid #2a2a2a",borderRadius:12,overflow:"hidden",cursor:"pointer",transition:"all .2s"}}
                     onMouseEnter={e=>{e.currentTarget.style.borderColor=topCfg.color;e.currentTarget.style.transform="translateY(-2px)";}}
-                    onMouseLeave={e=>{e.currentTarget.style.borderColor="#1e1e40";e.currentTarget.style.transform="";}}>
+                    onMouseLeave={e=>{e.currentTarget.style.borderColor="#2a2a2a";e.currentTarget.style.transform="";}}>
                     <div style={{height:3,background:\`linear-gradient(90deg,\${topCfg.color},\${topCfg.color}44)\`}}/>
                     <div style={{padding:"10px 14px",display:"flex",justifyContent:"space-between",alignItems:"center"}}>
                       <div><div style={{fontFamily:"'Bebas Neue',cursive",fontSize:16}}>{m.sheet}</div><div style={{fontSize:10,color:"#444"}}>{m.date}</div></div>
@@ -426,7 +435,7 @@ function D5History(){
               <Card>
                 <div style={{fontFamily:"'Bebas Neue',cursive",fontSize:16,color:"#00C9FF",marginBottom:12}}>BASE POINTS</div>
                 {[["Run","×5"],["Wicket","×100"],["Run Out","×50"],["Stumping","×50"],["Catch","×50"],["Duck","×(−50)"]].map(([l,v])=>(
-                  <div key={l} style={{display:"flex",justifyContent:"space-between",padding:"7px 0",borderBottom:"1px solid #0f0f25"}}>
+                  <div key={l} style={{display:"flex",justifyContent:"space-between",padding:"7px 0",borderBottom:"1px solid #1a1a1a"}}>
                     <span style={{fontSize:14,color:"#ccc"}}>{l}</span>
                     <span style={{fontFamily:"'Bebas Neue',cursive",fontSize:20,color:l==="Duck"?"#ff6b6b":"#fff"}}>{v}</span>
                   </div>
@@ -435,7 +444,7 @@ function D5History(){
               <Card>
                 <div style={{fontFamily:"'Bebas Neue',cursive",fontSize:16,color:"#FFB830",marginBottom:12}}>BONUS POINTS</div>
                 {[["Runs 30-50","+50"],["Runs 50-100","+150"],["Runs 100+","+250"],["2 Wkts","+50"],["3 Wkts","+150"],["5 Wkts","+200"],["6 Wkts","+100"],["3 Catches","+100"],["5 Catches","+200"],["3 Ro/Stmp","+100"],["5-9 Sixes","+150"],["10+ Sixes","+300"],["Hat-trick","+400"],["Maiden","+200 each"]].map(([l,v])=>(
-                  <div key={l} style={{display:"flex",justifyContent:"space-between",padding:"5px 0",borderBottom:"1px solid #0f0f25"}}>
+                  <div key={l} style={{display:"flex",justifyContent:"space-between",padding:"5px 0",borderBottom:"1px solid #1a1a1a"}}>
                     <span style={{fontSize:13,color:"#aaa"}}>{l}</span>
                     <span style={{fontFamily:"'Bebas Neue',cursive",fontSize:17,color:"#FFB830"}}>{v}</span>
                   </div>
@@ -630,16 +639,16 @@ function D5Fantasy({isEditor, onRequestEditor}){
         </div>
       )}
 
-      {!fbReady&&<div style={{position:"fixed",inset:0,background:"#07071a",zIndex:2000,display:"flex",alignItems:"center",justifyContent:"center",flexDirection:"column",gap:12}}><div style={{width:36,height:36,border:"3px solid #1a1a4a",borderTopColor:"#00C9FF",borderRadius:"50%",animation:"spin 0.8s linear infinite"}}/><div style={{fontSize:12,color:"#444",letterSpacing:2}}>CONNECTING...</div></div>}
+      {!fbReady&&<div style={{position:"fixed",inset:0,background:"#0d0d0d",zIndex:2000,display:"flex",alignItems:"center",justifyContent:"center",flexDirection:"column",gap:12}}><div style={{width:36,height:36,border:"3px solid #2a0a0a",borderTopColor:"#d11a2a",borderRadius:"50%",animation:"spin 0.8s linear infinite"}}/><div style={{fontSize:12,color:"#555",letterSpacing:3,textTransform:"uppercase"}}>LOADING...</div></div>}
       {showChangePw&&<ChangePwModal onClose={()=>setShowChangePw(false)}/>}
       {showLock&&<EditorLockModal onUnlock={handleUnlock} onClose={()=>{setShowLock(false);setPendingAction(null);}}/> }
 
       {/* Header */}
-      <div style={{background:"linear-gradient(90deg,#0a0a20,#0a1a0a,#0a0a20)",borderBottom:"1px solid #1a3a1a",padding:"14px 0 0"}}>
+      <div style={{background:"#111",borderBottom:"2px solid #d11a2a",padding:"14px 0 0"}}>
         <div style={{maxWidth:1400,margin:"0 auto",padding:"0 24px"}}>
           <div style={{display:"flex",alignItems:"center",gap:16,marginBottom:12,flexWrap:"wrap"}}>
             <div>
-              <div style={{fontFamily:"'Bebas Neue',cursive",fontSize:22,letterSpacing:2,color:"#A8FF3E"}}>D5 IPL 2026 — FANTASY LEAGUE</div>
+              <div style={{fontFamily:"'Bebas Neue',cursive",fontSize:22,letterSpacing:2,color:"#d11a2a"}}>D5 IPL 2026 — FANTASY LEAGUE</div>
               <div style={{fontSize:10,color:"#444",letterSpacing:2}}>{entries.length} MATCHES ENTERED</div>
             </div>
             {/* Team chips with edit */}
@@ -687,7 +696,7 @@ function D5Fantasy({isEditor, onRequestEditor}){
                 <div style={{display:"grid",gridTemplateColumns:\`repeat(\${teams.length},1fr)\`,gap:14,marginBottom:28}}>
                   {[...teams].sort((a,b)=>grandTotals[b.id]-grandTotals[a.id]).map((t,i)=>(
                     <Card key={t.id} style={{border:\`1px solid \${t.color}\${i===0?"77":"33"}\`,
-                      background:\`linear-gradient(135deg,\${t.color}\${i===0?"14":"0a"},#11112a)\`,
+                      background:\`linear-gradient(135deg,\${t.color}\${i===0?"14":"0a"},#181818)\`,
                       textAlign:"center",padding:"20px 14px",position:"relative",overflow:"hidden"}}>
                       <div style={{position:"absolute",top:-8,right:4,fontFamily:"'Bebas Neue',cursive",fontSize:90,color:\`\${t.color}07\`,lineHeight:1}}>{i+1}</div>
                       <div style={{fontSize:28,marginBottom:4}}>{["🥇","🥈","🥉","🏅"][i]||"🎖"}</div>
@@ -718,7 +727,7 @@ function D5Fantasy({isEditor, onRequestEditor}){
                           const ms=matchScores[ei]||{scores:{},winnerId:null,net:{}};
                           const winTeam=teams.find(t=>t.id===ms.winnerId);
                           return(
-                            <tr key={e.id} style={{borderBottom:"1px solid #0f0f25",cursor:isEditor?"pointer":"default"}} onClick={()=>isEditor&&startEdit(e)}>
+                            <tr key={e.id} style={{borderBottom:"1px solid #1a1a1a",cursor:isEditor?"pointer":"default"}} onClick={()=>isEditor&&startEdit(e)}>
                               <td style={{padding:"8px 12px",fontFamily:"'Bebas Neue',cursive",fontSize:14,color:"#aaa"}}>{e.matchLabel||"Match"}</td>
                               <td style={{padding:"8px 12px",fontSize:11,color:"#444"}}>{e.date}</td>
                               {teams.map(t=>{
@@ -765,7 +774,7 @@ function D5Fantasy({isEditor, onRequestEditor}){
                 const scores=teams.map(t=>({t,pts:(e.teamData[t.id]||[]).reduce((s,p)=>s+calcPts(p),0)})).sort((a,b)=>b.pts-a.pts);
                 const top=scores[0];
                 return(
-                  <div key={e.id} style={{background:"#11112a",border:\`1px solid \${top?.t?.color||"#1e1e40"}33\`,borderRadius:12,overflow:"hidden"}}>
+                  <div key={e.id} style={{background:"#181818",border:\`1px solid \${top?.t?.color||"#2a2a2a"}33\`,borderRadius:12,overflow:"hidden"}}>
                     <div style={{height:3,background:\`linear-gradient(90deg,\${top?.t?.color||"#444"},\${top?.t?.color||"#444"}44)\`}}/>
                     <div style={{padding:"10px 14px",display:"flex",justifyContent:"space-between",alignItems:"center"}}>
                       <div><div style={{fontFamily:"'Bebas Neue',cursive",fontSize:15}}>{e.matchLabel||"Match"}</div><div style={{fontSize:10,color:"#444"}}>{e.date}</div></div>
@@ -806,7 +815,7 @@ function D5Fantasy({isEditor, onRequestEditor}){
                 const pts=(viewEntry.teamData[t.id]||[]).reduce((s,p)=>s+calcPts(p),0);
                 const isWinner=pts===Math.max(...teams.map(tt=>(viewEntry.teamData[tt.id]||[]).reduce((s,p)=>s+calcPts(p),0)))&&pts>0;
                 return(
-                  <div key={t.id} style={{flex:1,minWidth:140,background:("linear-gradient(135deg,"+t.color+(isWinner?"22":"0a")+",#11112a)"),
+                  <div key={t.id} style={{flex:1,minWidth:140,background:("linear-gradient(135deg,"+t.color+(isWinner?"22":"0a")+",#181818)"),
                     border:("1px solid "+t.color+(isWinner?"88":"33")),borderRadius:12,padding:"14px 16px",textAlign:"center"}}>
                     <div style={{fontFamily:"'Bebas Neue',cursive",fontSize:13,color:t.color,marginBottom:2}}>{t.emoji} {t.name}</div>
                     <div style={{fontFamily:"'Bebas Neue',cursive",fontSize:44,color:isWinner?t.color:"#fff",lineHeight:1}}>{pts.toLocaleString()}</div>
@@ -821,13 +830,13 @@ function D5Fantasy({isEditor, onRequestEditor}){
                 const players=(viewEntry.teamData[t.id]||[]).filter(p=>p.name||p.runs||p.wkts);
                 if(!players.length) return null;
                 return(
-                  <div key={t.id} style={{background:"#11112a",border:("1px solid "+t.color+"33"),borderRadius:12,overflow:"hidden"}}>
+                  <div key={t.id} style={{background:"#181818",border:("1px solid "+t.color+"33"),borderRadius:12,overflow:"hidden"}}>
                     <div style={{background:("linear-gradient(90deg,"+t.color+"22,transparent)"),padding:"12px 16px",
                       fontFamily:"'Bebas Neue',cursive",fontSize:18,color:t.color}}>{t.emoji} {t.name}</div>
                     <div style={{overflowX:"auto"}}>
                       <table style={{width:"100%",borderCollapse:"collapse"}}>
                         <thead>
-                          <tr style={{borderBottom:"1px solid #1a1a38"}}>
+                          <tr style={{borderBottom:"1px solid #222"}}>
                             {["Player","Runs","Wkts","RO","Stmp","Catch","Duck","6s","HtkW","Htk6s","Mdn","Pts"].map(h=>(
                               <th key={h} style={{padding:"8px 10px",fontSize:10,color:["6s","HtkW","Htk6s","Mdn"].includes(h)?"#FFB83088":"#444",
                                 textAlign:"center",fontFamily:"'DM Sans',sans-serif",fontWeight:600,letterSpacing:1}}>{h}</th>
@@ -846,7 +855,7 @@ function D5Fantasy({isEditor, onRequestEditor}){
                                 {[p.runs,p.wkts,p.ro,p.stmp,p.catch,p.duck,p.b6s,p.bHtkW,p.bHtk6s,p.bMdn].map((v,i)=>(
                                   <td key={i} style={{padding:"10px 8px",textAlign:"center",
                                     fontFamily:"'Bebas Neue',cursive",fontSize:16,
-                                    color:v>0?(i>=6?"#FFB830":"#fff"):"#2a2a4a"}}>{v||"—"}</td>
+                                    color:v>0?(i>=6?"#FFB830":"#fff"):"#333"}}>{v||"—"}</td>
                                 ))}
                                 <td style={{padding:"10px 12px",textAlign:"center",fontFamily:"'Bebas Neue',cursive",fontSize:20,
                                   color:pts>500?"#FFB830":pts>200?"#A8FF3E":pts<0?"#ff6b6b":"#fff",fontWeight:"bold"}}>
@@ -857,7 +866,7 @@ function D5Fantasy({isEditor, onRequestEditor}){
                           })}
                         </tbody>
                         <tfoot>
-                          <tr style={{borderTop:"2px solid #2a2a55",background:"#0a0a1e"}}>
+                          <tr style={{borderTop:"2px solid #2a2a55",background:"#111"}}>
                             <td style={{padding:"10px 12px",fontFamily:"'Bebas Neue',cursive",fontSize:13,color:"#444"}}>TOTAL</td>
                             {Array(10).fill(null).map((_,i)=><td key={i}/>)}
                             <td style={{padding:"10px 12px",textAlign:"center",fontFamily:"'Bebas Neue',cursive",fontSize:24,color:t.color}}>
@@ -898,7 +907,7 @@ function D5Fantasy({isEditor, onRequestEditor}){
                 <div style={{flex:2,minWidth:180}}>
                   <Lbl>IPL Match (optional)</Lbl>
                   <select value={draftEntry.matchId} onChange={e=>setDraftEntry(p=>({...p,matchId:e.target.value,matchLabel:p.matchLabel||(IPL_SCHEDULE.find(m=>m.id===e.target.value)?.team1+" vs "+IPL_SCHEDULE.find(m=>m.id===e.target.value)?.team2||"")}))}
-                    style={{width:"100%",background:"#0a0a1e",border:"1px solid #2a2a4a",color:"#fff",borderRadius:6,padding:"6px 10px",fontSize:13,outline:"none"}}>
+                    style={{width:"100%",background:"#111",border:"1px solid #333",color:"#fff",borderRadius:6,padding:"6px 10px",fontSize:13,outline:"none"}}>
                     <option value="">— Select IPL match —</option>
                     {IPL_SCHEDULE.map(m=><option key={m.id} value={m.id}>{m.team1} vs {m.team2} · {m.date}</option>)}
                   </select>
@@ -958,21 +967,21 @@ function D5Fantasy({isEditor, onRequestEditor}){
                           gap:4,marginBottom:5,alignItems:"center",
                           background:p.isCaptain?(t.color+"08"):"transparent",
                           borderRadius:6,padding:"5px 6px",
-                          border:p.isCaptain?("1px solid "+t.color+"22"):"1px solid #0f0f25"}}>
+                          border:p.isCaptain?("1px solid "+t.color+"22"):"1px solid #1a1a1a"}}>
 
                           {/* Player name */}
                           <div style={{display:"flex",alignItems:"center",gap:4}}>
                             {p.isCaptain&&<span style={{fontSize:10,color:t.color}}>★</span>}
                             {allSquad.length>0
                               ? <select value={p.name} onChange={e=>updatePlayer(t.id,pi,"name",e.target.value)}
-                                  style={{background:"#0a0a1e",border:"none",borderBottom:("1px solid "+t.color+"55"),color:p.name?"#fff":"#555",
+                                  style={{background:"#111",border:"none",borderBottom:("1px solid "+t.color+"55"),color:p.name?"#fff":"#555",
                                     fontSize:11,outline:"none",width:"100%",padding:"2px 0",fontFamily:"'DM Sans',sans-serif",appearance:"none",cursor:"pointer"}}>
                                   <option value="">{p.isCaptain?"Captain":"Player"}</option>
                                   {availablePlayers.map(n=><option key={n} value={n}>{n}</option>)}
                                 </select>
                               : <input value={p.name} onChange={e=>updatePlayer(t.id,pi,"name",e.target.value)}
                                   placeholder={p.isCaptain?"Captain":"Player"}
-                                  style={{background:"transparent",border:"none",borderBottom:"1px solid #2a2a4a",color:"#fff",
+                                  style={{background:"transparent",border:"none",borderBottom:"1px solid #333",color:"#fff",
                                     fontSize:12,outline:"none",width:"100%",padding:"2px 0",fontFamily:"'DM Sans',sans-serif"}}/>
                             }
                           </div>
@@ -981,13 +990,13 @@ function D5Fantasy({isEditor, onRequestEditor}){
                           {["runs","wkts","ro","stmp","catch"].map(f=>(
                             <input key={f} type="number" value={p[f]||""} min={0}
                               onChange={e=>updatePlayer(t.id,pi,f,parseFloat(e.target.value)||0)}
-                              style={{background:"#0a0a1e",border:"1px solid #1a1a38",color:"#fff",borderRadius:4,
+                              style={{background:"#111",border:"1px solid #222",color:"#fff",borderRadius:4,
                                 padding:"4px 2px",fontSize:12,textAlign:"center",outline:"none",width:"100%",fontFamily:"'DM Sans',sans-serif"}}/>
                           ))}
 
                           {/* Duck toggle */}
                           <button onClick={()=>updatePlayer(t.id,pi,"duck",(p.duck||0)===1?0:1)}
-                            style={{background:(p.duck||0)===1?"#ff4a4a22":"#0a0a1e",border:("1px solid "+((p.duck||0)===1?"#ff6b6b":"#1a1a38")),
+                            style={{background:(p.duck||0)===1?"#ff4a4a22":"#111",border:("1px solid "+((p.duck||0)===1?"#ff6b6b":"#222")),
                               color:(p.duck||0)===1?"#ff6b6b":"#555",borderRadius:4,padding:"4px 2px",fontSize:12,
                               textAlign:"center",width:"100%",fontFamily:"'Bebas Neue',cursive",cursor:"pointer",transition:"all .15s"}}>
                             {(p.duck||0)===1?"🦆":"0"}
@@ -1049,7 +1058,7 @@ function D5Fantasy({isEditor, onRequestEditor}){
               <Card>
                 <div style={{fontFamily:"'Bebas Neue',cursive",fontSize:16,color:"#00C9FF",marginBottom:12}}>BASE POINTS</div>
                 {[["Run","×5"],["Wicket","×100"],["Run Out","×50"],["Stumping","×50"],["Catch","×50"],["Duck","×(−50)"]].map(([l,v])=>(
-                  <div key={l} style={{display:"flex",justifyContent:"space-between",padding:"7px 0",borderBottom:"1px solid #0f0f25"}}>
+                  <div key={l} style={{display:"flex",justifyContent:"space-between",padding:"7px 0",borderBottom:"1px solid #1a1a1a"}}>
                     <span style={{fontSize:14,color:"#ccc"}}>{l}</span>
                     <span style={{fontFamily:"'Bebas Neue',cursive",fontSize:20,color:l==="Duck"?"#ff6b6b":"#fff"}}>{v}</span>
                   </div>
@@ -1058,7 +1067,7 @@ function D5Fantasy({isEditor, onRequestEditor}){
               <Card>
                 <div style={{fontFamily:"'Bebas Neue',cursive",fontSize:16,color:"#FFB830",marginBottom:12}}>BONUS</div>
                 {[["Runs 30-50","+50"],["Runs 50-100","+150"],["Runs 100+","+250"],["2 Wkts","+50"],["3 Wkts","+150"],["5 Wkts","+200"],["6 Wkts","+100"],["3 Catches","+100"],["5 Catches","+200"],["3 Ro/Stmp","+100"],["5-9 Sixes","+150"],["10+ Sixes","+300"],["Hat-trick","+400"],["Maiden","+200 each"],["Captain","×2"]].map(([l,v])=>(
-                  <div key={l} style={{display:"flex",justifyContent:"space-between",padding:"5px 0",borderBottom:"1px solid #0f0f25"}}>
+                  <div key={l} style={{display:"flex",justifyContent:"space-between",padding:"5px 0",borderBottom:"1px solid #1a1a1a"}}>
                     <span style={{fontSize:13,color:"#aaa"}}>{l}</span>
                     <span style={{fontFamily:"'Bebas Neue',cursive",fontSize:17,color:"#FFB830"}}>{v}</span>
                   </div>
@@ -1095,7 +1104,7 @@ function ChangePwModal({onClose}){
   return(
     <div style={{position:"fixed",inset:0,background:"#000000bb",zIndex:1000,display:"flex",alignItems:"center",justifyContent:"center"}}
       onClick={e=>{if(e.target===e.currentTarget)onClose();}}>
-      <div style={{background:"#11112a",border:"1px solid #2a2a5a",borderRadius:16,padding:"32px 36px",width:320}}>
+      <div style={{background:"#181818",border:"1px solid #333",borderRadius:16,padding:"32px 36px",width:320}}>
         <div style={{fontFamily:"'Bebas Neue',cursive",fontSize:20,color:"#FFB830",marginBottom:6,textAlign:"center",letterSpacing:2}}>🔑 CHANGE PASSWORD</div>
         <div style={{fontSize:11,color:"#444",textAlign:"center",marginBottom:20}}>Editor password change</div>
         {success
@@ -1105,7 +1114,7 @@ function ChangePwModal({onClose}){
               <div key={lbl} style={{marginBottom:12}}>
                 <div style={{fontSize:10,color:"#555",marginBottom:4,letterSpacing:1}}>{lbl.toUpperCase()}</div>
                 <input type="password" value={val} onChange={e=>{setter(e.target.value);setErr("");}}
-                  style={{width:"100%",padding:"10px 14px",background:"#07071a",border:"1px solid #2a2a5a",borderRadius:8,color:"#e0e0f0",fontSize:14,outline:"none"}}/>
+                  style={{width:"100%",padding:"10px 14px",background:"#0d0d0d",border:"1px solid #2a2a5a",borderRadius:8,color:"#e0e0f0",fontSize:14,outline:"none"}}/>
               </div>
             ))}
             {err&&<div style={{fontSize:11,color:"#ff6b6b",marginBottom:10,textAlign:"center"}}>{err}</div>}
@@ -1137,14 +1146,14 @@ function EditorLockModal({onUnlock, onClose}){
   return(
     <div style={{position:"fixed",inset:0,background:"#000000bb",zIndex:1000,display:"flex",alignItems:"center",justifyContent:"center"}}
       onClick={e=>{if(e.target===e.currentTarget)onClose();}}>
-      <div style={{background:"#11112a",border:"1px solid #2a2a5a",borderRadius:16,padding:"32px 36px",width:300,animation:shake?"shake 0.4s ease":"none"}}>
+      <div style={{background:"#181818",border:"1px solid #333",borderRadius:16,padding:"32px 36px",width:300,animation:shake?"shake 0.4s ease":"none"}}>
         <div style={{fontFamily:"'Bebas Neue',cursive",fontSize:20,color:"#FFB830",marginBottom:6,textAlign:"center",letterSpacing:2}}>🔑 EDITOR ACCESS</div>
         <div style={{fontSize:11,color:"#444",textAlign:"center",marginBottom:20,letterSpacing:1}}>Enter editor password to make changes</div>
         <input type="password" placeholder="Editor password" value={pw}
           onChange={e=>{setPw(e.target.value);setErr(false);}}
           onKeyDown={e=>e.key==="Enter"&&attempt()}
           autoFocus
-          style={{width:"100%",padding:"11px 14px",background:"#07071a",border:\`1px solid \${err?"#ff4444":"#2a2a5a"}\`,borderRadius:10,color:"#e0e0f0",fontSize:14,outline:"none",marginBottom:6,letterSpacing:2}}/>
+          style={{width:"100%",padding:"11px 14px",background:"#0d0d0d",border:\`1px solid \${err?"#ff4444":"#2a2a5a"}\`,borderRadius:10,color:"#e0e0f0",fontSize:14,outline:"none",marginBottom:6,letterSpacing:2}}/>
         {err&&<div style={{fontSize:11,color:"#ff6b6b",marginBottom:10,textAlign:"center"}}>Incorrect password.</div>}
         {!err&&<div style={{height:16}}/>}
         <div style={{display:"flex",gap:8}}>
@@ -1202,52 +1211,53 @@ function App(){
     setLoading(false);
   };
 
-  const MainTab=({k,label,accent="#00C9FF"})=>(
-    <button onClick={()=>setTab(k)} style={{padding:"10px 20px",border:"none",cursor:"pointer",
-      background:tab===k?\`\${accent}18\`:"transparent",color:tab===k?accent:"#555",
-      fontFamily:"'Bebas Neue',cursive",fontSize:14,letterSpacing:1,
-      borderBottom:tab===k?\`3px solid \${accent}\`:"3px solid transparent",transition:"all .2s",outline:"none"}}>
+  const MainTab=({k,label})=>(
+    <button onClick={()=>setTab(k)} style={{padding:"10px 18px",border:"none",cursor:"pointer",
+      background:"transparent",color:tab===k?"#fff":"#555",
+      fontFamily:"'Bebas Neue',cursive",fontSize:13,letterSpacing:1.5,
+      borderBottom:tab===k?"3px solid #d11a2a":"3px solid transparent",
+      transition:"all .2s",outline:"none",whiteSpace:"nowrap"}}>
       {label}
     </button>
   );
 
   return(
-    <div style={{minHeight:"100vh",background:"#07071a",fontFamily:"'DM Sans',sans-serif",color:"#fff"}}>
+    <div style={{minHeight:"100vh",background:"#0d0d0d",fontFamily:"'DM Sans',sans-serif",color:"#fff"}}>
       <style>{\`
         @import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@400;500;600&display=swap');
         *{box-sizing:border-box;margin:0;padding:0;}
         input[type=number]::-webkit-inner-spin-button{opacity:.3;}
         ::-webkit-scrollbar{width:5px;height:5px;}
-        ::-webkit-scrollbar-thumb{background:#2a2a5a;border-radius:3px;}
-        select option{background:#0a0a1e;color:#fff;}
+        ::-webkit-scrollbar-thumb{background:#d11a2a;border-radius:3px;}
+        select option{background:#111;color:#fff;}
       \`}</style>
 
-      {/* HEADER */}
-      <div style={{background:"linear-gradient(135deg,#0d0d28,#0a1535)",borderBottom:"1px solid #1a1a4a"}}>
-        <div style={{maxWidth:1400,margin:"0 auto",padding:"0 24px"}}>
-          <div style={{display:"flex",alignItems:"center",justifyContent:"space-between",padding:"14px 0 10px",flexWrap:"wrap",gap:10}}>
+      {/* HEADER - Dream11 Style */}
+      <div style={{background:"#111",borderBottom:"1px solid #222",position:"sticky",top:0,zIndex:100}}>
+        <div style={{maxWidth:1400,margin:"0 auto",padding:"0 20px"}}>
+          <div style={{display:"flex",alignItems:"center",justifyContent:"space-between",padding:"12px 0 0",flexWrap:"wrap",gap:10}}>
             <div style={{display:"flex",alignItems:"center",gap:12}}>
-              <div style={{width:46,height:46,borderRadius:10,background:"linear-gradient(135deg,#A8FF3E,#00C9FF)",
+              <div style={{width:42,height:42,borderRadius:"50%",background:"linear-gradient(135deg,#d11a2a,#ff2d3d)",
                 display:"flex",alignItems:"center",justifyContent:"center",
-                fontFamily:"'Bebas Neue',cursive",fontSize:20,color:"#000"}}>D5</div>
+                fontFamily:"'Bebas Neue',cursive",fontSize:18,color:"#fff",boxShadow:"0 2px 12px #d11a2a66"}}>D5</div>
               <div>
-                <div style={{fontFamily:"'Bebas Neue',cursive",fontSize:24,letterSpacing:2}}>D5 <span style={{color:"#00C9FF"}}>IPL</span></div>
-                <div style={{fontSize:9,color:"#444",letterSpacing:2}}>FANTASY · HISTORY · LIVE SCORES</div>
+                <div style={{fontFamily:"'Bebas Neue',cursive",fontSize:22,letterSpacing:2,color:"#fff"}}>D5 <span style={{color:"#d11a2a"}}>IPL</span> <span style={{color:"#FFB830",fontSize:14}}>FANTASY</span></div>
+                <div style={{fontSize:9,color:"#555",letterSpacing:2}}>PLAY · COMPETE · WIN</div>
               </div>
             </div>
             {daysToIPL>0&&(
-              <div style={{textAlign:"center",padding:"5px 14px",borderRadius:10,background:"#1a0a3a",border:"1px solid #3a2a6a"}}>
-                <div style={{fontFamily:"'Bebas Neue',cursive",fontSize:24,color:"#A8FF3E",lineHeight:1}}>{daysToIPL}</div>
-                <div style={{fontSize:9,color:"#555",letterSpacing:1}}>DAYS TO IPL 2026</div>
+              <div style={{textAlign:"center",padding:"6px 16px",borderRadius:20,background:"#1a0a0a",border:"1px solid #d11a2a44"}}>
+                <div style={{fontFamily:"'Bebas Neue',cursive",fontSize:22,color:"#d11a2a",lineHeight:1}}>{daysToIPL}</div>
+                <div style={{fontSize:9,color:"#555",letterSpacing:1}}>DAYS TO IPL</div>
               </div>
             )}
           </div>
-          <div style={{display:"flex",gap:0,flexWrap:"wrap"}}>
-            <MainTab k="d52026"    label="⚡ D5 2026 Fantasy" accent="#A8FF3E"/>
-            <MainTab k="d5history" label="📜 D5 2025 History"  accent="#FFB830"/>
-            <MainTab k="schedule"  label="📅 IPL 2026 Schedule" accent="#00C9FF"/>
-            <MainTab k="live"      label="📡 Live Scores"       accent="#FF6B35"/>
-            <MainTab k="teams"     label="🏏 IPL Teams"         accent="#c084fc"/>
+          <div style={{display:"flex",gap:0,overflowX:"auto",marginTop:4}}>
+            <MainTab k="d52026"    label="⚡ Fantasy"/>
+            <MainTab k="d5history" label="📜 History"/>
+            <MainTab k="schedule"  label="📅 Schedule"/>
+            <MainTab k="live"      label="📡 Live"/>
+            <MainTab k="teams"     label="🏏 Teams"/>
           </div>
         </div>
       </div>
@@ -1261,7 +1271,7 @@ function App(){
             <span style={{fontSize:10,color:"#333",letterSpacing:1}}>FILTER:</span>
             {["ALL",...Object.keys(IPL_TEAMS)].map(code=>{const t=IPL_TEAMS[code];const active=filterTeam===code;return(
               <button key={code} onClick={()=>setFilterTeam(code)} style={{padding:"3px 10px",borderRadius:20,
-                border:\`1px solid \${active?(t?.color||"#00C9FF"):"#2a2a4a"}\`,
+                border:\`1px solid \${active?(t?.color||"#00C9FF"):"#333"}\`,
                 background:active?\`\${t?.color||"#00C9FF"}18\`:"transparent",
                 color:active?(t?.color||"#00C9FF"):"#444",cursor:"pointer",
                 fontSize:11,fontFamily:"'Bebas Neue',cursive",letterSpacing:1,transition:"all .15s"}}>
@@ -1276,10 +1286,10 @@ function App(){
               const sd=liveScores[match.id];const isExp=expandedMatch===match.id;
               return(
                 <div key={match.id} onClick={()=>setExpandedMatch(isExp?null:match.id)}
-                  style={{background:status==="live"?"linear-gradient(135deg,#1a0808,#11112a)":"#11112a",
-                    border:\`1px solid \${status==="live"?"#ff333333":"#1e1e40"}\`,borderRadius:12,overflow:"hidden",cursor:"pointer",transition:"all .2s"}}
+                  style={{background:status==="live"?"linear-gradient(135deg,#1a0808,#181818)":"#181818",
+                    border:\`1px solid \${status==="live"?"#ff333333":"#2a2a2a"}\`,borderRadius:12,overflow:"hidden",cursor:"pointer",transition:"all .2s"}}
                   onMouseEnter={e=>{e.currentTarget.style.transform="translateY(-2px)";e.currentTarget.style.borderColor="#00C9FF55";}}
-                  onMouseLeave={e=>{e.currentTarget.style.transform="";e.currentTarget.style.borderColor=status==="live"?"#ff333333":"#1e1e40";}}>
+                  onMouseLeave={e=>{e.currentTarget.style.transform="";e.currentTarget.style.borderColor=status==="live"?"#ff333333":"#2a2a2a";}}>
                   <div style={{padding:"8px 12px",background:"linear-gradient(90deg,#0a1020,#0d1535)",display:"flex",justifyContent:"space-between",alignItems:"center"}}>
                     <div>
                       <div style={{fontSize:10,color:"#444"}}>Match {IPL_SCHEDULE.indexOf(match)+1} · {fmtDate(match.date)}</div>
@@ -1360,7 +1370,7 @@ function App(){
               <div style={{fontFamily:"'Bebas Neue',cursive",fontSize:16,color:"#444",marginBottom:10}}>UPCOMING</div>
               <div style={{display:"grid",gridTemplateColumns:"repeat(auto-fill,minmax(260px,1fr))",gap:10}}>
                 {upcoming.slice(0,6).map(m=>{const t1=IPL_TEAMS[m.team1];const t2=IPL_TEAMS[m.team2];const d=getDaysUntil(m.date);return(
-                  <div key={m.id} style={{background:"#11112a",border:"1px solid #1e1e40",borderRadius:10,overflow:"hidden"}}>
+                  <div key={m.id} style={{background:"#181818",border:"1px solid #2a2a2a",borderRadius:10,overflow:"hidden"}}>
                     <div style={{height:2,background:\`linear-gradient(90deg,\${t1?.color||"#444"},\${t2?.color||"#444"})\`}}/>
                     <div style={{padding:"10px 12px",display:"flex",justifyContent:"space-between",alignItems:"center"}}>
                       <div><div style={{fontFamily:"'Bebas Neue',cursive",fontSize:15}}>{m.team1} vs {m.team2}</div><div style={{fontSize:10,color:"#444"}}>{fmtDate(m.date)} · {m.time}</div></div>
@@ -1383,7 +1393,7 @@ function App(){
               const played=tm.filter(m=>getMatchStatus(m)==="completed").length;
               return(
                 <div key={code} onClick={()=>{setFilterTeam(code);setTab("schedule");}}
-                  style={{background:"#11112a",border:\`1px solid \${t.color}28\`,borderRadius:12,overflow:"hidden",cursor:"pointer",transition:"all .2s"}}
+                  style={{background:"#181818",border:\`1px solid \${t.color}28\`,borderRadius:12,overflow:"hidden",cursor:"pointer",transition:"all .2s"}}
                   onMouseEnter={e=>{e.currentTarget.style.borderColor=t.color;e.currentTarget.style.transform="translateY(-2px)";}}
                   onMouseLeave={e=>{e.currentTarget.style.borderColor=\`\${t.color}28\`;e.currentTarget.style.transform="";}}>
                   <div style={{height:3,background:t.color}}/>
