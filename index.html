@@ -465,6 +465,7 @@ function D5Fantasy({isEditor, onRequestEditor}){
   const [teamNameDraft,setTeamNameDraft]=useState("");
   const [teamColorDraft,setTeamColorDraft]=useState("");
   const [showLock,setShowLock]=useState(false);
+  const [showChangePw,setShowChangePw]=useState(false);
   const [pendingAction,setPendingAction]=useState(null);
 
   const requireEditor=(action)=>{
@@ -481,6 +482,7 @@ function D5Fantasy({isEditor, onRequestEditor}){
   useEffect(()=>{
     const teamsRef = window.db.ref("d5_2026_teams");
     const entriesRef = window.db.ref("d5_2026_entries");
+    const pwRef = window.db.ref("d5_editor_pw");
     teamsRef.on("value", snap=>{
       const val=snap.val();
       if(val) setTeams(val);
@@ -490,8 +492,26 @@ function D5Fantasy({isEditor, onRequestEditor}){
       const val=snap.val();
       setEntries(val ? Object.values(val) : []);
     });
-    return()=>{teamsRef.off(); entriesRef.off();};
+    pwRef.on("value", snap=>{
+      const val=snap.val();
+      if(val) window.EDITOR_PASSWORD=val;
+    });
+    return()=>{teamsRef.off(); entriesRef.off(); pwRef.off();};
   },[]);
+
+  // Refresh data from Firebase manually
+  const [refreshing,setRefreshing]=useState(false);
+  const refreshData=()=>{
+    setRefreshing(true);
+    const teamsRef=window.db.ref("d5_2026_teams");
+    const entriesRef=window.db.ref("d5_2026_entries");
+    teamsRef.once("value",snap=>{const val=snap.val();if(val)setTeams(val);});
+    entriesRef.once("value",snap=>{
+      const val=snap.val();
+      setEntries(val?Object.values(val):[]);
+      setTimeout(()=>setRefreshing(false),600);
+    });
+  };
 
   // Write teams to Firebase (editor only action, so safe to write on change)
   const saveTeamsToFb=(newTeams)=>{
@@ -547,6 +567,8 @@ function D5Fantasy({isEditor, onRequestEditor}){
     setEditId(e.id);
     setView("newEntry");
   });
+  const [viewEntry,setViewEntry]=useState(null);
+  const startView=(e)=>{setViewEntry(e);setView("viewEntry");};
   const saveEntry=()=>{
     if(!draftEntry)return;
     saveEntryToFb(draftEntry);
@@ -609,7 +631,8 @@ function D5Fantasy({isEditor, onRequestEditor}){
       )}
 
       {!fbReady&&<div style={{position:"fixed",inset:0,background:"#07071a",zIndex:2000,display:"flex",alignItems:"center",justifyContent:"center",flexDirection:"column",gap:12}}><div style={{width:36,height:36,border:"3px solid #1a1a4a",borderTopColor:"#00C9FF",borderRadius:"50%",animation:"spin 0.8s linear infinite"}}/><div style={{fontSize:12,color:"#444",letterSpacing:2}}>CONNECTING...</div></div>}
-      {showLock&&<EditorLockModal onUnlock={handleUnlock} onClose={()=>{setShowLock(false);setPendingAction(null);}}/>}
+      {showChangePw&&<ChangePwModal onClose={()=>setShowChangePw(false)}/>}
+      {showLock&&<EditorLockModal onUnlock={handleUnlock} onClose={()=>{setShowLock(false);setPendingAction(null);}}/> }
 
       {/* Header */}
       <div style={{background:"linear-gradient(90deg,#0a0a20,#0a1a0a,#0a0a20)",borderBottom:"1px solid #1a3a1a",padding:"14px 0 0"}}>
@@ -630,11 +653,13 @@ function D5Fantasy({isEditor, onRequestEditor}){
                 </div>
               ))}
             </div>
-            <Btn variant="success" onClick={startNew}>+ New Match Entry</Btn>
+            {isEditor&&<Btn variant="success" onClick={startNew}>+ New Match Entry</Btn>}
             {isEditor
-              ? <div style={{padding:"3px 10px",borderRadius:20,background:"#FFB83020",border:"1px solid #FFB83044",color:"#FFB830",fontSize:10,fontFamily:"'Bebas Neue',cursive",letterSpacing:1}}>✓ EDITOR</div>
-              : <div onClick={()=>setShowLock(true)} style={{padding:"3px 10px",borderRadius:20,background:"#2a2a5a20",border:"1px solid #2a2a5a",color:"#555",fontSize:10,fontFamily:"'Bebas Neue',cursive",letterSpacing:1,cursor:"pointer"}} title="Click to unlock editing">🔒 VIEWER</div>
-            }
+              ? <div style={{display:"flex",gap:6,alignItems:"center"}}><div style={{padding:"3px 10px",borderRadius:20,background:"#FFB83020",border:"1px solid #FFB83044",color:"#FFB830",fontSize:10,fontFamily:"'Bebas Neue',cursive",letterSpacing:1}}>✓ EDITOR</div><div onClick={()=>setShowChangePw(true)} style={{padding:"3px 10px",borderRadius:20,background:"#2a2a5a20",border:"1px solid #2a2a5a",color:"#888",fontSize:10,fontFamily:"'Bebas Neue',cursive",letterSpacing:1,cursor:"pointer"}} title="Change password">🔑 CHANGE PW</div></div>
+              : <div onClick={()=>setShowLock(true)} style={{padding:"3px 10px",borderRadius:20,background:"#2a2a5a20",border:"1px solid #2a2a5a",color:"#555",fontSize:10,fontFamily:"'Bebas Neue',cursive",letterSpacing:1,cursor:"pointer"}} title="Click to unlock editing">🔒 VIEWER</div>}
+            <div onClick={refreshData} style={{padding:"3px 12px",borderRadius:20,background:"#00C9FF15",border:"1px solid #00C9FF44",color:refreshing?"#555":"#00C9FF",fontSize:10,fontFamily:"'Bebas Neue',cursive",letterSpacing:1,cursor:refreshing?"default":"pointer",transition:"all .2s"}} title="Refresh data">
+              {refreshing?"⏳ REFRESHING...":"🔄 REFRESH"}
+            </div>
           </div>
           <div style={{display:"flex",gap:2}}>
             <SubTab k="leaderboard" accent="#FFB830">🏆 Leaderboard</SubTab>
@@ -693,7 +718,7 @@ function D5Fantasy({isEditor, onRequestEditor}){
                           const ms=matchScores[ei]||{scores:{},winnerId:null,net:{}};
                           const winTeam=teams.find(t=>t.id===ms.winnerId);
                           return(
-                            <tr key={e.id} style={{borderBottom:"1px solid #0f0f25",cursor:"pointer"}} onClick={()=>startEdit(e)}>
+                            <tr key={e.id} style={{borderBottom:"1px solid #0f0f25",cursor:isEditor?"pointer":"default"}} onClick={()=>isEditor&&startEdit(e)}>
                               <td style={{padding:"8px 12px",fontFamily:"'Bebas Neue',cursive",fontSize:14,color:"#aaa"}}>{e.matchLabel||"Match"}</td>
                               <td style={{padding:"8px 12px",fontSize:11,color:"#444"}}>{e.date}</td>
                               {teams.map(t=>{
@@ -732,7 +757,7 @@ function D5Fantasy({isEditor, onRequestEditor}){
           <div>
             <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:16}}>
               <div style={{fontFamily:"'Bebas Neue',cursive",fontSize:22}}>Match Entries ({entries.length})</div>
-              <Btn variant="success" onClick={startNew}>+ New Entry</Btn>
+              {isEditor&&<Btn variant="success" onClick={startNew}>+ New Entry</Btn>}
             </div>
             {entries.length===0&&<Card style={{textAlign:"center",padding:32}}><div style={{color:"#444"}}>No entries yet.</div></Card>}
             <div style={{display:"grid",gridTemplateColumns:"repeat(auto-fill,minmax(320px,1fr))",gap:12}}>
@@ -745,8 +770,9 @@ function D5Fantasy({isEditor, onRequestEditor}){
                     <div style={{padding:"10px 14px",display:"flex",justifyContent:"space-between",alignItems:"center"}}>
                       <div><div style={{fontFamily:"'Bebas Neue',cursive",fontSize:15}}>{e.matchLabel||"Match"}</div><div style={{fontSize:10,color:"#444"}}>{e.date}</div></div>
                       <div style={{display:"flex",gap:6}}>
-                        <Btn small variant="ghost" onClick={()=>startEdit(e)}>✏️ Edit</Btn>
-                        <Btn small variant="danger" onClick={()=>deleteEntry(e.id)}>✕</Btn>
+                        {isEditor&&<Btn small variant="ghost" onClick={()=>startEdit(e)}>✏️ Edit</Btn>}
+                        {isEditor&&<Btn small variant="danger" onClick={()=>deleteEntry(e.id)}>✕</Btn>}
+                        <Btn small variant="ghost" onClick={()=>startView(e)}>👁 View</Btn>
                       </div>
                     </div>
                     <div style={{padding:"0 14px 12px",display:"flex",gap:8,flexWrap:"wrap"}}>
@@ -756,6 +782,90 @@ function D5Fantasy({isEditor, onRequestEditor}){
                           <span style={{fontFamily:"'Bebas Neue',cursive",fontSize:18}}>{pts}</span>
                         </div>
                       ))}
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+        )}
+
+        {/* ─── VIEW SCORECARD ─── */}
+        {view==="viewEntry"&&viewEntry&&(
+          <div style={{maxWidth:1400,margin:"0 auto",padding:"22px 24px"}}>
+            <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:20}}>
+              <div>
+                <div style={{fontFamily:"'Bebas Neue',cursive",fontSize:26,color:"#00C9FF"}}>{viewEntry.matchLabel||"Match"}</div>
+                <div style={{fontSize:12,color:"#444"}}>{viewEntry.date}</div>
+              </div>
+              <Btn variant="ghost" onClick={()=>{setView("entries");setViewEntry(null);}}>← Back</Btn>
+            </div>
+            {/* Live totals */}
+            <div style={{display:"flex",gap:10,marginBottom:24,flexWrap:"wrap"}}>
+              {teams.map(t=>{
+                const pts=(viewEntry.teamData[t.id]||[]).reduce((s,p)=>s+calcPts(p),0);
+                const isWinner=pts===Math.max(...teams.map(tt=>(viewEntry.teamData[tt.id]||[]).reduce((s,p)=>s+calcPts(p),0)))&&pts>0;
+                return(
+                  <div key={t.id} style={{flex:1,minWidth:140,background:("linear-gradient(135deg,"+t.color+(isWinner?"22":"0a")+",#11112a)"),
+                    border:("1px solid "+t.color+(isWinner?"88":"33")),borderRadius:12,padding:"14px 16px",textAlign:"center"}}>
+                    <div style={{fontFamily:"'Bebas Neue',cursive",fontSize:13,color:t.color,marginBottom:2}}>{t.emoji} {t.name}</div>
+                    <div style={{fontFamily:"'Bebas Neue',cursive",fontSize:44,color:isWinner?t.color:"#fff",lineHeight:1}}>{pts.toLocaleString()}</div>
+                    <div style={{fontSize:9,color:"#444",marginTop:2}}>{isWinner?"🏆 WINNER":"POINTS"}</div>
+                  </div>
+                );
+              })}
+            </div>
+            {/* Per team player scorecards */}
+            <div style={{display:"grid",gridTemplateColumns:"1fr",gap:16}}>
+              {teams.map(t=>{
+                const players=(viewEntry.teamData[t.id]||[]).filter(p=>p.name||p.runs||p.wkts);
+                if(!players.length) return null;
+                return(
+                  <div key={t.id} style={{background:"#11112a",border:("1px solid "+t.color+"33"),borderRadius:12,overflow:"hidden"}}>
+                    <div style={{background:("linear-gradient(90deg,"+t.color+"22,transparent)"),padding:"12px 16px",
+                      fontFamily:"'Bebas Neue',cursive",fontSize:18,color:t.color}}>{t.emoji} {t.name}</div>
+                    <div style={{overflowX:"auto"}}>
+                      <table style={{width:"100%",borderCollapse:"collapse"}}>
+                        <thead>
+                          <tr style={{borderBottom:"1px solid #1a1a38"}}>
+                            {["Player","Runs","Wkts","RO","Stmp","Catch","Duck","6s","HtkW","Htk6s","Mdn","Pts"].map(h=>(
+                              <th key={h} style={{padding:"8px 10px",fontSize:10,color:["6s","HtkW","Htk6s","Mdn"].includes(h)?"#FFB83088":"#444",
+                                textAlign:"center",fontFamily:"'DM Sans',sans-serif",fontWeight:600,letterSpacing:1}}>{h}</th>
+                            ))}
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {players.map((p,pi)=>{
+                            const pts=calcPts(p);
+                            return(
+                              <tr key={p.id} style={{borderBottom:"1px solid #0f0f22",
+                                background:p.isCaptain?(t.color+"08"):"transparent"}}>
+                                <td style={{padding:"10px 12px",fontSize:13,color:p.isCaptain?t.color:"#ccc",fontWeight:p.isCaptain?600:400}}>
+                                  {p.isCaptain&&<span style={{marginRight:4}}>★</span>}{p.name||"—"}
+                                </td>
+                                {[p.runs,p.wkts,p.ro,p.stmp,p.catch,p.duck,p.b6s,p.bHtkW,p.bHtk6s,p.bMdn].map((v,i)=>(
+                                  <td key={i} style={{padding:"10px 8px",textAlign:"center",
+                                    fontFamily:"'Bebas Neue',cursive",fontSize:16,
+                                    color:v>0?(i>=6?"#FFB830":"#fff"):"#2a2a4a"}}>{v||"—"}</td>
+                                ))}
+                                <td style={{padding:"10px 12px",textAlign:"center",fontFamily:"'Bebas Neue',cursive",fontSize:20,
+                                  color:pts>500?"#FFB830":pts>200?"#A8FF3E":pts<0?"#ff6b6b":"#fff",fontWeight:"bold"}}>
+                                  {pts}{p.isCaptain&&<div style={{fontSize:9,color:t.color}}>×2</div>}
+                                </td>
+                              </tr>
+                            );
+                          })}
+                        </tbody>
+                        <tfoot>
+                          <tr style={{borderTop:"2px solid #2a2a55",background:"#0a0a1e"}}>
+                            <td style={{padding:"10px 12px",fontFamily:"'Bebas Neue',cursive",fontSize:13,color:"#444"}}>TOTAL</td>
+                            {Array(10).fill(null).map((_,i)=><td key={i}/>)}
+                            <td style={{padding:"10px 12px",textAlign:"center",fontFamily:"'Bebas Neue',cursive",fontSize:24,color:t.color}}>
+                              {(viewEntry.teamData[t.id]||[]).reduce((s,p)=>s+calcPts(p),0).toLocaleString()}
+                            </td>
+                          </tr>
+                        </tfoot>
+                      </table>
                     </div>
                   </div>
                 );
@@ -963,14 +1073,59 @@ function D5Fantasy({isEditor, onRequestEditor}){
 }
 
 // ─── AUTH ─────────────────────────────────────────────────────────────────────
-const EDITOR_PASSWORD = "d5edit2026";
+window.EDITOR_PASSWORD = "d5edit2026"; // default, overridden by Firebase
+
+function ChangePwModal({onClose}){
+  const [oldPw,setOldPw]=useState("");
+  const [newPw,setNewPw]=useState("");
+  const [confirmPw,setConfirmPw]=useState("");
+  const [err,setErr]=useState("");
+  const [success,setSuccess]=useState(false);
+
+  const handleChange=()=>{
+    if(oldPw!==window.EDITOR_PASSWORD){setErr("Current password is incorrect.");return;}
+    if(newPw.length<4){setErr("New password must be at least 4 characters.");return;}
+    if(newPw!==confirmPw){setErr("New passwords do not match.");return;}
+    window.EDITOR_PASSWORD=newPw;
+    window.db.ref("d5_editor_pw").set(newPw);
+    setSuccess(true);
+    setTimeout(()=>onClose(),1500);
+  };
+
+  return(
+    <div style={{position:"fixed",inset:0,background:"#000000bb",zIndex:1000,display:"flex",alignItems:"center",justifyContent:"center"}}
+      onClick={e=>{if(e.target===e.currentTarget)onClose();}}>
+      <div style={{background:"#11112a",border:"1px solid #2a2a5a",borderRadius:16,padding:"32px 36px",width:320}}>
+        <div style={{fontFamily:"'Bebas Neue',cursive",fontSize:20,color:"#FFB830",marginBottom:6,textAlign:"center",letterSpacing:2}}>🔑 CHANGE PASSWORD</div>
+        <div style={{fontSize:11,color:"#444",textAlign:"center",marginBottom:20}}>Editor password change</div>
+        {success
+          ? <div style={{textAlign:"center",color:"#A8FF3E",fontFamily:"'Bebas Neue',cursive",fontSize:18,padding:"20px 0"}}>✓ PASSWORD CHANGED!</div>
+          : <>
+            {[["Current Password",oldPw,setOldPw],["New Password",newPw,setNewPw],["Confirm New Password",confirmPw,setConfirmPw]].map(([lbl,val,setter])=>(
+              <div key={lbl} style={{marginBottom:12}}>
+                <div style={{fontSize:10,color:"#555",marginBottom:4,letterSpacing:1}}>{lbl.toUpperCase()}</div>
+                <input type="password" value={val} onChange={e=>{setter(e.target.value);setErr("");}}
+                  style={{width:"100%",padding:"10px 14px",background:"#07071a",border:"1px solid #2a2a5a",borderRadius:8,color:"#e0e0f0",fontSize:14,outline:"none"}}/>
+              </div>
+            ))}
+            {err&&<div style={{fontSize:11,color:"#ff6b6b",marginBottom:10,textAlign:"center"}}>{err}</div>}
+            <div style={{display:"flex",gap:8,marginTop:8}}>
+              <button onClick={onClose} style={{flex:1,padding:"10px",borderRadius:10,border:"1px solid #2a2a5a",background:"transparent",color:"#555",fontFamily:"'Bebas Neue',cursive",fontSize:15}}>CANCEL</button>
+              <button onClick={handleChange} style={{flex:2,padding:"10px",borderRadius:10,border:"none",background:"linear-gradient(135deg,#FFB83022,#FF6B3522)",borderTop:"1px solid #FFB83044",color:"#FFB830",fontFamily:"'Bebas Neue',cursive",fontSize:15}}>SAVE →</button>
+            </div>
+          </>
+        }
+      </div>
+    </div>
+  );
+}
 
 function EditorLockModal({onUnlock, onClose}){
   const [pw,setPw]=useState("");
   const [err,setErr]=useState(false);
   const [shake,setShake]=useState(false);
   const attempt=()=>{
-    if(pw===EDITOR_PASSWORD){
+    if(pw===window.EDITOR_PASSWORD){
       try{sessionStorage.setItem("d5_editor","1");}catch{}
       onUnlock();
     } else {
