@@ -1,10 +1,16 @@
 # 🏏 D5 IPL Fantasy League — Production Platform (v2.0)
 
+[![Live Demo](https://img.shields.io/badge/Live%20Demo-mohanlalam.github.io%2FD5---success?style=for-the-badge&logo=github)](https://mohanlalam.github.io/D5-)
+[![GitHub Repo](https://img.shields.io/badge/GitHub-Repository-black?style=for-the-badge&logo=github)](https://github.com/mohanlalam/D5-)
+
 [![Tests](https://img.shields.io/badge/Tests-5%2F5%20Passing-brightgreen)](file:///c:/Users/Ram%20Mohan/OneDrive/Desktop/D5/src/core/scoringEngine.test.js)
 [![Architecture](https://img.shields.io/badge/Architecture-Clean%20%2F%20DDD-blue)](file:///c:/Users/Ram%20Mohan/OneDrive/Desktop/D5/src/core/)
 [![Runtime](https://img.shields.io/badge/Node.js-18%2B-green)](file:///c:/Users/Ram%20Mohan/OneDrive/Desktop/D5/package.json)
 [![React](https://img.shields.io/badge/Frontend-React%2018%20(Zero%20Babel%20Lag)-61DAFB)](file:///c:/Users/Ram%20Mohan/OneDrive/Desktop/D5/public/js/app.js)
 [![License](https://img.shields.io/badge/License-MIT-purple)](file:///c:/Users/Ram%20Mohan/OneDrive/Desktop/D5/package.json)
+
+> **🌐 Live Application**: [https://mohanlalam.github.io/D5-](https://mohanlalam.github.io/D5-)  
+> **📦 Source Code**: [https://github.com/mohanlalam/D5-](https://github.com/mohanlalam/D5-)
 
 An enterprise-grade, high-performance, modular full-stack **IPL Fantasy League platform** engineered with Clean Architecture principles, pure domain scoring logic, live differential net analytics, historical tournament archive (2025 season), real-time cloud synchronization, and live match integration via Cricket APIs.
 
