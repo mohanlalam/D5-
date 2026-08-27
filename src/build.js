@@ -1,6 +1,6 @@
 /**
  * Production Bundle Generator for Standalone & Web Distribution
- * D5 IPL Fantasy Platform
+ * D5 IPL Fantasy Platform (v2.1)
  */
 
 import fs from "fs";
@@ -20,26 +20,30 @@ const createHtml = (isStandalone = false) => `<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8"/>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>D5 IPL Fantasy 2026</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover"/>
+  <meta name="theme-color" content="#000000"/>
+  <meta name="apple-mobile-web-app-capable" content="yes"/>
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"/>
+  <meta name="apple-mobile-web-app-title" content="D5 IPL"/>
+  <title>D5 IPL Fantasy 2026 • iOS Edition</title>
+  <link rel="manifest" href="manifest.json"/>
   <link rel="preconnect" href="https://fonts.googleapis.com"/>
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
-  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet"/>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet"/>
   <script src="https://cdn.jsdelivr.net/npm/react@18/umd/react.production.min.js" crossorigin></script>
   <script src="https://cdn.jsdelivr.net/npm/react-dom@18/umd/react-dom.production.min.js" crossorigin></script>
   <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-database-compat.js"></script>
   ${isStandalone ? `<style>\n${cssContent}\n</style>` : `<link rel="stylesheet" href="css/app.css"/>`}
   <style>
-    #loading { position: fixed; inset: 0; background: #0b0d12; display: flex; align-items: center; justify-content: center; flex-direction: column; gap: 16px; z-index: 9999; }
-    .spinner-red { width: 44px; height: 44px; border: 3px solid #22080a; border-top-color: #d11a2a; border-radius: 50%; animation: spin 0.8s linear infinite; }
-    @keyframes spin { to { transform: rotate(360deg); } }
+    #loading { position: fixed; inset: 0; background: #000000; display: flex; align-items: center; justify-content: center; flex-direction: column; gap: 16px; z-index: 9999; }
+    .spinner-red { width: 40px; height: 40px; border: 3px solid rgba(255,59,48,0.2); border-top-color: #ff3b30; border-radius: 50%; animation: spin 0.7s linear infinite; }
   </style>
 </head>
 <body>
 <div id="loading">
   <div class="spinner-red"></div>
-  <div style="font-family:'Bebas Neue',cursive;font-size:18px;color:#888;letter-spacing:2px;">LOADING D5 IPL FANTASY...</div>
+  <div style="font-family:-apple-system,BlinkMacSystemFont,sans-serif;font-size:14px;color:#888;letter-spacing:1px;font-weight:600;">LOADING D5 IPL FANTASY...</div>
 </div>
 <div id="root"></div>
 
@@ -145,13 +149,13 @@ export function build() {
     fs.mkdirSync(PUBLIC_DIR, { recursive: true });
   }
 
-  // 1. Web app bundle for Express static serving
+  // 1. Web app bundle for Express / PWA static serving
   fs.writeFileSync(path.join(PUBLIC_DIR, "index.html"), createHtml(false), "utf8");
-  console.log("✓ Generated public/index.html (Modular Web App)");
+  console.log("✓ Generated public/index.html (PWA & Web Distribution)");
 
-  // 2. Standalone zero-dependency distribution file for instant double-click running
+  // 2. Standalone zero-dependency distribution file
   fs.writeFileSync(path.join(ROOT_DIR, "index.html"), createHtml(true), "utf8");
-  console.log("✓ Generated root index.html (Standalone Production App)");
+  console.log("✓ Generated root index.html (Standalone iOS Mobile App)");
 }
 
 build();

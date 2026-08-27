@@ -1,31 +1,28 @@
 /* ==========================================================================
-   D5 IPL Fantasy Platform — iOS Human Interface Design System (v2.0)
-   Designed according to Apple HIG: Frosted Glass, Inset Groups & Tactile Micro-interactions
+   D5 IPL Fantasy Platform — High-End iOS Mobile App Design System (v2.1)
+   Features: Dynamic Island Live Widget, Floating Glass Tab Bar & Inset Groups
    ========================================================================== */
 
 :root {
-  /* iOS Dark Palette & Semantic Colors */
+  /* iOS True Dark Palette */
   --ios-bg-base: #000000;
   --ios-bg-grouped: #000000;
   --ios-bg-secondary: #1c1c1e;
   --ios-bg-tertiary: #2c2c2e;
   --ios-bg-quaternary: #3a3a3c;
   
-  --ios-glass-header: rgba(28, 28, 30, 0.78);
-  --ios-glass-card: rgba(28, 28, 30, 0.65);
-  --ios-glass-elevated: rgba(44, 44, 46, 0.75);
-  --ios-glass-sheet: rgba(24, 24, 26, 0.88);
+  --ios-glass-nav: rgba(20, 20, 22, 0.82);
+  --ios-glass-card: rgba(28, 28, 30, 0.68);
+  --ios-glass-sheet: rgba(24, 24, 26, 0.92);
+  --ios-glass-tabbar: rgba(22, 22, 24, 0.85);
   
-  --ios-separator: rgba(84, 84, 88, 0.45);
+  --ios-separator: rgba(84, 84, 88, 0.4);
   --ios-separator-opaque: #38383a;
   
-  /* Apple System Accents */
+  /* Apple HIG System Accents */
   --ios-blue: #0a84ff;
-  --ios-blue-rgb: 10, 132, 255;
   --ios-green: #30d158;
-  --ios-green-rgb: 48, 209, 88;
   --ios-red: #ff453a;
-  --ios-red-rgb: 255, 69, 58;
   --ios-orange: #ff9f0a;
   --ios-yellow: #ffd60a;
   --ios-purple: #bf5af2;
@@ -36,15 +33,13 @@
   /* Typography */
   --ios-text-primary: #ffffff;
   --ios-text-secondary: rgba(235, 235, 245, 0.6);
-  --ios-text-tertiary: rgba(235, 235, 245, 0.3);
+  --ios-text-tertiary: rgba(235, 235, 245, 0.35);
   --ios-text-quaternary: rgba(235, 235, 245, 0.18);
   
-  --font-ios-display: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro", "SF Pro Text", "Helvetica Neue", Arial, sans-serif;
-  --font-ios-heading: 'Bebas Neue', var(--font-ios-display);
   --font-ios-text: -apple-system, BlinkMacSystemFont, "SF Pro Text", "SF Pro", "Helvetica Neue", Arial, sans-serif;
-  --font-ios-mono: "SF Mono", Menlo, Monaco, Consolas, monospace;
+  --font-ios-heading: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro", "Helvetica Neue", Arial, sans-serif;
   
-  /* Apple Radii & Elevation */
+  /* Radii */
   --ios-radius-xs: 6px;
   --ios-radius-sm: 10px;
   --ios-radius-md: 14px;
@@ -52,11 +47,10 @@
   --ios-radius-xl: 28px;
   --ios-radius-full: 9999px;
   
-  --ios-shadow-subtle: 0 2px 10px rgba(0, 0, 0, 0.35);
-  --ios-shadow-sheet: 0 -8px 32px rgba(0, 0, 0, 0.65);
-  --ios-shadow-glass: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
-  
-  /* Apple Timing Curves (iOS Spring Feels) */
+  /* Shadows & Springs */
+  --ios-shadow-card: 0 4px 20px rgba(0, 0, 0, 0.4);
+  --ios-shadow-dynamic: 0 8px 30px rgba(0, 0, 0, 0.6);
+  --ios-shadow-tabbar: 0 -4px 24px rgba(0, 0, 0, 0.55);
   --ios-ease-spring: cubic-bezier(0.175, 0.885, 0.32, 1.15);
   --ios-ease-smooth: cubic-bezier(0.32, 0.72, 0, 1);
 }
@@ -75,44 +69,101 @@ body {
   font-size: 15px;
   line-height: 1.45;
   -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
   overflow-x: hidden;
   letter-spacing: -0.2px;
+  padding-bottom: env(safe-area-inset-bottom, 20px);
 }
 
-/* iOS Smooth Scrollbar */
-::-webkit-scrollbar {
-  width: 5px;
-  height: 5px;
+/* Custom Scrollbar */
+::-webkit-scrollbar { width: 5px; height: 5px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: rgba(255, 255, 255, 0.2); border-radius: var(--ios-radius-full); }
+::-webkit-scrollbar-thumb:hover { background: rgba(255, 255, 255, 0.35); }
+
+/* ─── DYNAMIC ISLAND / LIVE ACTIVITY WIDGET ────────────────────────────────── */
+.dynamic-island {
+  background: #000000;
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  border-radius: 28px;
+  padding: 8px 18px;
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+  box-shadow: var(--ios-shadow-dynamic), 0 0 0 1px rgba(255,255,255,0.06);
+  transition: all 0.3s var(--ios-ease-spring);
+  cursor: pointer;
+  max-width: 95vw;
 }
-::-webkit-scrollbar-track {
-  background: transparent;
+
+.dynamic-island:hover {
+  transform: scale(1.02);
+  border-color: rgba(255, 255, 255, 0.25);
 }
-::-webkit-scrollbar-thumb {
-  background: rgba(255, 255, 255, 0.2);
+
+/* ─── FLOATING iOS BOTTOM TAB BAR ─────────────────────────────────────────── */
+.ios-bottom-tabbar {
+  position: fixed;
+  bottom: 12px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: var(--ios-glass-tabbar);
+  backdrop-filter: blur(28px) saturate(200%);
+  -webkit-backdrop-filter: blur(28px) saturate(200%);
+  border: 0.5px solid rgba(255, 255, 255, 0.12);
   border-radius: var(--ios-radius-full);
-}
-::-webkit-scrollbar-thumb:hover {
-  background: rgba(255, 255, 255, 0.35);
+  padding: 6px 10px;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  z-index: 99;
+  box-shadow: var(--ios-shadow-tabbar);
+  max-width: calc(100vw - 24px);
 }
 
-/* iOS Glass Surfaces */
+.ios-tab-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 6px 14px;
+  border-radius: var(--ios-radius-full);
+  background: transparent;
+  border: none;
+  color: var(--ios-text-secondary);
+  cursor: pointer;
+  transition: all 0.2s var(--ios-ease-smooth);
+  font-size: 11px;
+  font-weight: 500;
+  gap: 2px;
+}
+
+.ios-tab-item.active {
+  background: rgba(255, 255, 255, 0.14);
+  color: #ffffff;
+  font-weight: 600;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+}
+
+.ios-tab-item:active {
+  transform: scale(0.92);
+}
+
+/* ─── SURFACES & CARDS ─────────────────────────────────────────────────────── */
 .ios-glass {
   background: var(--ios-glass-card);
   backdrop-filter: blur(24px) saturate(190%);
   -webkit-backdrop-filter: blur(24px) saturate(190%);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  box-shadow: var(--ios-shadow-glass);
+  border: 0.5px solid rgba(255, 255, 255, 0.1);
+  box-shadow: var(--ios-shadow-card);
 }
 
 .ios-glass-nav {
-  background: var(--ios-glass-header);
+  background: var(--ios-glass-nav);
   backdrop-filter: blur(30px) saturate(200%);
   -webkit-backdrop-filter: blur(30px) saturate(200%);
   border-bottom: 0.5px solid var(--ios-separator);
 }
 
-/* iOS Inset Group Container */
 .ios-inset-group {
   background: var(--ios-bg-secondary);
   border-radius: var(--ios-radius-lg);
@@ -137,42 +188,7 @@ body {
   background-color: var(--ios-bg-tertiary);
 }
 
-/* iOS Segmented Control */
-.ios-segmented-control {
-  display: inline-flex;
-  background: rgba(118, 118, 128, 0.24);
-  padding: 3px;
-  border-radius: var(--ios-radius-sm);
-  gap: 2px;
-  position: relative;
-  user-select: none;
-}
-
-.ios-segmented-btn {
-  padding: 6px 14px;
-  border-radius: 7px;
-  border: none;
-  font-size: 13px;
-  font-weight: 500;
-  font-family: var(--font-ios-text);
-  color: var(--ios-text-secondary);
-  background: transparent;
-  cursor: pointer;
-  transition: all 0.22s var(--ios-ease-smooth);
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  white-space: nowrap;
-}
-
-.ios-segmented-btn.active {
-  background: rgba(255, 255, 255, 0.16);
-  color: #ffffff;
-  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.25), 0 1px 1px rgba(0, 0, 0, 0.15);
-  font-weight: 600;
-}
-
-/* iOS Spring Buttons */
+/* ─── BUTTONS & TACTILE CONTROLS ─────────────────────────────────────────── */
 .ios-btn {
   display: inline-flex;
   align-items: center;
@@ -185,11 +201,12 @@ body {
   border: none;
   cursor: pointer;
   padding: 9px 18px;
-  transition: transform 0.18s var(--ios-ease-spring), opacity 0.15s ease, background 0.2s ease;
+  transition: transform 0.18s var(--ios-ease-spring), opacity 0.15s ease;
+  user-select: none;
 }
 
 .ios-btn:active:not(:disabled) {
-  transform: scale(0.95);
+  transform: scale(0.94);
   opacity: 0.85;
 }
 
@@ -198,31 +215,16 @@ body {
   cursor: not-allowed;
 }
 
-.ios-btn-primary {
-  background: var(--ios-blue);
-  color: #ffffff;
-}
+.ios-btn-primary { background: var(--ios-blue); color: #ffffff; }
+.ios-btn-tinted { background: rgba(10, 132, 255, 0.15); color: var(--ios-blue); }
+.ios-btn-destructive { background: rgba(255, 69, 58, 0.15); color: var(--ios-red); border: 0.5px solid rgba(255, 69, 58, 0.35); }
+.ios-btn-ghost { background: rgba(255, 255, 255, 0.08); color: var(--ios-text-primary); }
+.ios-btn-green { background: var(--ios-green); color: #000000; font-weight: 700; }
 
-.ios-btn-tinted {
-  background: rgba(10, 132, 255, 0.15);
-  color: var(--ios-blue);
-}
-
-.ios-btn-destructive {
-  background: rgba(255, 69, 58, 0.15);
-  color: var(--ios-red);
-  border: 1px solid rgba(255, 69, 58, 0.3);
-}
-
-.ios-btn-ghost {
-  background: rgba(255, 255, 255, 0.08);
-  color: var(--ios-text-primary);
-}
-
-/* iOS Inputs */
+/* ─── INPUTS ───────────────────────────────────────────────────────────────── */
 .ios-input {
   background: var(--ios-bg-tertiary);
-  border: 1px solid rgba(255, 255, 255, 0.08);
+  border: 0.5px solid var(--ios-separator);
   color: var(--ios-text-primary);
   border-radius: var(--ios-radius-sm);
   padding: 10px 14px;
@@ -237,7 +239,7 @@ body {
   box-shadow: 0 0 0 3px rgba(10, 132, 255, 0.25);
 }
 
-/* iOS Modal Sheet */
+/* ─── MODAL SHEETS ─────────────────────────────────────────────────────────── */
 .ios-sheet-backdrop {
   position: fixed;
   inset: 0;
@@ -263,10 +265,10 @@ body {
   -webkit-backdrop-filter: blur(30px) saturate(200%);
   border: 1px solid rgba(255, 255, 255, 0.12);
   border-radius: var(--ios-radius-xl) var(--ios-radius-xl) 0 0;
-  box-shadow: var(--ios-shadow-sheet);
+  box-shadow: 0 -10px 40px rgba(0, 0, 0, 0.7);
   width: 100%;
-  max-width: 820px;
-  max-height: 90vh;
+  max-width: 860px;
+  max-height: 92vh;
   display: flex;
   flex-direction: column;
   overflow: hidden;
@@ -276,11 +278,10 @@ body {
 @media (min-width: 768px) {
   .ios-sheet-card {
     border-radius: var(--ios-radius-xl);
-    max-height: 85vh;
+    max-height: 88vh;
   }
 }
 
-/* iOS Grabber */
 .ios-grabber {
   width: 36px;
   height: 4.5px;
@@ -289,10 +290,24 @@ body {
   margin: 10px auto 4px;
 }
 
-/* Live Pulse */
+/* ─── ROLE BADGES ──────────────────────────────────────────────────────────── */
+.role-badge {
+  font-size: 10px;
+  font-weight: 700;
+  padding: 2px 7px;
+  border-radius: 6px;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+}
+.role-bat { background: rgba(10, 132, 255, 0.18); color: var(--ios-blue); }
+.role-bowl { background: rgba(255, 69, 58, 0.18); color: var(--ios-red); }
+.role-all { background: rgba(48, 209, 88, 0.18); color: var(--ios-green); }
+.role-wk { background: rgba(255, 159, 10, 0.18); color: var(--ios-orange); }
+
+/* ─── ANIMATIONS ──────────────────────────────────────────────────────────── */
 @keyframes iosLivePulse {
   0% { transform: scale(1); opacity: 1; }
-  50% { transform: scale(1.35); opacity: 0.45; }
+  50% { transform: scale(1.4); opacity: 0.4; }
   100% { transform: scale(1); opacity: 1; }
 }
 
@@ -305,17 +320,11 @@ body {
   animation: iosLivePulse 1.4s infinite ease-in-out;
 }
 
-@keyframes iosFadeIn {
-  from { opacity: 0; }
-  to { opacity: 1; }
-}
+@keyframes iosFadeIn { from { opacity: 0; } to { opacity: 1; } }
+@keyframes iosSlideUp { from { transform: translateY(100%); } to { transform: translateY(0); } }
+@keyframes spin { to { transform: rotate(360deg); } }
 
-@keyframes iosSlideUp {
-  from { transform: translateY(100%); }
-  to { transform: translateY(0); }
-}
-
-/* Responsive Table */
+/* ─── TABLES ───────────────────────────────────────────────────────────────── */
 .ios-table {
   width: 100%;
   border-collapse: collapse;
