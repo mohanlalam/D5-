@@ -26,8 +26,9 @@ function IOSButton({ onClick, children, variant = "primary", disabled = false, s
     "aria-label": ariaLabel,
     "aria-busy": loading,
     style: {
-      padding: small ? "6px 14px" : "10px 20px",
+      padding: small ? "7px 16px" : "11px 22px",
       fontSize: small ? "13px" : "15px",
+      fontWeight: "700",
       ...style,
     }
   },
@@ -123,17 +124,17 @@ function IOSModalSheet({ isOpen, onClose, title, children, maxWidth = "920px" })
           borderBottom: "0.5px solid var(--ios-separator)",
         }
       },
-        h("h2", { style: { fontSize: "17px", fontWeight: "600", color: "var(--ios-text-primary)" } }, title),
+        h("h2", { style: { fontSize: "18px", fontWeight: "700", color: "var(--ios-text-primary)" } }, title),
         h("button", {
           onClick: onClose,
           style: {
             background: "rgba(118, 118, 128, 0.24)",
             border: "none",
-            width: "28px",
-            height: "28px",
+            width: "30px",
+            height: "30px",
             borderRadius: "50%",
             color: "var(--ios-text-secondary)",
-            fontSize: "15px",
+            fontSize: "16px",
             cursor: "pointer",
             display: "flex",
             alignItems: "center",
@@ -164,20 +165,10 @@ function IOSNumberInput({ label, value, onChange, min = 0, max = 999 }) {
 // ─── MAIN APPLICATION COMPONENT ───────────────────────────────────────────────
 
 function App() {
-  const [tab, setTab] = useState("standings");
+  const [tab, setTab] = useState("matches");
   const [teams, setTeams] = useState(DEFAULT_2027_TEAMS);
   const [entries, setEntries] = useState([]);
-  const [isEditor, setIsEditor] = useState(false);
-  const [showAdminModal, setShowAdminModal] = useState(false);
-  const [adminPin, setAdminPin] = useState("");
-  const [adminError, setAdminError] = useState("");
   const [editingEntry, setEditingEntry] = useState(null);
-
-  // Live Scores & Simulator
-  const [liveScores, setLiveScores] = useState({});
-  const [liveLoading, setLiveLoading] = useState(false);
-  const [autoRefresh, setAutoRefresh] = useState(false);
-  const [lastRefreshedAt, setLastRefreshedAt] = useState(null);
 
   // Live Simulator Engine
   const [simActive, setSimActive] = useState(false);
@@ -191,12 +182,11 @@ function App() {
   const [histFilter, setHistFilter] = useState("ALL");
   const [selHistMatch, setSelHistMatch] = useState(null);
 
-  // ── Firebase Realtime Sync (2027 Season Keys) ──────────────────────────────
+  // ── Firebase Realtime Sync ─────────────────────────────────────────────────
   useEffect(() => {
     if (window.db) {
       const teamsRef = window.db.ref("d5_2027_teams");
       const entriesRef = window.db.ref("d5_2027_entries");
-      const pwRef = window.db.ref("d5_editor_pw");
 
       teamsRef.on("value", (snap) => {
         const val = snap.val();
@@ -206,15 +196,10 @@ function App() {
         const val = snap.val();
         setEntries(val ? Object.values(val) : []);
       });
-      pwRef.on("value", (snap) => {
-        const val = snap.val();
-        if (val) window.EDITOR_PASSWORD = val;
-      });
 
       return () => {
         teamsRef.off();
         entriesRef.off();
-        pwRef.off();
       };
     }
   }, []);
@@ -331,7 +316,7 @@ function App() {
   };
 
   return h("div", { style: { minHeight: "100vh", display: "flex", flexDirection: "column", paddingBottom: "90px" } },
-    // Top Navigation & Dynamic Island
+    // ── 1. Top Navigation & Dynamic Island ────────────────────────────────────
     h("header", {
       className: "ios-glass-nav",
       style: { position: "sticky", top: 0, zIndex: 100, padding: "10px 18px" }
@@ -351,15 +336,15 @@ function App() {
         h("div", { style: { display: "flex", alignItems: "center", gap: "10px" } },
           h("div", {
             style: {
-              width: "34px", height: "34px", borderRadius: "10px",
+              width: "36px", height: "36px", borderRadius: "10px",
               background: "linear-gradient(135deg, var(--ios-red), #ff2d55)",
-              display: "flex", alignItems: "center", justifyContent: "center", fontSize: "16px",
+              display: "flex", alignItems: "center", justifyContent: "center", fontSize: "18px",
               boxShadow: "0 3px 10px rgba(255, 59, 48, 0.35)",
             }
           }, "🏏"),
           h("div", null,
-            h("div", { style: { fontSize: "17px", fontWeight: "700", letterSpacing: "-0.4px" } }, "D5 IPL Fantasy"),
-            h("div", { style: { fontSize: "11px", color: "var(--ios-text-secondary)", fontWeight: "500" } }, "Season 2027 • Manual Control")
+            h("div", { style: { fontSize: "18px", fontWeight: "800", letterSpacing: "-0.4px" } }, "D5 IPL Fantasy"),
+            h("div", { style: { fontSize: "11px", color: "var(--ios-green)", fontWeight: "700" } }, "IPL 2027 • Manual Control Suite")
           )
         ),
 
@@ -374,39 +359,141 @@ function App() {
             simActive ? h("span", null,
               h("strong", { style: { color: "var(--ios-teal)" } }, `${simScore.team1} ${simScore.r}/${simScore.w}`),
               h("span", { style: { color: "var(--ios-text-secondary)", fontSize: "11px", marginLeft: "4px" } }, `(${simScore.o} ov) vs ${simScore.team2}`)
-            ) : h("span", { style: { color: "var(--ios-text-secondary)" } },
-              "IPL 2027 Season Setup Active"
+            ) : h("span", { style: { color: "var(--ios-text-primary)", fontWeight: "600" } },
+              "IPL 2027 Manual Match Entry Active"
             )
           )
         ),
 
-        // Action Buttons
+        // Prominent Header Button
         h("div", { style: { display: "flex", alignItems: "center", gap: "8px" } },
           h(IOSButton, {
             variant: "primary",
-            small: true,
-            onClick: () => {
-              if (!isEditor) setIsEditor(true);
-              setEditingEntry(blankEntry(teams));
-            }
-          }, "+ Manual Entry"),
-          isEditor
-            ? h(IOSButton, { variant: "destructive", small: true, onClick: () => setIsEditor(false) }, "🔓 Lock")
-            : h(IOSButton, { variant: "ghost", small: true, onClick: () => setShowAdminModal(true) }, "🔒 Admin")
+            onClick: () => setEditingEntry(blankEntry(teams)),
+            style: { background: "linear-gradient(135deg, #0a84ff, #0066cc)", boxShadow: "0 3px 12px rgba(10,132,255,0.4)" }
+          }, "➕ Add / Enter Match")
         )
       )
     ),
 
-    // Main App Views
+    // ── 2. Main App Views ─────────────────────────────────────────────────────
     h("main", { style: { flex: 1, maxWidth: "1280px", width: "100%", margin: "0 auto", padding: "20px" } },
-      // 🏆 View 1: 2027 Standings
+
+      // 📋 View 1: Matches / Scorecards (DEFAULT VIEW)
+      tab === "matches" && h("div", null,
+        h("div", {
+          style: {
+            display: "flex",
+            justifyContent: "space-between",
+            alignItems: "center",
+            marginBottom: "20px",
+            flexWrap: "wrap",
+            gap: "12px",
+            background: "rgba(255,255,255,0.04)",
+            padding: "16px 20px",
+            borderRadius: "var(--ios-radius-lg)",
+            border: "0.5px solid var(--ios-separator)"
+          }
+        },
+          h("div", null,
+            h("h1", { style: { fontSize: "28px", fontWeight: "800", letterSpacing: "-0.5px" } }, "Match Scorecards & Player Selections"),
+            h("p", { style: { fontSize: "13.5px", color: "var(--ios-text-secondary)", marginTop: "2px" } },
+              "Create new matches, select 5-player team rosters, set captains, and enter individual scores."
+            )
+          ),
+          h(IOSButton, {
+            variant: "primary",
+            onClick: () => setEditingEntry(blankEntry(teams)),
+            style: { background: "var(--ios-blue)", fontSize: "15px", padding: "12px 24px" }
+          }, "➕ Create Match Entry")
+        ),
+
+        // Grid of Matches
+        entries.length > 0 ? h("div", { style: { display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(320px, 1fr))", gap: "16px" } },
+          entries.map((entry) => {
+            const mScore = standingsData.matchScores.find((m) => m.id === entry.id);
+            const winner = teams.find((t) => t.id === mScore?.winnerId);
+            return h(IOSCard, {
+              key: entry.id,
+              onClick: () => setEditingEntry(entry),
+              style: { cursor: "pointer", border: "1px solid rgba(255,255,255,0.15)" }
+            },
+              h("div", { style: { display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: "12px" } },
+                h("div", null,
+                  h("div", { style: { fontWeight: "800", fontSize: "17px", color: "#fff" } }, entry.matchLabel || "Match Scorecard"),
+                  h("div", { style: { fontSize: "12px", color: "var(--ios-text-secondary)" } }, fmtDate(entry.date))
+                ),
+                winner && h("span", {
+                  style: {
+                    padding: "3px 10px", borderRadius: "var(--ios-radius-full)",
+                    background: `${winner.color}20`, border: `0.5px solid ${winner.color}`,
+                    color: winner.color, fontSize: "11px", fontWeight: "700"
+                  }
+                }, `🏆 Winner: ${winner.name}`)
+              ),
+              // Teams breakdown
+              h("div", { style: { display: "grid", gridTemplateColumns: "1fr 1fr", gap: "10px", margin: "14px 0" } },
+                teams.map((t) => {
+                  const pts = mScore?.scores[t.id] || 0;
+                  const netPts = mScore?.net[t.id] || 0;
+                  const isWinner = t.id === winner?.id;
+                  return h("div", {
+                    key: t.id,
+                    style: {
+                      background: "var(--ios-bg-secondary)",
+                      border: `0.5px solid ${isWinner ? t.color : "var(--ios-separator)"}`,
+                      borderRadius: "var(--ios-radius-md)",
+                      padding: "10px 12px",
+                    }
+                  },
+                    h("div", { style: { display: "flex", justifyContent: "space-between", alignItems: "center" } },
+                      h("span", { style: { color: t.color, fontWeight: "700", fontSize: "13px" } }, t.name),
+                      h("span", { style: { fontWeight: "800", fontSize: "16px", color: "#fff" } }, pts)
+                    ),
+                    h("div", { style: { fontSize: "11px", color: netPts >= 0 ? "var(--ios-green)" : "var(--ios-red)", marginTop: "4px" } },
+                      `Net: ${netPts >= 0 ? "+" : ""}${netPts}`
+                    )
+                  );
+                })
+              ),
+              // Action Buttons on Card
+              h("div", {
+                style: { display: "flex", gap: "8px", justifyContent: "space-between", borderTop: "0.5px solid var(--ios-separator)", paddingTop: "10px" },
+                onClick: (e) => e.stopPropagation()
+              },
+                h(IOSButton, {
+                  variant: "tinted", small: true,
+                  onClick: () => setEditingEntry(entry)
+                }, "✏️ Edit Players / Stats"),
+                h(IOSButton, {
+                  variant: "destructive", small: true,
+                  onClick: () => handleDeleteScorecard(entry.id)
+                }, "🗑️ Delete")
+              )
+            );
+          })
+        ) : h(IOSCard, { style: { textAlign: "center", padding: "48px 20px" } },
+          h("div", { style: { fontSize: "44px", marginBottom: "12px" } }, "🏏"),
+          h("h3", { style: { fontSize: "20px", fontWeight: "700", marginBottom: "6px" } }, "No Matches Recorded Yet for IPL 2027"),
+          h("p", { style: { fontSize: "14px", color: "var(--ios-text-secondary)", marginBottom: "20px" } },
+            "Click the button below to manually enter match details and select players for all 4 fantasy teams."
+          ),
+          h(IOSButton, {
+            variant: "primary",
+            onClick: () => setEditingEntry(blankEntry(teams)),
+            style: { padding: "14px 28px", fontSize: "16px" }
+          }, "➕ Enter Match #1 Now")
+        )
+      ),
+
+      // 🏆 View 2: Standings
       tab === "standings" && h("div", null,
         h("div", { style: { display: "flex", justifyContent: "space-between", alignItems: "flex-end", marginBottom: "18px", flexWrap: "wrap", gap: "10px" } },
           h("div", null,
             h("h1", { style: { fontSize: "28px", fontWeight: "800", letterSpacing: "-0.5px" } }, "IPL 2027 Leaderboard"),
             h("p", { style: { fontSize: "13px", color: "var(--ios-text-secondary)" } }, "Dynamic net differential ranking for the 2027 tournament")
           ),
-          h(IOSButton, { variant: "primary", onClick: () => setEditingEntry(blankEntry(teams)) }, "✍️ Enter Match Scorecard")
+          h(IOSButton, { variant: "primary", onClick: () => setEditingEntry(blankEntry(teams)) }, "➕ Enter Match Scorecard")
         ),
         // Standings Table
         h(IOSCard, { style: { padding: 0, overflow: "hidden", marginBottom: "20px" } },
@@ -454,74 +541,10 @@ function App() {
               )
             )
           )
-        ),
-        // Empty Banner
-        entries.length === 0 && h(IOSCard, { style: { textAlign: "center", padding: "36px 20px" } },
-          h("div", { style: { fontSize: "40px", marginBottom: "8px" } }, "🏏"),
-          h("h3", { style: { fontSize: "18px", fontWeight: "600", marginBottom: "4px" } }, "Ready for IPL 2027 Season!"),
-          h("p", { style: { fontSize: "13px", color: "var(--ios-text-secondary)", marginBottom: "16px" } }, "Tap below to manually enter match details, select player rosters, and record scores."),
-          h(IOSButton, { variant: "tinted", onClick: () => setEditingEntry(blankEntry(teams)) }, "+ Manually Add Match #1")
         )
       ),
 
-      // 📋 View 2: Scorecards
-      tab === "matches" && h("div", null,
-        h("div", { style: { display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "18px" } },
-          h("h1", { style: { fontSize: "28px", fontWeight: "800", letterSpacing: "-0.5px" } }, "2027 Match Scorecards"),
-          h(IOSButton, { variant: "primary", onClick: () => setEditingEntry(blankEntry(teams)) }, "+ Create Match Entry")
-        ),
-        h("div", { style: { display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(320px, 1fr))", gap: "16px" } },
-          entries.map((entry) => {
-            const mScore = standingsData.matchScores.find((m) => m.id === entry.id);
-            const winner = teams.find((t) => t.id === mScore?.winnerId);
-            return h(IOSCard, { key: entry.id },
-              h("div", { style: { display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: "12px" } },
-                h("div", null,
-                  h("div", { style: { fontWeight: "700", fontSize: "16px" } }, entry.matchLabel || "Match Scorecard"),
-                  h("div", { style: { fontSize: "12px", color: "var(--ios-text-secondary)" } }, fmtDate(entry.date))
-                ),
-                winner && h("span", {
-                  style: {
-                    padding: "3px 10px", borderRadius: "var(--ios-radius-full)",
-                    background: `${winner.color}20`, border: `0.5px solid ${winner.color}`,
-                    color: winner.color, fontSize: "11px", fontWeight: "600"
-                  }
-                }, `🏆 Winner: ${winner.name}`)
-              ),
-              h("div", { style: { display: "grid", gridTemplateColumns: "1fr 1fr", gap: "10px", margin: "14px 0" } },
-                teams.map((t) => {
-                  const pts = mScore?.scores[t.id] || 0;
-                  const netPts = mScore?.net[t.id] || 0;
-                  const isWinner = t.id === winner?.id;
-                  return h("div", {
-                    key: t.id,
-                    style: {
-                      background: "var(--ios-bg-secondary)",
-                      border: `0.5px solid ${isWinner ? t.color : "var(--ios-separator)"}`,
-                      borderRadius: "var(--ios-radius-md)",
-                      padding: "10px 12px",
-                    }
-                  },
-                    h("div", { style: { display: "flex", justifyContent: "space-between", alignItems: "center" } },
-                      h("span", { style: { color: t.color, fontWeight: "600", fontSize: "13px" } }, t.name),
-                      h("span", { style: { fontWeight: "700", fontSize: "16px", color: "#fff" } }, pts)
-                    ),
-                    h("div", { style: { fontSize: "11px", color: netPts >= 0 ? "var(--ios-green)" : "var(--ios-red)", marginTop: "4px" } },
-                      `Net: ${netPts >= 0 ? "+" : ""}${netPts}`
-                    )
-                  );
-                })
-              ),
-              h("div", { style: { display: "flex", gap: "8px", justifyContent: "flex-end", borderTop: "0.5px solid var(--ios-separator)", paddingTop: "10px" } },
-                h(IOSButton, { variant: "ghost", small: true, onClick: () => setEditingEntry(entry) }, "Edit Match"),
-                h(IOSButton, { variant: "destructive", small: true, onClick: () => handleDeleteScorecard(entry.id) }, "Delete")
-              )
-            );
-          })
-        )
-      ),
-
-      // 📡 View 3: Live Simulator & 2027 Fixtures
+      // 📡 View 3: Live Simulator
       tab === "live" && h("div", null,
         h("div", { style: { display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "18px", flexWrap: "wrap", gap: "10px" } },
           h("div", null,
@@ -536,7 +559,6 @@ function App() {
             }, simActive ? "⏹ Stop Simulator" : "▶ Start Live Game Sim")
           )
         ),
-        // Simulator Card
         simActive && h(IOSCard, { style: { borderColor: "var(--ios-green)", marginBottom: "20px", background: "rgba(48,209,88,0.06)" } },
           h("div", { style: { display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "12px" } },
             h(IOSLiveBadge, { text: "LIVE GAME SIMULATOR" }),
@@ -551,7 +573,6 @@ function App() {
             h(IOSTeamAvatar, { code: simScore.team2, color: IPL_TEAMS[simScore.team2]?.color || "#888", large: true })
           )
         ),
-        // 2027 Fixtures
         h("h2", { style: { fontSize: "20px", fontWeight: "700", marginBottom: "12px" } }, "IPL 2027 Fixture Schedule"),
         h("div", { style: { display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(300px, 1fr))", gap: "14px" } },
           IPL_SCHEDULE_2027.map((m) => h(IOSCard, { key: m.id },
@@ -577,7 +598,7 @@ function App() {
         )
       ),
 
-      // 👥 View 4: 10-Team IPL Squads Explorer
+      // 👥 View 4: Squads
       tab === "squads" && h("div", null,
         h("div", { style: { display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "18px", flexWrap: "wrap", gap: "10px" } },
           h("div", null,
@@ -598,7 +619,6 @@ function App() {
             }, r))
           )
         ),
-        // Team Selector Slider
         h("div", { style: { display: "flex", gap: "8px", overflowX: "auto", paddingBottom: "12px", marginBottom: "16px" } },
           Object.entries(IPL_TEAMS).map(([code, t]) => {
             const isSel = selSquadTeam === code;
@@ -625,7 +645,6 @@ function App() {
             );
           })
         ),
-        // Selected Squad
         h(IOSCard, null,
           h("div", { style: { display: "flex", alignItems: "center", gap: "12px", marginBottom: "16px" } },
             h(IOSTeamAvatar, { code: selSquadTeam, color: IPL_TEAMS[selSquadTeam]?.color || "#888", large: true }),
@@ -758,7 +777,7 @@ function App() {
         )
       ),
 
-      // 🎯 View 6: Rules & Net Differentials
+      // 🎯 View 6: Rules
       tab === "rules" && h("div", null,
         h("h1", { style: { fontSize: "28px", fontWeight: "800", letterSpacing: "-0.5px", marginBottom: "18px" } }, "IPL 2027 Scoring Rules"),
         h("div", { style: { display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(320px, 1fr))", gap: "16px", marginBottom: "20px" } },
@@ -807,14 +826,14 @@ function App() {
       )
     ),
 
-    // Floating Bottom Tab Bar
+    // ── 3. Floating Bottom Tab Bar ────────────────────────────────────────────
     h("nav", {
       className: "ios-bottom-tabbar",
       role: "navigation"
     },
       [
-        { id: "standings", label: "Standings", icon: "🏆" },
         { id: "matches", label: "Matches", icon: "📋" },
+        { id: "standings", label: "Standings", icon: "🏆" },
         { id: "live", label: "Live Sim", icon: "📡" },
         { id: "squads", label: "Players", icon: "👥" },
         { id: "archive", label: "2025", icon: "📜" },
@@ -832,43 +851,7 @@ function App() {
       })
     ),
 
-    // Modal: Admin PIN Unlock
-    h(IOSModalSheet, {
-      isOpen: showAdminModal,
-      onClose: () => { setShowAdminModal(false); setAdminPin(""); setAdminError(""); },
-      title: "Admin Authentication",
-      maxWidth: "400px",
-    },
-      h("div", { style: { display: "flex", flexDirection: "column", gap: "14px" } },
-        h("p", { style: { fontSize: "13px", color: "var(--ios-text-secondary)" } }, "Enter the PIN to unlock full manual editing privilege."),
-        h("input", {
-          className: "ios-input",
-          type: "password",
-          value: adminPin,
-          onChange: (e) => { setAdminPin(e.target.value); setAdminError(""); },
-          placeholder: "Enter PIN (default: ipl)",
-          autoFocus: true,
-        }),
-        adminError && h("div", { style: { color: "var(--ios-red)", fontSize: "12px" } }, adminError),
-        h("div", { style: { display: "flex", gap: "8px", justifyContent: "flex-end", marginTop: "8px" } },
-          h(IOSButton, { variant: "ghost", small: true, onClick: () => { setShowAdminModal(false); setAdminPin(""); setAdminError(""); } }, "Cancel"),
-          h(IOSButton, {
-            variant: "primary", small: true,
-            onClick: () => {
-              if (adminPin === (window.EDITOR_PASSWORD || "ipl")) {
-                setIsEditor(true);
-                setShowAdminModal(false);
-                setAdminPin("");
-              } else {
-                setAdminError("Incorrect PIN");
-              }
-            }
-          }, "Unlock")
-        )
-      )
-    ),
-
-    // 🌟 Manual Match & Player Selection Modal Suite
+    // ── 4. 🌟 Manual Match & Player Selection Modal Suite ────────────────────
     editingEntry && h(IOSModalSheet, {
       isOpen: Boolean(editingEntry),
       onClose: () => setEditingEntry(null),
