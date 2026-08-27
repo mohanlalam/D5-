@@ -1,34 +1,32 @@
 /**
- * D5 IPL Fantasy Platform — 2027 Season Edition
- * High-End iOS Design System & Manual Match/Player Selection Suite
+ * D5 IPL Fantasy Platform — Titanium Slate Design (v3.0)
+ * Clean, High-End Athletic Theme with Focused Harmonious Palette
  */
 
 const { useState, useEffect, useRef, useMemo, createElement: h } = React;
 
-// ─── HAPTIC FEEDBACK HELPER ──────────────────────────────────────────────────
 const hapticFeedback = (pattern = 10) => {
   if (typeof navigator !== "undefined" && navigator.vibrate) {
     try { navigator.vibrate(pattern); } catch (e) {}
   }
 };
 
-// ─── REUSABLE ACCESSIBLE iOS COMPONENTS ──────────────────────────────────────
+// ─── REUSABLE CLEAN UI COMPONENTS ──────────────────────────────────────────
 
-function IOSButton({ onClick, children, variant = "primary", disabled = false, small = false, loading = false, style = {}, ariaLabel }) {
+function AppButton({ onClick, children, variant = "primary", disabled = false, small = false, loading = false, style = {}, ariaLabel }) {
   const handleClick = (e) => {
-    hapticFeedback(12);
+    hapticFeedback(10);
     if (onClick) onClick(e);
   };
   return h("button", {
     onClick: handleClick,
     disabled: disabled || loading,
-    className: `ios-btn ios-btn-${variant}`,
+    className: `theme-btn theme-btn-${variant}`,
     "aria-label": ariaLabel,
     "aria-busy": loading,
     style: {
-      padding: small ? "7px 16px" : "11px 22px",
-      fontSize: small ? "13px" : "15px",
-      fontWeight: "700",
+      padding: small ? "6px 14px" : "10px 20px",
+      fontSize: small ? "12.5px" : "14px",
       ...style,
     }
   },
@@ -42,63 +40,15 @@ function IOSButton({ onClick, children, variant = "primary", disabled = false, s
   );
 }
 
-function IOSCard({ children, style = {}, className = "", onClick }) {
+function AppCard({ children, style = {}, className = "", onClick, interactive = false }) {
   return h("div", {
-    className: `ios-glass ${className}`,
+    className: `theme-card ${interactive ? "theme-card-interactive" : ""} ${className}`,
     onClick: onClick ? (e) => { hapticFeedback(8); onClick(e); } : undefined,
-    style: {
-      borderRadius: "var(--ios-radius-lg)",
-      padding: "18px",
-      transition: "all 0.2s var(--ios-ease-smooth)",
-      cursor: onClick ? "pointer" : "default",
-      ...style,
-    }
+    style: { cursor: onClick ? "pointer" : "default", ...style },
   }, children);
 }
 
-function IOSLiveBadge({ text = "LIVE 2027" }) {
-  return h("span", {
-    style: {
-      display: "inline-flex",
-      alignItems: "center",
-      gap: "6px",
-      padding: "3px 10px",
-      borderRadius: "var(--ios-radius-full)",
-      background: "rgba(255, 69, 58, 0.15)",
-      border: "0.5px solid rgba(255, 69, 58, 0.4)",
-      color: "var(--ios-red)",
-      fontSize: "11px",
-      fontWeight: "700",
-      letterSpacing: "0.6px",
-    }
-  },
-    h("span", { className: "ios-pulse-dot" }),
-    text
-  );
-}
-
-function IOSTeamAvatar({ code, color, size = 40, large = false }) {
-  const finalSize = large ? 56 : size;
-  return h("div", {
-    style: {
-      width: `${finalSize}px`,
-      height: `${finalSize}px`,
-      borderRadius: "50%",
-      background: `linear-gradient(135deg, ${color}28, ${color}12)`,
-      border: `2px solid ${color}`,
-      display: "flex",
-      alignItems: "center",
-      justifyContent: "center",
-      fontWeight: "700",
-      fontSize: large ? "17px" : "13px",
-      color: color,
-      boxShadow: `0 4px 14px ${color}33`,
-      flexShrink: 0,
-    }
-  }, code);
-}
-
-function IOSModalSheet({ isOpen, onClose, title, children, maxWidth = "920px" }) {
+function AppModal({ isOpen, onClose, title, children, maxWidth = "900px" }) {
   useEffect(() => {
     const handleKeyDown = (e) => { if (e.key === "Escape" && isOpen) onClose(); };
     window.addEventListener("keydown", handleKeyDown);
@@ -108,33 +58,24 @@ function IOSModalSheet({ isOpen, onClose, title, children, maxWidth = "920px" })
   if (!isOpen) return null;
 
   return h("div", {
-    className: "ios-sheet-backdrop",
+    className: "theme-modal-backdrop",
     onClick: (e) => { if (e.target === e.currentTarget) onClose(); },
     role: "dialog",
     "aria-modal": true,
   },
-    h("div", { className: "ios-sheet-card", style: { maxWidth } },
-      h("div", { className: "ios-grabber" }),
-      h("div", {
-        style: {
-          display: "flex",
-          justifyContent: "space-between",
-          alignItems: "center",
-          padding: "12px 20px",
-          borderBottom: "0.5px solid var(--ios-separator)",
-        }
-      },
-        h("h2", { style: { fontSize: "18px", fontWeight: "700", color: "var(--ios-text-primary)" } }, title),
+    h("div", { className: "theme-modal-sheet", style: { maxWidth } },
+      h("div", { className: "theme-modal-header" },
+        h("h2", { style: { fontSize: "17px", fontWeight: "700", color: "var(--text-primary)" } }, title),
         h("button", {
           onClick: onClose,
           style: {
-            background: "rgba(118, 118, 128, 0.24)",
+            background: "rgba(255, 255, 255, 0.06)",
             border: "none",
             width: "30px",
             height: "30px",
             borderRadius: "50%",
-            color: "var(--ios-text-secondary)",
-            fontSize: "16px",
+            color: "var(--text-secondary)",
+            fontSize: "15px",
             cursor: "pointer",
             display: "flex",
             alignItems: "center",
@@ -147,17 +88,17 @@ function IOSModalSheet({ isOpen, onClose, title, children, maxWidth = "920px" })
   );
 }
 
-function IOSNumberInput({ label, value, onChange, min = 0, max = 999 }) {
+function AppNumberInput({ label, value, onChange, min = 0, max = 999 }) {
   return h("div", { style: { display: "flex", flexDirection: "column", gap: "3px" } },
-    label && h("span", { style: { fontSize: "10px", fontWeight: "600", color: "var(--ios-text-secondary)", textTransform: "uppercase" } }, label),
+    label && h("span", { style: { fontSize: "10px", fontWeight: "700", color: "var(--text-muted)", textTransform: "uppercase" } }, label),
     h("input", {
-      className: "ios-input",
+      className: "theme-input",
       type: "number",
       min,
       max,
       value,
       onChange: (e) => onChange(Number(e.target.value)),
-      style: { textAlign: "center", padding: "6px 4px", fontSize: "13px", fontWeight: "700" }
+      style: { textAlign: "center", padding: "6px 4px", fontSize: "13.5px", fontWeight: "700" }
     })
   );
 }
@@ -315,69 +256,70 @@ function App() {
     }
   };
 
-  return h("div", { style: { minHeight: "100vh", display: "flex", flexDirection: "column", paddingBottom: "90px" } },
-    // ── 1. Top Navigation & Dynamic Island ────────────────────────────────────
+  return h("div", { style: { minHeight: "100vh", display: "flex", flexDirection: "column" } },
+    // ── 1. Top Clean Navigation Header ────────────────────────────────────────
     h("header", {
-      className: "ios-glass-nav",
-      style: { position: "sticky", top: 0, zIndex: 100, padding: "10px 18px" }
+      className: "theme-header-nav",
+      style: { position: "sticky", top: 0, zIndex: 100, padding: "12px 20px" }
     },
       h("div", {
         style: {
-          maxWidth: "1280px",
+          maxWidth: "1240px",
           margin: "0 auto",
           display: "flex",
           alignItems: "center",
           justifyContent: "space-between",
           flexWrap: "wrap",
-          gap: "10px",
+          gap: "12px",
         }
       },
         // Brand Title
         h("div", { style: { display: "flex", alignItems: "center", gap: "10px" } },
           h("div", {
             style: {
-              width: "36px", height: "36px", borderRadius: "10px",
-              background: "linear-gradient(135deg, var(--ios-red), #ff2d55)",
-              display: "flex", alignItems: "center", justifyContent: "center", fontSize: "18px",
-              boxShadow: "0 3px 10px rgba(255, 59, 48, 0.35)",
+              width: "34px", height: "34px", borderRadius: "10px",
+              background: "linear-gradient(135deg, #10b981, #059669)",
+              display: "flex", alignItems: "center", justifyContent: "center", fontSize: "16px",
+              boxShadow: "0 2px 8px rgba(16, 185, 129, 0.3)",
             }
           }, "🏏"),
           h("div", null,
-            h("div", { style: { fontSize: "18px", fontWeight: "800", letterSpacing: "-0.4px" } }, "D5 IPL Fantasy"),
-            h("div", { style: { fontSize: "11px", color: "var(--ios-green)", fontWeight: "700" } }, "IPL 2027 • Manual Control Suite")
+            h("div", { style: { fontSize: "16px", fontWeight: "700", letterSpacing: "-0.3px", color: "#fff" } }, "D5 Fantasy League"),
+            h("div", { style: { fontSize: "11.5px", color: "var(--text-secondary)", fontWeight: "500" } }, "IPL 2027 Season")
           )
         ),
 
-        // Apple Dynamic Island Live Activity Widget
+        // Live Indicator Bar
         h("div", {
-          className: "dynamic-island",
           onClick: () => setTab("live"),
-          title: "Click to open Live Tracker"
+          style: {
+            background: "rgba(255, 255, 255, 0.04)",
+            border: "1px solid var(--border-subtle)",
+            borderRadius: "var(--radius-full)",
+            padding: "5px 14px",
+            display: "flex",
+            alignItems: "center",
+            gap: "8px",
+            fontSize: "12.5px",
+            cursor: "pointer",
+          }
         },
-          h("span", { className: "ios-pulse-dot" }),
-          h("div", { style: { display: "flex", alignItems: "center", gap: "8px", fontSize: "13px" } },
-            simActive ? h("span", null,
-              h("strong", { style: { color: "var(--ios-teal)" } }, `${simScore.team1} ${simScore.r}/${simScore.w}`),
-              h("span", { style: { color: "var(--ios-text-secondary)", fontSize: "11px", marginLeft: "4px" } }, `(${simScore.o} ov) vs ${simScore.team2}`)
-            ) : h("span", { style: { color: "var(--ios-text-primary)", fontWeight: "600" } },
-              "IPL 2027 Manual Match Entry Active"
-            )
-          )
+          h("span", { className: "pulse-dot" }),
+          simActive
+            ? h("span", { style: { color: "var(--accent-primary)", fontWeight: "600" } }, `${simScore.team1} ${simScore.r}/${simScore.w} (${simScore.o} ov)`)
+            : h("span", { style: { color: "var(--text-secondary)" } }, "IPL 2027 Manual Match Suite")
         ),
 
         // Prominent Header Button
-        h("div", { style: { display: "flex", alignItems: "center", gap: "8px" } },
-          h(IOSButton, {
-            variant: "primary",
-            onClick: () => setEditingEntry(blankEntry(teams)),
-            style: { background: "linear-gradient(135deg, #0a84ff, #0066cc)", boxShadow: "0 3px 12px rgba(10,132,255,0.4)" }
-          }, "➕ Add / Enter Match")
-        )
+        h(AppButton, {
+          variant: "primary",
+          onClick: () => setEditingEntry(blankEntry(teams)),
+        }, "➕ Enter Match Scorecard")
       )
     ),
 
     // ── 2. Main App Views ─────────────────────────────────────────────────────
-    h("main", { style: { flex: 1, maxWidth: "1280px", width: "100%", margin: "0 auto", padding: "20px" } },
+    h("main", { style: { flex: 1, maxWidth: "1240px", width: "100%", margin: "0 auto", padding: "24px 20px" } },
 
       // 📋 View 1: Matches / Scorecards (DEFAULT VIEW)
       tab === "matches" && h("div", null,
@@ -389,50 +331,39 @@ function App() {
             marginBottom: "20px",
             flexWrap: "wrap",
             gap: "12px",
-            background: "rgba(255,255,255,0.04)",
-            padding: "16px 20px",
-            borderRadius: "var(--ios-radius-lg)",
-            border: "0.5px solid var(--ios-separator)"
           }
         },
           h("div", null,
-            h("h1", { style: { fontSize: "28px", fontWeight: "800", letterSpacing: "-0.5px" } }, "Match Scorecards & Player Selections"),
-            h("p", { style: { fontSize: "13.5px", color: "var(--ios-text-secondary)", marginTop: "2px" } },
-              "Create new matches, select 5-player team rosters, set captains, and enter individual scores."
+            h("h1", { style: { fontSize: "24px", fontWeight: "700", letterSpacing: "-0.5px" } }, "Match Scorecards"),
+            h("p", { style: { fontSize: "13.5px", color: "var(--text-secondary)", marginTop: "2px" } },
+              "Select 5-player team rosters, set captains, and record match statistics."
             )
           ),
-          h(IOSButton, {
+          h(AppButton, {
             variant: "primary",
             onClick: () => setEditingEntry(blankEntry(teams)),
-            style: { background: "var(--ios-blue)", fontSize: "15px", padding: "12px 24px" }
-          }, "➕ Create Match Entry")
+          }, "➕ New Match Entry")
         ),
 
         // Grid of Matches
-        entries.length > 0 ? h("div", { style: { display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(320px, 1fr))", gap: "16px" } },
+        entries.length > 0 ? h("div", { style: { display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(340px, 1fr))", gap: "16px" } },
           entries.map((entry) => {
             const mScore = standingsData.matchScores.find((m) => m.id === entry.id);
             const winner = teams.find((t) => t.id === mScore?.winnerId);
-            return h(IOSCard, {
+            return h(AppCard, {
               key: entry.id,
+              interactive: true,
               onClick: () => setEditingEntry(entry),
-              style: { cursor: "pointer", border: "1px solid rgba(255,255,255,0.15)" }
             },
-              h("div", { style: { display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: "12px" } },
+              h("div", { style: { display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "14px" } },
                 h("div", null,
-                  h("div", { style: { fontWeight: "800", fontSize: "17px", color: "#fff" } }, entry.matchLabel || "Match Scorecard"),
-                  h("div", { style: { fontSize: "12px", color: "var(--ios-text-secondary)" } }, fmtDate(entry.date))
+                  h("div", { style: { fontWeight: "700", fontSize: "16px", color: "#fff" } }, entry.matchLabel || "Match Scorecard"),
+                  h("div", { style: { fontSize: "12px", color: "var(--text-muted)", marginTop: "2px" } }, fmtDate(entry.date))
                 ),
-                winner && h("span", {
-                  style: {
-                    padding: "3px 10px", borderRadius: "var(--ios-radius-full)",
-                    background: `${winner.color}20`, border: `0.5px solid ${winner.color}`,
-                    color: winner.color, fontSize: "11px", fontWeight: "700"
-                  }
-                }, `🏆 Winner: ${winner.name}`)
+                winner && h("span", { className: "badge-pill badge-winner" }, `🏆 ${winner.name}`)
               ),
-              // Teams breakdown
-              h("div", { style: { display: "grid", gridTemplateColumns: "1fr 1fr", gap: "10px", margin: "14px 0" } },
+              // Clean Score Grid
+              h("div", { style: { display: "grid", gridTemplateColumns: "1fr 1fr", gap: "8px", margin: "14px 0" } },
                 teams.map((t) => {
                   const pts = mScore?.scores[t.id] || 0;
                   const netPts = mScore?.net[t.id] || 0;
@@ -440,49 +371,48 @@ function App() {
                   return h("div", {
                     key: t.id,
                     style: {
-                      background: "var(--ios-bg-secondary)",
-                      border: `0.5px solid ${isWinner ? t.color : "var(--ios-separator)"}`,
-                      borderRadius: "var(--ios-radius-md)",
+                      background: isWinner ? "rgba(16, 185, 129, 0.08)" : "rgba(255, 255, 255, 0.02)",
+                      border: `1px solid ${isWinner ? "rgba(16, 185, 129, 0.3)" : "var(--border-subtle)"}`,
+                      borderRadius: "var(--radius-md)",
                       padding: "10px 12px",
                     }
                   },
                     h("div", { style: { display: "flex", justifyContent: "space-between", alignItems: "center" } },
-                      h("span", { style: { color: t.color, fontWeight: "700", fontSize: "13px" } }, t.name),
-                      h("span", { style: { fontWeight: "800", fontSize: "16px", color: "#fff" } }, pts)
+                      h("span", { style: { fontWeight: "600", fontSize: "13px", color: isWinner ? "var(--accent-primary)" : "var(--text-secondary)" } }, t.name),
+                      h("span", { style: { fontWeight: "700", fontSize: "15px", color: "#fff" } }, pts)
                     ),
-                    h("div", { style: { fontSize: "11px", color: netPts >= 0 ? "var(--ios-green)" : "var(--ios-red)", marginTop: "4px" } },
+                    h("div", { style: { fontSize: "11px", color: netPts >= 0 ? "var(--accent-primary)" : "var(--accent-rose)", marginTop: "3px", fontWeight: "600" } },
                       `Net: ${netPts >= 0 ? "+" : ""}${netPts}`
                     )
                   );
                 })
               ),
-              // Action Buttons on Card
+              // Action Buttons
               h("div", {
-                style: { display: "flex", gap: "8px", justifyContent: "space-between", borderTop: "0.5px solid var(--ios-separator)", paddingTop: "10px" },
+                style: { display: "flex", gap: "8px", justifyContent: "flex-end", borderTop: "1px solid var(--border-subtle)", paddingTop: "10px" },
                 onClick: (e) => e.stopPropagation()
               },
-                h(IOSButton, {
-                  variant: "tinted", small: true,
+                h(AppButton, {
+                  variant: "secondary", small: true,
                   onClick: () => setEditingEntry(entry)
-                }, "✏️ Edit Players / Stats"),
-                h(IOSButton, {
-                  variant: "destructive", small: true,
+                }, "✏️ Edit"),
+                h(AppButton, {
+                  variant: "danger", small: true,
                   onClick: () => handleDeleteScorecard(entry.id)
                 }, "🗑️ Delete")
               )
             );
           })
-        ) : h(IOSCard, { style: { textAlign: "center", padding: "48px 20px" } },
-          h("div", { style: { fontSize: "44px", marginBottom: "12px" } }, "🏏"),
-          h("h3", { style: { fontSize: "20px", fontWeight: "700", marginBottom: "6px" } }, "No Matches Recorded Yet for IPL 2027"),
-          h("p", { style: { fontSize: "14px", color: "var(--ios-text-secondary)", marginBottom: "20px" } },
-            "Click the button below to manually enter match details and select players for all 4 fantasy teams."
+        ) : h(AppCard, { style: { textAlign: "center", padding: "48px 20px" } },
+          h("div", { style: { fontSize: "40px", marginBottom: "12px" } }, "🏏"),
+          h("h3", { style: { fontSize: "18px", fontWeight: "700", marginBottom: "6px" } }, "No Matches Recorded Yet"),
+          h("p", { style: { fontSize: "13.5px", color: "var(--text-secondary)", marginBottom: "20px" } },
+            "Click below to manually set up your first match, select 5 players per team, and record scores."
           ),
-          h(IOSButton, {
+          h(AppButton, {
             variant: "primary",
             onClick: () => setEditingEntry(blankEntry(teams)),
-            style: { padding: "14px 28px", fontSize: "16px" }
-          }, "➕ Enter Match #1 Now")
+          }, "➕ Enter First Match")
         )
       ),
 
@@ -490,15 +420,14 @@ function App() {
       tab === "standings" && h("div", null,
         h("div", { style: { display: "flex", justifyContent: "space-between", alignItems: "flex-end", marginBottom: "18px", flexWrap: "wrap", gap: "10px" } },
           h("div", null,
-            h("h1", { style: { fontSize: "28px", fontWeight: "800", letterSpacing: "-0.5px" } }, "IPL 2027 Leaderboard"),
-            h("p", { style: { fontSize: "13px", color: "var(--ios-text-secondary)" } }, "Dynamic net differential ranking for the 2027 tournament")
+            h("h1", { style: { fontSize: "24px", fontWeight: "700", letterSpacing: "-0.5px" } }, "League Leaderboard"),
+            h("p", { style: { fontSize: "13px", color: "var(--text-secondary)" } }, "Dynamic net differential ranking for the 2027 season")
           ),
-          h(IOSButton, { variant: "primary", onClick: () => setEditingEntry(blankEntry(teams)) }, "➕ Enter Match Scorecard")
+          h(AppButton, { variant: "primary", onClick: () => setEditingEntry(blankEntry(teams)) }, "➕ Enter Match Scorecard")
         ),
-        // Standings Table
-        h(IOSCard, { style: { padding: 0, overflow: "hidden", marginBottom: "20px" } },
+        h(AppCard, { style: { padding: 0, overflow: "hidden" } },
           h("div", { style: { overflowX: "auto" } },
-            h("table", { className: "ios-table" },
+            h("table", { className: "theme-table" },
               h("thead", null,
                 h("tr", null,
                   h("th", { style: { width: "60px", textAlign: "center" } }, "POS"),
@@ -512,29 +441,24 @@ function App() {
               ),
               h("tbody", null,
                 standingsData.leaderboard.map((team, idx) => h("tr", { key: team.id },
-                  h("td", { style: { textAlign: "center", fontWeight: "700", color: idx === 0 ? "var(--ios-yellow)" : "var(--ios-text-secondary)" } },
+                  h("td", { style: { textAlign: "center", fontWeight: "700", color: idx === 0 ? "var(--accent-gold)" : "var(--text-muted)" } },
                     idx === 0 ? "👑 1" : `${idx + 1}`
                   ),
                   h("td", null,
-                    h("div", { style: { display: "flex", alignItems: "center", gap: "12px" } },
-                      h(IOSTeamAvatar, { code: team.name.slice(0, 3).toUpperCase(), color: team.color, size: 34 }),
-                      h("div", null,
-                        h("div", { style: { fontWeight: "600", color: "#fff" } }, team.name),
-                        h("div", { style: { fontSize: "12px", color: "var(--ios-text-secondary)" } }, `Avg: ${team.avgScore} pts`)
-                      )
-                    )
+                    h("div", { style: { fontWeight: "600", color: "#fff" } }, team.name),
+                    h("div", { style: { fontSize: "11.5px", color: "var(--text-muted)" } }, `Avg: ${team.avgScore} pts`)
                   ),
                   h("td", { style: { textAlign: "center" } }, team.played),
-                  h("td", { style: { textAlign: "center", fontWeight: "600", color: "var(--ios-green)" } }, team.wins),
-                  h("td", { style: { textAlign: "center", color: "var(--ios-teal)" } }, team.bestMatch),
-                  h("td", { style: { textAlign: "center", color: "var(--ios-text-secondary)" } }, team.rawPointsTotal),
+                  h("td", { style: { textAlign: "center", fontWeight: "600", color: "var(--accent-primary)" } }, team.wins),
+                  h("td", { style: { textAlign: "center", color: "var(--accent-secondary)" } }, team.bestMatch),
+                  h("td", { style: { textAlign: "center", color: "var(--text-secondary)" } }, team.rawPointsTotal),
                   h("td", {
                     style: {
                       textAlign: "right",
                       paddingRight: "20px",
                       fontWeight: "700",
-                      fontSize: "17px",
-                      color: team.grandPoints >= 0 ? "var(--ios-green)" : "var(--ios-red)",
+                      fontSize: "16px",
+                      color: team.grandPoints >= 0 ? "var(--accent-primary)" : "var(--accent-rose)",
                     }
                   }, `${team.grandPoints >= 0 ? "+" : ""}${team.grandPoints}`)
                 ))
@@ -548,52 +472,44 @@ function App() {
       tab === "live" && h("div", null,
         h("div", { style: { display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "18px", flexWrap: "wrap", gap: "10px" } },
           h("div", null,
-            h("h1", { style: { fontSize: "28px", fontWeight: "800", letterSpacing: "-0.5px" } }, "Live Match Tracker & Simulator"),
-            h("p", { style: { fontSize: "13px", color: "var(--ios-text-secondary)" } }, "Interactive live game engine & IPL 2027 schedule")
+            h("h1", { style: { fontSize: "24px", fontWeight: "700", letterSpacing: "-0.5px" } }, "Match Simulator & Schedule"),
+            h("p", { style: { fontSize: "13px", color: "var(--text-secondary)" } }, "Interactive live game engine & tournament fixtures")
           ),
-          h("div", { style: { display: "flex", gap: "8px" } },
-            h(IOSButton, {
-              variant: simActive ? "destructive" : "green",
-              small: true,
-              onClick: () => setSimActive(!simActive)
-            }, simActive ? "⏹ Stop Simulator" : "▶ Start Live Game Sim")
-          )
+          h(AppButton, {
+            variant: simActive ? "danger" : "primary",
+            small: true,
+            onClick: () => setSimActive(!simActive)
+          }, simActive ? "⏹ Stop Simulator" : "▶ Start Live Game Sim")
         ),
-        simActive && h(IOSCard, { style: { borderColor: "var(--ios-green)", marginBottom: "20px", background: "rgba(48,209,88,0.06)" } },
+        simActive && h(AppCard, { style: { marginBottom: "20px", background: "rgba(16, 185, 129, 0.06)", borderColor: "var(--accent-primary-border)" } },
           h("div", { style: { display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "12px" } },
-            h(IOSLiveBadge, { text: "LIVE GAME SIMULATOR" }),
-            h("span", { style: { fontSize: "12px", color: "var(--ios-green)", fontWeight: "600" } }, "Simulating ball-by-ball (3s)")
+            h("span", { className: "badge-pill badge-live" }, "SIMULATING BALL-BY-BALL"),
+            h("span", { style: { fontSize: "12px", color: "var(--accent-primary)", fontWeight: "600" } }, "Updates every 3s")
           ),
-          h("div", { style: { display: "flex", justifyContent: "space-between", alignItems: "center", margin: "14px 0" } },
-            h(IOSTeamAvatar, { code: simScore.team1, color: IPL_TEAMS[simScore.team1]?.color || "#888", large: true }),
+          h("div", { style: { display: "flex", justifyContent: "space-around", alignItems: "center", margin: "14px 0" } },
             h("div", { style: { textAlign: "center" } },
-              h("div", { style: { fontSize: "32px", fontWeight: "800", color: "var(--ios-teal)" } }, `${simScore.r}/${simScore.w}`),
-              h("div", { style: { fontSize: "13px", color: "var(--ios-text-secondary)" } }, `Overs: ${simScore.o} • Target: ${simScore.target}`)
+              h("div", { style: { fontSize: "18px", fontWeight: "700" } }, simScore.team1),
+              h("div", { style: { fontSize: "12px", color: "var(--text-muted)" } }, "Batting")
             ),
-            h(IOSTeamAvatar, { code: simScore.team2, color: IPL_TEAMS[simScore.team2]?.color || "#888", large: true })
+            h("div", { style: { textAlign: "center" } },
+              h("div", { style: { fontSize: "32px", fontWeight: "800", color: "var(--accent-primary)" } }, `${simScore.r}/${simScore.w}`),
+              h("div", { style: { fontSize: "12.5px", color: "var(--text-secondary)" } }, `Overs: ${simScore.o} • Target: ${simScore.target}`)
+            ),
+            h("div", { style: { textAlign: "center" } },
+              h("div", { style: { fontSize: "18px", fontWeight: "700" } }, simScore.team2),
+              h("div", { style: { fontSize: "12px", color: "var(--text-muted)" } }, "Bowling")
+            )
           )
         ),
-        h("h2", { style: { fontSize: "20px", fontWeight: "700", marginBottom: "12px" } }, "IPL 2027 Fixture Schedule"),
-        h("div", { style: { display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(300px, 1fr))", gap: "14px" } },
-          IPL_SCHEDULE_2027.map((m) => h(IOSCard, { key: m.id },
-            h("div", { style: { display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "10px" } },
-              h("span", { style: { fontSize: "12px", color: "var(--ios-text-secondary)" } }, `${fmtDate(m.date)} • ${m.time}`),
-              h("span", { style: { fontSize: "11px", padding: "2px 8px", borderRadius: "var(--ios-radius-full)", background: "var(--ios-bg-secondary)", color: "var(--ios-text-secondary)" } }, "Scheduled")
+        h("h2", { style: { fontSize: "18px", fontWeight: "700", marginBottom: "12px" } }, "IPL 2027 Schedule"),
+        h("div", { style: { display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(280px, 1fr))", gap: "12px" } },
+          IPL_SCHEDULE_2027.map((m) => h(AppCard, { key: m.id },
+            h("div", { style: { display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "8px" } },
+              h("span", { style: { fontSize: "12px", color: "var(--text-muted)" } }, `${fmtDate(m.date)} • ${m.time}`),
+              h("span", { style: { fontSize: "11px", color: "var(--text-secondary)" } }, "Scheduled")
             ),
-            h("div", { style: { display: "flex", justifyContent: "space-between", alignItems: "center", margin: "10px 0" } },
-              h("div", { style: { display: "flex", alignItems: "center", gap: "8px" } },
-                h(IOSTeamAvatar, { code: m.team1, color: IPL_TEAMS[m.team1]?.color || "#888", size: 30 }),
-                h("span", { style: { fontWeight: "600", fontSize: "14px" } }, m.team1)
-              ),
-              h("span", { style: { color: "var(--ios-text-tertiary)", fontSize: "13px" } }, "vs"),
-              h("div", { style: { display: "flex", alignItems: "center", gap: "8px" } },
-                h("span", { style: { fontWeight: "600", fontSize: "14px" } }, m.team2),
-                h(IOSTeamAvatar, { code: m.team2, color: IPL_TEAMS[m.team2]?.color || "#888", size: 30 })
-              )
-            ),
-            h("div", { style: { fontSize: "11px", color: "var(--ios-text-secondary)", borderTop: "0.5px solid var(--ios-separator)", paddingTop: "8px", marginTop: "6px" } },
-              `📍 ${m.venue}`
-            )
+            h("div", { style: { fontWeight: "700", fontSize: "15px", margin: "6px 0" } }, `${m.team1} vs ${m.team2}`),
+            h("div", { style: { fontSize: "12px", color: "var(--text-muted)" } }, `📍 ${m.venue}`)
           ))
         )
       ),
@@ -602,60 +518,46 @@ function App() {
       tab === "squads" && h("div", null,
         h("div", { style: { display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "18px", flexWrap: "wrap", gap: "10px" } },
           h("div", null,
-            h("h1", { style: { fontSize: "28px", fontWeight: "800", letterSpacing: "-0.5px" } }, "IPL 2027 Player Directory"),
-            h("p", { style: { fontSize: "13px", color: "var(--ios-text-secondary)" } }, "Player profiles & rosters across all 10 franchises")
+            h("h1", { style: { fontSize: "24px", fontWeight: "700", letterSpacing: "-0.5px" } }, "Player Directory"),
+            h("p", { style: { fontSize: "13px", color: "var(--text-secondary)" } }, "Official squads across all 10 franchises")
           ),
           h("div", { style: { display: "flex", gap: "6px", flexWrap: "wrap" } },
             ["ALL", "BAT", "BOWL", "ALL-ROUND", "WK"].map((r) => h("button", {
               key: r,
               onClick: () => setSquadRoleFilter(r),
               style: {
-                padding: "5px 12px", borderRadius: "var(--ios-radius-full)",
+                padding: "5px 12px", borderRadius: "var(--radius-full)",
                 border: "none",
-                background: squadRoleFilter === r ? "rgba(255,255,255,0.2)" : "var(--ios-bg-secondary)",
-                color: squadRoleFilter === r ? "#fff" : "var(--ios-text-secondary)",
+                background: squadRoleFilter === r ? "var(--accent-primary)" : "var(--bg-elevated)",
+                color: squadRoleFilter === r ? "var(--text-inverse)" : "var(--text-secondary)",
                 fontSize: "12px", fontWeight: "600", cursor: "pointer"
               }
             }, r))
           )
         ),
-        h("div", { style: { display: "flex", gap: "8px", overflowX: "auto", paddingBottom: "12px", marginBottom: "16px" } },
+        h("div", { style: { display: "flex", gap: "8px", overflowX: "auto", paddingBottom: "10px", marginBottom: "16px" } },
           Object.entries(IPL_TEAMS).map(([code, t]) => {
             const isSel = selSquadTeam === code;
             return h("button", {
               key: code,
               onClick: () => setSelSquadTeam(code),
               style: {
-                padding: "8px 14px",
-                borderRadius: "var(--ios-radius-md)",
-                border: isSel ? `1.5px solid ${t.color}` : "0.5px solid var(--ios-separator)",
-                background: isSel ? `${t.color}22` : "var(--ios-bg-secondary)",
-                color: isSel ? t.color : "var(--ios-text-secondary)",
-                fontWeight: "700",
+                padding: "7px 14px",
+                borderRadius: "var(--radius-md)",
+                border: `1px solid ${isSel ? "var(--accent-primary)" : "var(--border-subtle)"}`,
+                background: isSel ? "var(--accent-primary-dim)" : "var(--bg-elevated)",
+                color: isSel ? "var(--accent-primary)" : "var(--text-secondary)",
+                fontWeight: "600",
                 fontSize: "13px",
                 cursor: "pointer",
-                display: "flex",
-                alignItems: "center",
-                gap: "8px",
                 flexShrink: 0,
               }
-            },
-              h(IOSTeamAvatar, { code, color: t.color, size: 24 }),
-              code
-            );
+            }, code);
           })
         ),
-        h(IOSCard, null,
-          h("div", { style: { display: "flex", alignItems: "center", gap: "12px", marginBottom: "16px" } },
-            h(IOSTeamAvatar, { code: selSquadTeam, color: IPL_TEAMS[selSquadTeam]?.color || "#888", large: true }),
-            h("div", null,
-              h("h2", { style: { fontSize: "20px", fontWeight: "700" } }, IPL_TEAMS[selSquadTeam]?.name),
-              h("div", { style: { fontSize: "12px", color: "var(--ios-text-secondary)" } },
-                `City: ${IPL_TEAMS[selSquadTeam]?.city || ""} • IPL Trophies: ${IPL_TEAMS[selSquadTeam]?.titleWins || 0} 🏆`
-              )
-            )
-          ),
-          h("div", { style: { display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(220px, 1fr))", gap: "10px" } },
+        h(AppCard, null,
+          h("h2", { style: { fontSize: "18px", fontWeight: "700", marginBottom: "14px" } }, IPL_TEAMS[selSquadTeam]?.name),
+          h("div", { style: { display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(200px, 1fr))", gap: "10px" } },
             (IPL_SQUADS[selSquadTeam] || [])
               .filter((p) => {
                 if (squadRoleFilter === "ALL") return true;
@@ -668,22 +570,17 @@ function App() {
               .map((player, idx) => h("div", {
                 key: idx,
                 style: {
-                  background: "var(--ios-bg-secondary)",
-                  border: "0.5px solid var(--ios-separator)",
-                  borderRadius: "var(--ios-radius-md)",
-                  padding: "10px 14px",
+                  background: "var(--bg-elevated)",
+                  border: "1px solid var(--border-subtle)",
+                  borderRadius: "var(--radius-md)",
+                  padding: "10px 12px",
                   display: "flex",
                   justifyContent: "space-between",
                   alignItems: "center",
                 }
               },
-                h("div", null,
-                  h("div", { style: { fontWeight: "600", fontSize: "14px" } }, player.name),
-                  player.overseas && h("span", { style: { fontSize: "10px", color: "var(--ios-text-tertiary)" } }, "✈ Overseas")
-                ),
-                h("span", {
-                  className: `role-badge ${player.role === "BAT" ? "role-bat" : player.role === "BOWL" ? "role-bowl" : player.role === "ALL" ? "role-all" : "role-wk"}`
-                }, player.role)
+                h("div", { style: { fontWeight: "600", fontSize: "13.5px" } }, player.name),
+                h("span", { style: { fontSize: "11px", color: "var(--accent-primary)", fontWeight: "700" } }, player.role)
               ))
           )
         )
@@ -693,11 +590,11 @@ function App() {
       tab === "archive" && h("div", null,
         h("div", { style: { display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "18px", flexWrap: "wrap", gap: "10px" } },
           h("div", null,
-            h("h1", { style: { fontSize: "28px", fontWeight: "800", letterSpacing: "-0.5px" } }, "2025 Historical Archive"),
-            h("p", { style: { fontSize: "13px", color: "var(--ios-text-secondary)" } }, "47 historical match records from the 2025 tournament")
+            h("h1", { style: { fontSize: "24px", fontWeight: "700", letterSpacing: "-0.5px" } }, "2025 Season Archive"),
+            h("p", { style: { fontSize: "13px", color: "var(--text-secondary)" } }, "47 historical match records")
           ),
           h("select", {
-            className: "ios-input",
+            className: "theme-input",
             value: histFilter,
             onChange: (e) => setHistFilter(e.target.value),
             style: { width: "160px" }
@@ -706,131 +603,81 @@ function App() {
             Object.keys(D5_2025.grand || {}).map((t) => h("option", { key: t, value: t }, t))
           )
         ),
-        h(IOSCard, { style: { padding: 0, overflow: "hidden", marginBottom: "20px" } },
+        h(AppCard, { style: { padding: 0, overflow: "hidden", marginBottom: "18px" } },
           h("div", { style: { overflowX: "auto" } },
-            h("table", { className: "ios-table" },
+            h("table", { className: "theme-table" },
               h("thead", null,
                 h("tr", null,
                   h("th", { style: { width: "60px", textAlign: "center" } }, "RANK"),
                   h("th", null, "HISTORICAL TEAM"),
                   h("th", { style: { textAlign: "center" } }, "MATCHES"),
                   h("th", { style: { textAlign: "center" } }, "WINS"),
-                  h("th", { style: { textAlign: "center" } }, "WIN RATE"),
                   h("th", { style: { textAlign: "right", paddingRight: "20px" } }, "TOTAL POINTS")
                 )
               ),
               h("tbody", null,
-                Object.entries(D5_2025.grand || {}).sort((a, b) => b[1] - a[1]).map(([t, pts], i) => {
-                  const wins = D5_2025.wins?.[t] || 0;
-                  const matchCount = D5_2025.matches.filter((m) => m.teams[t]).length;
-                  const winRate = matchCount ? Math.round((wins / matchCount) * 100) : 0;
-                  const cfg = D5_TEAM_CONFIG[t] || { color: "#888" };
-                  return h("tr", { key: t },
-                    h("td", { style: { textAlign: "center", fontWeight: "700", color: i === 0 ? "var(--ios-yellow)" : "var(--ios-text-secondary)" } },
-                      i === 0 ? "🏆 1" : `${i + 1}`
-                    ),
-                    h("td", null,
-                      h("div", { style: { display: "flex", alignItems: "center", gap: "10px" } },
-                        h("span", { style: { width: "10px", height: "10px", borderRadius: "50%", background: cfg.color } }),
-                        h("span", { style: { fontWeight: "600", color: cfg.color } }, t)
-                      )
-                    ),
-                    h("td", { style: { textAlign: "center" } }, matchCount),
-                    h("td", { style: { textAlign: "center", fontWeight: "600", color: "var(--ios-green)" } }, wins),
-                    h("td", { style: { textAlign: "center", color: "var(--ios-teal)" } }, `${winRate}%`),
-                    h("td", { style: { textAlign: "right", paddingRight: "20px", fontWeight: "700", fontSize: "16px", color: "var(--ios-yellow)" } }, pts)
-                  );
-                })
+                Object.entries(D5_2025.grand || {}).sort((a, b) => b[1] - a[1]).map(([t, pts], i) => (
+                  h("tr", { key: t },
+                    h("td", { style: { textAlign: "center", fontWeight: "700", color: i === 0 ? "var(--accent-gold)" : "var(--text-muted)" } }, `${i + 1}`),
+                    h("td", { style: { fontWeight: "600", color: "#fff" } }, t),
+                    h("td", { style: { textAlign: "center" } }, D5_2025.matches.filter((m) => m.teams[t]).length),
+                    h("td", { style: { textAlign: "center", fontWeight: "600", color: "var(--accent-primary)" } }, D5_2025.wins?.[t] || 0),
+                    h("td", { style: { textAlign: "right", paddingRight: "20px", fontWeight: "700", color: "var(--accent-gold)" } }, pts)
+                  )
+                ))
               )
             )
           )
-        ),
-        h("div", { style: { display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(280px, 1fr))", gap: "14px" } },
-          D5_2025.matches
-            .filter((m) => histFilter === "ALL" || m.teams[histFilter])
-            .map((m) => {
-              const sorted = Object.entries(m.totals).sort((a, b) => b[1] - a[1]);
-              const top = sorted[0];
-              const topCfg = D5_TEAM_CONFIG[top?.[0]] || { color: "#888" };
-              return h(IOSCard, {
-                key: m.id,
-                onClick: () => setSelHistMatch(m),
-                style: { cursor: "pointer" }
-              },
-                h("div", { style: { display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "8px" } },
-                  h("span", { style: { fontWeight: "600", fontSize: "15px" } }, m.sheet),
-                  top && h("span", {
-                    style: { padding: "2px 8px", borderRadius: "var(--ios-radius-full)", background: `${topCfg.color}20`, color: topCfg.color, fontSize: "11px", fontWeight: "600" }
-                  }, `🏆 ${top[0]}`)
-                ),
-                h("div", { style: { display: "flex", gap: "6px", flexWrap: "wrap", marginTop: "10px" } },
-                  sorted.map(([t, pts]) => {
-                    const cfg = D5_TEAM_CONFIG[t] || { color: "#888" };
-                    return h("span", {
-                      key: t,
-                      style: { padding: "3px 8px", borderRadius: "8px", background: `${cfg.color}15`, color: cfg.color, fontSize: "12px", fontWeight: "500" }
-                    }, `${t}: ${pts}`);
-                  })
-                )
-              );
-            })
         )
       ),
 
       // 🎯 View 6: Rules
       tab === "rules" && h("div", null,
-        h("h1", { style: { fontSize: "28px", fontWeight: "800", letterSpacing: "-0.5px", marginBottom: "18px" } }, "IPL 2027 Scoring Rules"),
+        h("h1", { style: { fontSize: "24px", fontWeight: "700", letterSpacing: "-0.5px", marginBottom: "18px" } }, "Scoring Rules & Net Differentials"),
         h("div", { style: { display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(320px, 1fr))", gap: "16px", marginBottom: "20px" } },
-          h(IOSCard, null,
-            h("h3", { style: { color: "var(--ios-teal)", fontSize: "17px", fontWeight: "700", marginBottom: "12px" } }, "⚡ Base Points"),
+          h(AppCard, null,
+            h("h3", { style: { color: "var(--accent-primary)", fontSize: "16px", fontWeight: "700", marginBottom: "12px" } }, "⚡ Base Points"),
             [
-              ["Run", "+5 pts / run", "⚡"],
-              ["Wicket", "+100 pts / wkt", "🎯"],
-              ["Catch", "+50 pts / catch", "🧤"],
-              ["Stumping", "+50 pts / st", "⚡"],
-              ["Run Out", "+50 / +100 pts", "🏃"],
-              ["Duck Penalty", "−50 pts", "🦆"],
-            ].map(([k, v, icon]) => h("div", { key: k, style: { display: "flex", justifyContent: "space-between", padding: "8px 0", borderBottom: "0.5px solid var(--ios-separator)" } },
-              h("span", { style: { color: "var(--ios-text-secondary)" } }, `${icon} ${k}`),
-              h("span", { style: { fontWeight: "700", color: k.includes("Duck") ? "var(--ios-red)" : "#fff" } }, v)
+              ["Run", "+5 pts / run"],
+              ["Wicket", "+100 pts / wkt"],
+              ["Catch", "+50 pts / catch"],
+              ["Stumping", "+50 pts / st"],
+              ["Run Out", "+50 / +100 pts"],
+              ["Duck Penalty", "−50 pts"],
+            ].map(([k, v]) => h("div", { key: k, style: { display: "flex", justifyContent: "space-between", padding: "8px 0", borderBottom: "1px solid var(--border-subtle)" } },
+              h("span", { style: { color: "var(--text-secondary)" } }, k),
+              h("span", { style: { fontWeight: "700", color: k.includes("Duck") ? "var(--accent-rose)" : "#fff" } }, v)
             ))
           ),
-          h(IOSCard, null,
-            h("h3", { style: { color: "var(--ios-orange)", fontSize: "17px", fontWeight: "700", marginBottom: "12px" } }, "⭐ Milestone Bonuses"),
+          h(AppCard, null,
+            h("h3", { style: { color: "var(--accent-gold)", fontSize: "16px", fontWeight: "700", marginBottom: "12px" } }, "⭐ Milestone Bonuses"),
             [
-              ["Runs 30 – 49", "+50 pts"],
-              ["Runs 50 – 99 (Half-Century)", "+150 pts"],
+              ["Runs 30 – 49 / 50 – 99", "+50 / +150 pts"],
               ["Runs 100+ (Century)", "+250 pts"],
-              ["2 Wickets / 3-4 Wickets", "+50 / +150 pts"],
-              ["5+ Wickets (Fifer)", "+200 pts"],
+              ["2 Wkts / 3-4 Wkts / 5+ Wkts", "+50 / +150 / +200 pts"],
               ["3 Catches / 5 Catches", "+100 / +200 pts"],
               ["5 – 9 Sixes / 10+ Sixes", "+150 / +300 pts"],
               ["Maiden Over / Hat-trick", "+200 / +400 pts"],
-            ].map(([k, v]) => h("div", { key: k, style: { display: "flex", justifyContent: "space-between", padding: "8px 0", borderBottom: "0.5px solid var(--ios-separator)" } },
-              h("span", { style: { color: "var(--ios-text-secondary)" } }, k),
-              h("span", { style: { fontWeight: "700", color: "var(--ios-orange)" } }, v)
+            ].map(([k, v]) => h("div", { key: k, style: { display: "flex", justifyContent: "space-between", padding: "8px 0", borderBottom: "1px solid var(--border-subtle)" } },
+              h("span", { style: { color: "var(--text-secondary)" } }, k),
+              h("span", { style: { fontWeight: "700", color: "var(--accent-gold)" } }, v)
             ))
           )
         ),
-        h(IOSCard, { style: { borderColor: "rgba(48,209,88,0.3)" } },
-          h("h3", { style: { color: "var(--ios-green)", fontSize: "17px", fontWeight: "700", marginBottom: "8px" } }, "🌟 Captain & Differential Scoring"),
-          h("p", { style: { fontSize: "13.5px", color: "var(--ios-text-secondary)", lineHeight: "1.7", marginBottom: "10px" } },
-            "1. ", h("strong", { style: { color: "#fff" } }, "Captain 2× Multiplier: "),
-            "Designated captain receives double (2×) all base points and bonuses."
+        h(AppCard, null,
+          h("h3", { style: { color: "var(--accent-primary)", fontSize: "16px", fontWeight: "700", marginBottom: "8px" } }, "🌟 Captain & Differential Scoring"),
+          h("p", { style: { fontSize: "13.5px", color: "var(--text-secondary)", lineHeight: "1.7", marginBottom: "8px" } },
+            "• Captain 2×: Designated captain receives double (2×) all base points and bonuses."
           ),
-          h("p", { style: { fontSize: "13.5px", color: "var(--ios-text-secondary)", lineHeight: "1.7" } },
-            "2. ", h("strong", { style: { color: "#fff" } }, "Differential Net Points: "),
-            "Winner gains the sum of differences between their total score and all losing teams. Losers lose the exact point difference against the winner."
+          h("p", { style: { fontSize: "13.5px", color: "var(--text-secondary)", lineHeight: "1.7" } },
+            "• Net Differential: Winner gains the sum of point differences against all losing teams. Losers lose their exact difference against the winner."
           )
         )
       )
     ),
 
-    // ── 3. Floating Bottom Tab Bar ────────────────────────────────────────────
-    h("nav", {
-      className: "ios-bottom-tabbar",
-      role: "navigation"
-    },
+    // ── 3. Clean Floating Bottom Navigation Bar ───────────────────────────────
+    h("nav", { className: "theme-bottom-nav" },
       [
         { id: "matches", label: "Matches", icon: "📋" },
         { id: "standings", label: "Standings", icon: "🏆" },
@@ -843,75 +690,41 @@ function App() {
         return h("button", {
           key: item.id,
           onClick: () => { hapticFeedback(10); setTab(item.id); },
-          className: `ios-tab-item ${isSel ? "active" : ""}`,
+          className: `theme-nav-item ${isSel ? "active" : ""}`,
         },
-          h("span", { style: { fontSize: "16px" } }, item.icon),
+          h("span", { style: { fontSize: "15px" } }, item.icon),
           h("span", null, item.label)
         );
       })
     ),
 
-    // ── 4. 🌟 Manual Match & Player Selection Modal Suite ────────────────────
-    editingEntry && h(IOSModalSheet, {
+    // ── 4. Clean Manual Match & Player Selection Modal ────────────────────────
+    editingEntry && h(AppModal, {
       isOpen: Boolean(editingEntry),
       onClose: () => setEditingEntry(null),
-      title: "IPL 2027 Manual Match Creator & Scorecard",
-      maxWidth: "960px",
+      title: "Match Scorecard & Player Roster Setup",
+      maxWidth: "920px",
     },
-      h(IOSManualMatchEditor, {
+      h(CleanManualMatchEditor, {
         entry: editingEntry,
         teams,
         onSave: handleSaveScorecard,
         onCancel: () => setEditingEntry(null),
       })
-    ),
-
-    // Modal: 2025 Match Scorecard
-    selHistMatch && h(IOSModalSheet, {
-      isOpen: Boolean(selHistMatch),
-      onClose: () => setSelHistMatch(null),
-      title: `Scorecard: ${selHistMatch.sheet}`,
-      maxWidth: "760px",
-    },
-      h("div", { style: { display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(240px, 1fr))", gap: "12px" } },
-        Object.entries(selHistMatch.totals).sort((a, b) => b[1] - a[1]).map(([tName, pts]) => {
-          const cfg = D5_TEAM_CONFIG[tName] || { color: "#888" };
-          const roster = selHistMatch.teams[tName] || [];
-          return h("div", {
-            key: tName,
-            style: { background: "var(--ios-bg-secondary)", borderRadius: "var(--ios-radius-md)", padding: "14px", border: `0.5px solid ${cfg.color}44` }
-          },
-            h("div", { style: { display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "10px" } },
-              h("span", { style: { fontWeight: "700", color: cfg.color } }, tName),
-              h("span", { style: { fontWeight: "700", fontSize: "16px", color: "#fff" } }, `${pts} pts`)
-            ),
-            roster.map((p, idx) => h("div", {
-              key: idx,
-              style: { display: "flex", justifyContent: "space-between", padding: "4px 0", fontSize: "12px", borderBottom: "0.5px solid var(--ios-separator)" }
-            },
-              h("span", { style: { color: p.cap ? "var(--ios-yellow)" : "var(--ios-text-secondary)" } }, p.cap ? `★ ${p.n}` : p.n),
-              h("span", { style: { color: "var(--ios-teal)", fontWeight: "600" } }, p.pts)
-            ))
-          );
-        })
-      )
     )
   );
 }
 
-// ─── MANUAL MATCH & PLAYER SELECTION SUITE ────────────────────────────────────
+// ─── CLEAN MANUAL MATCH & PLAYER SELECTION SUITE ──────────────────────────────
 
-function IOSManualMatchEditor({ entry, teams, onSave, onCancel }) {
+function CleanManualMatchEditor({ entry, teams, onSave, onCancel }) {
   const [draft, setDraft] = useState(() => JSON.parse(JSON.stringify(entry)));
   const [activeTeamId, setActiveTeamId] = useState(teams[0]?.id || "T1");
 
-  // Flattened player list across all IPL squads for easy selection
   const allIplPlayers = useMemo(() => {
     const list = [];
     Object.entries(IPL_SQUADS).forEach(([teamCode, squad]) => {
-      squad.forEach((p) => {
-        list.push({ name: p.name, role: p.role, teamCode });
-      });
+      squad.forEach((p) => list.push({ name: p.name, role: p.role, teamCode }));
     });
     return list;
   }, []);
@@ -925,7 +738,7 @@ function IOSManualMatchEditor({ entry, teams, onSave, onCancel }) {
   };
 
   const toggleCaptain = (teamId, playerIdx) => {
-    hapticFeedback(15);
+    hapticFeedback(12);
     setDraft((prev) => {
       const next = JSON.parse(JSON.stringify(prev));
       next.teamData[teamId].forEach((p, idx) => {
@@ -935,7 +748,6 @@ function IOSManualMatchEditor({ entry, teams, onSave, onCancel }) {
     });
   };
 
-  // Compute live preview of points in modal
   const teamTotals = useMemo(() => {
     return teams.reduce((acc, t) => {
       const roster = draft.teamData[t.id] || [];
@@ -945,14 +757,14 @@ function IOSManualMatchEditor({ entry, teams, onSave, onCancel }) {
   }, [draft, teams]);
 
   return h("div", { style: { display: "flex", flexDirection: "column", gap: "16px" } },
-    // Step 1: Match Setup Header
-    h("div", { style: { background: "var(--ios-bg-secondary)", borderRadius: "var(--ios-radius-lg)", padding: "14px", border: "0.5px solid var(--ios-separator)" } },
-      h("div", { style: { fontSize: "12px", fontWeight: "700", color: "var(--ios-teal)", textTransform: "uppercase", marginBottom: "8px" } }, "1. Match Details"),
+    // Step 1: Match Setup
+    h("div", { style: { background: "var(--bg-elevated)", borderRadius: "var(--radius-lg)", padding: "14px", border: "1px solid var(--border-subtle)" } },
+      h("div", { style: { fontSize: "11.5px", fontWeight: "700", color: "var(--accent-primary)", textTransform: "uppercase", marginBottom: "8px" } }, "1. Match Details"),
       h("div", { style: { display: "grid", gridTemplateColumns: "2fr 1fr 1fr", gap: "10px" } },
         h("div", null,
-          h("label", { style: { fontSize: "11px", color: "var(--ios-text-secondary)", fontWeight: "600", display: "block", marginBottom: "4px" } }, "MATCH TITLE / FIXTURE"),
+          h("label", { style: { fontSize: "11px", color: "var(--text-muted)", fontWeight: "600", display: "block", marginBottom: "4px" } }, "MATCH TITLE"),
           h("input", {
-            className: "ios-input",
+            className: "theme-input",
             type: "text",
             value: draft.matchLabel || "",
             onChange: (e) => setDraft({ ...draft, matchLabel: e.target.value }),
@@ -961,9 +773,9 @@ function IOSManualMatchEditor({ entry, teams, onSave, onCancel }) {
           })
         ),
         h("div", null,
-          h("label", { style: { fontSize: "11px", color: "var(--ios-text-secondary)", fontWeight: "600", display: "block", marginBottom: "4px" } }, "DATE"),
+          h("label", { style: { fontSize: "11px", color: "var(--text-muted)", fontWeight: "600", display: "block", marginBottom: "4px" } }, "DATE"),
           h("input", {
-            className: "ios-input",
+            className: "theme-input",
             type: "date",
             value: draft.date || "",
             onChange: (e) => setDraft({ ...draft, date: e.target.value }),
@@ -971,9 +783,9 @@ function IOSManualMatchEditor({ entry, teams, onSave, onCancel }) {
           })
         ),
         h("div", null,
-          h("label", { style: { fontSize: "11px", color: "var(--ios-text-secondary)", fontWeight: "600", display: "block", marginBottom: "4px" } }, "QUICK PRESET"),
+          h("label", { style: { fontSize: "11px", color: "var(--text-muted)", fontWeight: "600", display: "block", marginBottom: "4px" } }, "PRESET FIXTURE"),
           h("select", {
-            className: "ios-input",
+            className: "theme-input",
             style: { width: "100%" },
             onChange: (e) => {
               const fix = IPL_SCHEDULE_2027.find((m) => m.id === e.target.value);
@@ -987,13 +799,13 @@ function IOSManualMatchEditor({ entry, teams, onSave, onCancel }) {
             }
           },
             h("option", { value: "" }, "Select Fixture..."),
-            IPL_SCHEDULE_2027.map((m) => h("option", { key: m.id, value: m.id }, `${m.team1} vs ${m.team2} (${m.date})`))
+            IPL_SCHEDULE_2027.map((m) => h("option", { key: m.id, value: m.id }, `${m.team1} vs ${m.team2}`))
           )
         )
       )
     ),
 
-    // Step 2: Fantasy Team Switcher Tabs with Live Totals
+    // Step 2: Team Tabs
     h("div", { style: { display: "flex", gap: "8px", overflowX: "auto", paddingBottom: "4px" } },
       teams.map((t) => {
         const isSel = activeTeamId === t.id;
@@ -1002,11 +814,11 @@ function IOSManualMatchEditor({ entry, teams, onSave, onCancel }) {
           key: t.id,
           onClick: () => setActiveTeamId(t.id),
           style: {
-            padding: "9px 16px",
-            borderRadius: "var(--ios-radius-md)",
-            border: isSel ? `1.5px solid ${t.color}` : "0.5px solid var(--ios-separator)",
-            background: isSel ? `${t.color}22` : "var(--ios-bg-secondary)",
-            color: isSel ? t.color : "var(--ios-text-secondary)",
+            padding: "8px 16px",
+            borderRadius: "var(--radius-md)",
+            border: `1px solid ${isSel ? "var(--accent-primary)" : "var(--border-subtle)"}`,
+            background: isSel ? "var(--accent-primary-dim)" : "var(--bg-elevated)",
+            color: isSel ? "var(--accent-primary)" : "var(--text-secondary)",
             fontWeight: "700",
             fontSize: "13px",
             cursor: "pointer",
@@ -1016,32 +828,22 @@ function IOSManualMatchEditor({ entry, teams, onSave, onCancel }) {
             flexShrink: 0,
           }
         },
-          h("span", { style: { width: "8px", height: "8px", borderRadius: "50%", background: t.color } }),
           `${t.name}: `,
           h("span", { style: { color: "#fff", fontWeight: "800" } }, `${total} pts`)
         );
       })
     ),
 
-    // Step 3: Player Selection Roster & Stats Grid for Active Team
+    // Step 3: Roster & Stats Grid
     h("div", { style: { display: "flex", flexDirection: "column", gap: "10px" } },
-      h("div", { style: { display: "flex", justifyContent: "space-between", alignItems: "center" } },
-        h("div", { style: { fontSize: "12px", fontWeight: "700", color: "var(--ios-orange)", textTransform: "uppercase" } },
-          `2. ${teams.find((t) => t.id === activeTeamId)?.name} 5-Player Roster & Match Stats`
-        ),
-        h("span", { style: { fontSize: "11px", color: "var(--ios-text-secondary)" } },
-          "💡 Type player name or pick from dropdown • Click ★ to set Captain (2×)"
-        )
-      ),
-
       (draft.teamData[activeTeamId] || []).map((player, pIdx) => {
         const pts = calcPts(player);
         return h("div", {
           key: player.id || pIdx,
           style: {
-            background: "var(--ios-bg-secondary)",
-            border: player.isCaptain ? "1px solid var(--ios-yellow)" : "0.5px solid var(--ios-separator)",
-            borderRadius: "var(--ios-radius-md)",
+            background: "var(--bg-elevated)",
+            border: `1px solid ${player.isCaptain ? "var(--accent-gold)" : "var(--border-subtle)"}`,
+            borderRadius: "var(--radius-md)",
             padding: "12px",
             display: "grid",
             gridTemplateColumns: "180px 1fr 1fr 1fr 1fr 1fr 50px 75px",
@@ -1049,10 +851,10 @@ function IOSManualMatchEditor({ entry, teams, onSave, onCancel }) {
             alignItems: "center",
           }
         },
-          // Player Name & Captain Picker
+          // Player Autocomplete & Captain
           h("div", null,
             h("input", {
-              className: "ios-input",
+              className: "theme-input",
               list: `ipl-players-${activeTeamId}-${pIdx}`,
               type: "text",
               value: player.name || "",
@@ -1067,47 +869,47 @@ function IOSManualMatchEditor({ entry, teams, onSave, onCancel }) {
               onClick: () => toggleCaptain(activeTeamId, pIdx),
               style: {
                 background: "none", border: "none",
-                color: player.isCaptain ? "var(--ios-yellow)" : "var(--ios-text-tertiary)",
+                color: player.isCaptain ? "var(--accent-gold)" : "var(--text-muted)",
                 fontSize: "11px", fontWeight: "700", cursor: "pointer", marginTop: "4px", display: "block"
               }
-            }, player.isCaptain ? "★ Captain (2× Multiplier)" : "☆ Set as Captain")
+            }, player.isCaptain ? "★ Captain (2×)" : "☆ Make Captain")
           ),
-          h(IOSNumberInput, { label: "Runs (+5)", value: player.runs || 0, onChange: (v) => updatePlayerField(activeTeamId, pIdx, "runs", v) }),
-          h(IOSNumberInput, { label: "Wkts (+100)", value: player.wkts || 0, onChange: (v) => updatePlayerField(activeTeamId, pIdx, "wkts", v) }),
-          h(IOSNumberInput, { label: "Catches (+50)", value: player.catch || 0, onChange: (v) => updatePlayerField(activeTeamId, pIdx, "catch", v) }),
-          h(IOSNumberInput, { label: "RO/St (+50)", value: (player.ro || 0) + (player.stmp || 0), onChange: (v) => updatePlayerField(activeTeamId, pIdx, "ro", v) }),
-          h(IOSNumberInput, { label: "Sixes (Bonus)", value: player.b6s || 0, onChange: (v) => updatePlayerField(activeTeamId, pIdx, "b6s", v) }),
-          h(IOSNumberInput, { label: "Duck (-50)", value: player.duck || 0, min: 0, max: 1, onChange: (v) => updatePlayerField(activeTeamId, pIdx, "duck", v) }),
-          h("div", { style: { textAlign: "right", fontWeight: "800", fontSize: "17px", color: player.isCaptain ? "var(--ios-yellow)" : "var(--ios-green)" } },
+          h(AppNumberInput, { label: "Runs", value: player.runs || 0, onChange: (v) => updatePlayerField(activeTeamId, pIdx, "runs", v) }),
+          h(AppNumberInput, { label: "Wkts", value: player.wkts || 0, onChange: (v) => updatePlayerField(activeTeamId, pIdx, "wkts", v) }),
+          h(AppNumberInput, { label: "Catches", value: player.catch || 0, onChange: (v) => updatePlayerField(activeTeamId, pIdx, "catch", v) }),
+          h(AppNumberInput, { label: "RO/St", value: (player.ro || 0) + (player.stmp || 0), onChange: (v) => updatePlayerField(activeTeamId, pIdx, "ro", v) }),
+          h(AppNumberInput, { label: "Sixes", value: player.b6s || 0, onChange: (v) => updatePlayerField(activeTeamId, pIdx, "b6s", v) }),
+          h(AppNumberInput, { label: "Duck", value: player.duck || 0, min: 0, max: 1, onChange: (v) => updatePlayerField(activeTeamId, pIdx, "duck", v) }),
+          h("div", { style: { textAlign: "right", fontWeight: "800", fontSize: "16px", color: player.isCaptain ? "var(--accent-gold)" : "var(--accent-primary)" } },
             `${pts} pts`
           )
         );
       })
     ),
 
-    // Footer actions & Live Winner Preview
+    // Footer actions
     h("div", {
       style: {
         display: "flex",
         justifyContent: "space-between",
         alignItems: "center",
-        borderTop: "0.5px solid var(--ios-separator)",
+        borderTop: "1px solid var(--border-subtle)",
         paddingTop: "14px",
         marginTop: "10px",
       }
     },
-      h("div", { style: { fontSize: "13px", color: "var(--ios-text-secondary)" } },
-        "Match Total Points: ",
+      h("div", { style: { fontSize: "13px", color: "var(--text-secondary)" } },
+        "Match Total: ",
         Object.entries(teamTotals).map(([tId, pts]) => {
           const t = teams.find((tm) => tm.id === tId);
-          return h("span", { key: tId, style: { color: t?.color || "#fff", fontWeight: "700", marginRight: "10px" } },
+          return h("span", { key: tId, style: { fontWeight: "700", marginRight: "12px", color: "#fff" } },
             `${t?.name}: ${pts}`
           );
         })
       ),
       h("div", { style: { display: "flex", gap: "10px" } },
-        h(IOSButton, { variant: "ghost", onClick: onCancel }, "Cancel"),
-        h(IOSButton, { variant: "primary", onClick: () => onSave(draft) }, "💾 Save Match Scorecard")
+        h(AppButton, { variant: "secondary", onClick: onCancel }, "Cancel"),
+        h(AppButton, { variant: "primary", onClick: () => onSave(draft) }, "💾 Save Scorecard")
       )
     )
   );
