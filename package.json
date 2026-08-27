@@ -1,0 +1,22 @@
+{
+  "name": "d5-ipl-fantasy",
+  "version": "2.0.0",
+  "description": "Production-grade D5 IPL Fantasy League Platform with real-time scoring, differential analytics, and live match tracking",
+  "main": "src/server/nativeServer.js",
+  "type": "module",
+  "scripts": {
+    "start": "node src/server/nativeServer.js",
+    "dev": "node --watch src/server/nativeServer.js",
+    "build": "node src/build.js",
+    "test": "node --test src/core/scoringEngine.test.js"
+  },
+  "keywords": [
+    "ipl",
+    "fantasy-cricket",
+    "scoring-engine",
+    "clean-architecture",
+    "realtime-analytics"
+  ],
+  "author": "D5 League Engineering Team",
+  "license": "MIT"
+}

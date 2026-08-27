@@ -1,0 +1,34 @@
+{
+  "teams": [
+    {
+      "id": "T1",
+      "name": "Mvrcks",
+      "color": "#00C9FF",
+      "emoji": "🔵"
+    },
+    {
+      "id": "T2",
+      "name": "Sharks",
+      "color": "#FF6B35",
+      "emoji": "🦈"
+    },
+    {
+      "id": "T3",
+      "name": "MTR",
+      "color": "#A8FF3E",
+      "emoji": "🟢"
+    },
+    {
+      "id": "T4",
+      "name": "Sixers",
+      "color": "#FFB830",
+      "emoji": "🟡"
+    }
+  ],
+  "entries": {},
+  "editorPassword": "ipl",
+  "config": {
+    "theme": "dark",
+    "leagueName": "D5 IPL Fantasy 2026"
+  }
+}
