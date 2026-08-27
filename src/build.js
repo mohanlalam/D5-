@@ -1,13 +1,13 @@
 /**
  * Production Bundle Generator for Standalone & Web Distribution
- * D5 IPL Fantasy Platform (v2.1)
+ * D5 IPL Fantasy Platform — 2027 Season Edition
  */
 
 import fs from "fs";
 import path from "path";
 import { fileURLToPath } from "url";
 import { D5_2025 } from "./core/data2025.js";
-import { IPL_SCHEDULE, IPL_TEAMS, IPL_SQUADS, DEFAULT_2026_TEAMS, D5_TEAM_CONFIG, MAIN_TEAMS, SCORING_RULES } from "./core/constants.js";
+import { IPL_SCHEDULE_2027, IPL_TEAMS, IPL_SQUADS, DEFAULT_2027_TEAMS, D5_TEAM_CONFIG, MAIN_TEAMS, SCORING_RULES } from "./core/constants.js";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const ROOT_DIR = path.resolve(__dirname, "..");
@@ -25,7 +25,7 @@ const createHtml = (isStandalone = false) => `<!DOCTYPE html>
   <meta name="apple-mobile-web-app-capable" content="yes"/>
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"/>
   <meta name="apple-mobile-web-app-title" content="D5 IPL"/>
-  <title>D5 IPL Fantasy 2026 • iOS Edition</title>
+  <title>D5 IPL Fantasy 2027 • iOS Edition</title>
   <link rel="manifest" href="manifest.json"/>
   <link rel="preconnect" href="https://fonts.googleapis.com"/>
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
@@ -38,22 +38,23 @@ const createHtml = (isStandalone = false) => `<!DOCTYPE html>
   <style>
     #loading { position: fixed; inset: 0; background: #000000; display: flex; align-items: center; justify-content: center; flex-direction: column; gap: 16px; z-index: 9999; }
     .spinner-red { width: 40px; height: 40px; border: 3px solid rgba(255,59,48,0.2); border-top-color: #ff3b30; border-radius: 50%; animation: spin 0.7s linear infinite; }
+    @keyframes spin { to { transform: rotate(360deg); } }
   </style>
 </head>
 <body>
 <div id="loading">
   <div class="spinner-red"></div>
-  <div style="font-family:-apple-system,BlinkMacSystemFont,sans-serif;font-size:14px;color:#888;letter-spacing:1px;font-weight:600;">LOADING D5 IPL FANTASY...</div>
+  <div style="font-family:-apple-system,BlinkMacSystemFont,sans-serif;font-size:14px;color:#888;letter-spacing:1px;font-weight:600;">LOADING D5 IPL FANTASY 2027...</div>
 </div>
 <div id="root"></div>
 
 <script>
 // ─── DOMAIN CONSTANTS & HISTORICAL DATA ──────────────────────────────────────
 const D5_2025 = ${JSON.stringify(D5_2025)};
-const IPL_SCHEDULE = ${JSON.stringify(IPL_SCHEDULE)};
+const IPL_SCHEDULE_2027 = ${JSON.stringify(IPL_SCHEDULE_2027)};
 const IPL_TEAMS = ${JSON.stringify(IPL_TEAMS)};
 const IPL_SQUADS = ${JSON.stringify(IPL_SQUADS)};
-const DEFAULT_2026_TEAMS = ${JSON.stringify(DEFAULT_2026_TEAMS)};
+const DEFAULT_2027_TEAMS = ${JSON.stringify(DEFAULT_2027_TEAMS)};
 const D5_TEAM_CONFIG = ${JSON.stringify(D5_TEAM_CONFIG)};
 const MAIN_TEAMS = ${JSON.stringify(MAIN_TEAMS)};
 const SCORING_RULES = ${JSON.stringify(SCORING_RULES)};
@@ -151,11 +152,11 @@ export function build() {
 
   // 1. Web app bundle for Express / PWA static serving
   fs.writeFileSync(path.join(PUBLIC_DIR, "index.html"), createHtml(false), "utf8");
-  console.log("✓ Generated public/index.html (PWA & Web Distribution)");
+  console.log("✓ Generated public/index.html (PWA 2027 Season Edition)");
 
   // 2. Standalone zero-dependency distribution file
   fs.writeFileSync(path.join(ROOT_DIR, "index.html"), createHtml(true), "utf8");
-  console.log("✓ Generated root index.html (Standalone iOS Mobile App)");
+  console.log("✓ Generated root index.html (Standalone 2027 iOS Mobile App)");
 }
 
 build();

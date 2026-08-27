@@ -1,6 +1,6 @@
 /**
  * Core Domain Constants & Configuration
- * D5 IPL Fantasy Platform
+ * D5 IPL Fantasy Platform — 2027 Season Edition
  */
 
 export const IPL_TEAMS = {
@@ -16,27 +16,17 @@ export const IPL_TEAMS = {
   GT:   { name: "Gujarat Titans", color: "#1C4B8E", short: "GT", city: "Ahmedabad", titleWins: 1 },
 };
 
-export const IPL_SCHEDULE = [
-  { id: "m1",  date: "2026-03-28", time: "7:30 PM", team1: "CSK", team2: "RCB", venue: "MA Chidambaram Stadium, Chennai" },
-  { id: "m2",  date: "2026-03-29", time: "3:30 PM", team1: "KKR", team2: "SRH", venue: "Eden Gardens, Kolkata" },
-  { id: "m3",  date: "2026-03-29", time: "7:30 PM", team1: "RR",  team2: "LSG", venue: "Sawai Mansingh Stadium, Jaipur" },
-  { id: "m4",  date: "2026-03-30", time: "7:30 PM", team1: "GT",  team2: "MI",  venue: "Narendra Modi Stadium, Ahmedabad" },
-  { id: "m5",  date: "2026-03-31", time: "7:30 PM", team1: "PBKS",team2: "DC",  venue: "PCA Stadium, Mullanpur" },
-  { id: "m6",  date: "2026-04-01", time: "7:30 PM", team1: "RCB", team2: "KKR", venue: "M. Chinnaswamy Stadium, Bengaluru" },
-  { id: "m7",  date: "2026-04-02", time: "7:30 PM", team1: "SRH", team2: "CSK", venue: "Rajiv Gandhi Stadium, Hyderabad" },
-  { id: "m8",  date: "2026-04-03", time: "7:30 PM", team1: "LSG", team2: "GT",  venue: "Ekana Stadium, Lucknow" },
-  { id: "m9",  date: "2026-04-04", time: "3:30 PM", team1: "MI",  team2: "RR",  venue: "Wankhede Stadium, Mumbai" },
-  { id: "m10", date: "2026-04-04", time: "7:30 PM", team1: "DC",  team2: "CSK", venue: "Arun Jaitley Stadium, Delhi" },
-  { id: "m11", date: "2026-04-05", time: "3:30 PM", team1: "PBKS",team2: "RCB", venue: "PCA Stadium, Mullanpur" },
-  { id: "m12", date: "2026-04-05", time: "7:30 PM", team1: "KKR", team2: "GT",  venue: "Eden Gardens, Kolkata" },
-  { id: "m13", date: "2026-04-06", time: "7:30 PM", team1: "SRH", team2: "RR",  venue: "Rajiv Gandhi Stadium, Hyderabad" },
-  { id: "m14", date: "2026-04-07", time: "7:30 PM", team1: "CSK", team2: "MI",  venue: "MA Chidambaram Stadium, Chennai" },
-  { id: "m15", date: "2026-04-08", time: "7:30 PM", team1: "DC",  team2: "LSG", venue: "Arun Jaitley Stadium, Delhi" },
-  { id: "m16", date: "2026-04-09", time: "7:30 PM", team1: "GT",  team2: "PBKS",venue: "Narendra Modi Stadium, Ahmedabad" },
-  { id: "m17", date: "2026-04-10", time: "7:30 PM", team1: "RCB", team2: "SRH", venue: "M. Chinnaswamy Stadium, Bengaluru" },
-  { id: "m18", date: "2026-04-11", time: "7:30 PM", team1: "MI",  team2: "DC",  venue: "Wankhede Stadium, Mumbai" },
-  { id: "m19", date: "2026-04-12", time: "3:30 PM", team1: "RR",  team2: "KKR", venue: "Sawai Mansingh Stadium, Jaipur" },
-  { id: "m20", date: "2026-04-12", time: "7:30 PM", team1: "LSG", team2: "GT",  venue: "Ekana Stadium, Lucknow" },
+export const IPL_SCHEDULE_2027 = [
+  { id: "m1",  date: "2027-03-27", time: "7:30 PM", team1: "CSK", team2: "MI",  venue: "MA Chidambaram Stadium, Chennai" },
+  { id: "m2",  date: "2027-03-28", time: "3:30 PM", team1: "KKR", team2: "RCB", venue: "Eden Gardens, Kolkata" },
+  { id: "m3",  date: "2027-03-28", time: "7:30 PM", team1: "RR",  team2: "SRH", venue: "Sawai Mansingh Stadium, Jaipur" },
+  { id: "m4",  date: "2027-03-29", time: "7:30 PM", team1: "GT",  team2: "DC",  venue: "Narendra Modi Stadium, Ahmedabad" },
+  { id: "m5",  date: "2027-03-30", time: "7:30 PM", team1: "PBKS",team2: "LSG", venue: "PCA Stadium, Mullanpur" },
+  { id: "m6",  date: "2027-03-31", time: "7:30 PM", team1: "RCB", team2: "CSK", venue: "M. Chinnaswamy Stadium, Bengaluru" },
+  { id: "m7",  date: "2027-04-01", time: "7:30 PM", team1: "SRH", team2: "MI",  venue: "Rajiv Gandhi Stadium, Hyderabad" },
+  { id: "m8",  date: "2027-04-02", time: "7:30 PM", team1: "LSG", team2: "KKR", venue: "Ekana Stadium, Lucknow" },
+  { id: "m9",  date: "2027-04-03", time: "3:30 PM", team1: "MI",  team2: "GT",  venue: "Wankhede Stadium, Mumbai" },
+  { id: "m10", date: "2027-04-03", time: "7:30 PM", team1: "DC",  team2: "RR",  venue: "Arun Jaitley Stadium, Delhi" },
 ];
 
 export const IPL_SQUADS = {
@@ -46,13 +36,12 @@ export const IPL_SQUADS = {
     { name: "Suryakumar Yadav", role: "BAT", overseas: false },
     { name: "Hardik Pandya", role: "ALL", overseas: false },
     { name: "Tilak Varma", role: "BAT", overseas: false },
+    { name: "Trent Boult", role: "BOWL", overseas: true },
     { name: "Tim David", role: "BAT", overseas: true },
     { name: "Ryan Rickelton", role: "WK", overseas: true },
-    { name: "Trent Boult", role: "BOWL", overseas: true },
     { name: "Will Jacks", role: "ALL", overseas: true },
     { name: "Deepak Chahar", role: "BOWL", overseas: false },
     { name: "Mitchell Santner", role: "ALL", overseas: true },
-    { name: "Karn Sharma", role: "BOWL", overseas: false },
   ],
   CSK: [
     { name: "Ruturaj Gaikwad", role: "BAT", overseas: false },
@@ -65,7 +54,6 @@ export const IPL_SQUADS = {
     { name: "Khaleel Ahmed", role: "BOWL", overseas: false },
     { name: "Devon Conway", role: "WK", overseas: true },
     { name: "Rahul Tripathi", role: "BAT", overseas: false },
-    { name: "Nathan Ellis", role: "BOWL", overseas: true },
   ],
   RCB: [
     { name: "Virat Kohli", role: "BAT", overseas: false },
@@ -78,7 +66,6 @@ export const IPL_SQUADS = {
     { name: "Krunal Pandya", role: "ALL", overseas: false },
     { name: "Bhuvneshwar Kumar", role: "BOWL", overseas: false },
     { name: "Jitesh Sharma", role: "WK", overseas: false },
-    { name: "Devdutt Padikkal", role: "BAT", overseas: false },
   ],
   KKR: [
     { name: "Ajinkya Rahane", role: "BAT", overseas: false },
@@ -90,8 +77,6 @@ export const IPL_SQUADS = {
     { name: "Varun Chakravarthy", role: "BOWL", overseas: false },
     { name: "Mitchell Starc", role: "BOWL", overseas: true },
     { name: "Harshit Rana", role: "BOWL", overseas: false },
-    { name: "Angkrish Raghuvanshi", role: "BAT", overseas: false },
-    { name: "Moeen Ali", role: "ALL", overseas: true },
   ],
   DC: [
     { name: "Axar Patel", role: "ALL", overseas: false },
@@ -102,8 +87,6 @@ export const IPL_SQUADS = {
     { name: "Mitchell Marsh", role: "ALL", overseas: true },
     { name: "Faf du Plessis", role: "BAT", overseas: true },
     { name: "Mukesh Kumar", role: "BOWL", overseas: false },
-    { name: "Ashutosh Sharma", role: "BAT", overseas: false },
-    { name: "Mohit Sharma", role: "BOWL", overseas: false },
   ],
   SRH: [
     { name: "Pat Cummins", role: "BOWL", overseas: true },
@@ -114,8 +97,6 @@ export const IPL_SQUADS = {
     { name: "Mohammed Shami", role: "BOWL", overseas: false },
     { name: "Adam Zampa", role: "BOWL", overseas: true },
     { name: "Ishan Kishan", role: "WK", overseas: false },
-    { name: "Harshal Patel", role: "BOWL", overseas: false },
-    { name: "Rahul Chahar", role: "BOWL", overseas: false },
   ],
   PBKS: [
     { name: "Shreyas Iyer", role: "BAT", overseas: false },
@@ -125,9 +106,6 @@ export const IPL_SQUADS = {
     { name: "Marcus Stoinis", role: "ALL", overseas: true },
     { name: "Prabhsimran Singh", role: "WK", overseas: false },
     { name: "Glenn Maxwell", role: "ALL", overseas: true },
-    { name: "Lockie Ferguson", role: "BOWL", overseas: true },
-    { name: "Nehal Wadhera", role: "BAT", overseas: false },
-    { name: "Azmatullah Omarzai", role: "ALL", overseas: true },
   ],
   RR: [
     { name: "Sanju Samson", role: "WK", overseas: false },
@@ -137,9 +115,6 @@ export const IPL_SQUADS = {
     { name: "Dhruv Jurel", role: "WK", overseas: false },
     { name: "Yashasvi Jaiswal", role: "BAT", overseas: false },
     { name: "Jofra Archer", role: "BOWL", overseas: true },
-    { name: "Wanindu Hasaranga", role: "ALL", overseas: true },
-    { name: "Sandeep Sharma", role: "BOWL", overseas: false },
-    { name: "Maheesh Theekshana", role: "BOWL", overseas: true },
   ],
   LSG: [
     { name: "Nicholas Pooran", role: "WK", overseas: true },
@@ -147,10 +122,7 @@ export const IPL_SQUADS = {
     { name: "Mayank Yadav", role: "BOWL", overseas: false },
     { name: "David Miller", role: "BAT", overseas: true },
     { name: "Aiden Markram", role: "ALL", overseas: true },
-    { name: "Avesh Khan", role: "BOWL", overseas: false },
     { name: "Rishabh Pant", role: "WK", overseas: false },
-    { name: "Mitchell Marsh", role: "ALL", overseas: true },
-    { name: "Digvesh Rathi", role: "BOWL", overseas: false },
   ],
   GT: [
     { name: "Shubman Gill", role: "BAT", overseas: false },
@@ -158,13 +130,11 @@ export const IPL_SQUADS = {
     { name: "Rashid Khan", role: "ALL", overseas: true },
     { name: "Prasidh Krishna", role: "BOWL", overseas: false },
     { name: "Kagiso Rabada", role: "BOWL", overseas: true },
-    { name: "Shahrukh Khan", role: "ALL", overseas: false },
     { name: "Rahul Tewatia", role: "ALL", overseas: false },
-    { name: "Gerald Coetzee", role: "BOWL", overseas: true },
   ],
 };
 
-export const DEFAULT_2026_TEAMS = [
+export const DEFAULT_2027_TEAMS = [
   { id: "T1", name: "Mvrcks", color: "#00C9FF", emoji: "🔵" },
   { id: "T2", name: "Sharks", color: "#FF6B35", emoji: "🦈" },
   { id: "T3", name: "MTR",    color: "#A8FF3E", emoji: "🟢" },

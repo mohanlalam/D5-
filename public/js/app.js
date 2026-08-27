@@ -1,9 +1,6 @@
 /**
- * High-End iOS Mobile Application Core & Free Cricket API Engine
- * D5 IPL Fantasy Platform (v2.1)
- * 
- * Features: Dynamic Island, Bottom Tab Bar, 10-Team Squads Directory,
- * Multi-Tier Free Cricket API & Live Game Simulator, Differential Matrix
+ * D5 IPL Fantasy Platform — 2027 Season Edition
+ * High-End iOS Design System & Manual Match/Player Selection Suite
  */
 
 const { useState, useEffect, useRef, useMemo, createElement: h } = React;
@@ -15,7 +12,7 @@ const hapticFeedback = (pattern = 10) => {
   }
 };
 
-// ─── 1. UI ATOMS & REUSABLE iOS COMPONENTS ───────────────────────────────────
+// ─── REUSABLE ACCESSIBLE iOS COMPONENTS ──────────────────────────────────────
 
 function IOSButton({ onClick, children, variant = "primary", disabled = false, small = false, loading = false, style = {}, ariaLabel }) {
   const handleClick = (e) => {
@@ -58,7 +55,7 @@ function IOSCard({ children, style = {}, className = "", onClick }) {
   }, children);
 }
 
-function IOSLiveBadge({ text = "LIVE" }) {
+function IOSLiveBadge({ text = "LIVE 2027" }) {
   return h("span", {
     style: {
       display: "inline-flex",
@@ -77,44 +74,6 @@ function IOSLiveBadge({ text = "LIVE" }) {
     h("span", { className: "ios-pulse-dot" }),
     text
   );
-}
-
-function IOSStatusBadge({ status, daysUntil }) {
-  if (status === "live") return h(IOSLiveBadge);
-  if (status === "completed") {
-    return h("span", {
-      style: {
-        padding: "3px 10px", borderRadius: "var(--ios-radius-full)",
-        background: "rgba(48, 209, 88, 0.12)", color: "var(--ios-green)",
-        fontSize: "11px", fontWeight: "600", border: "0.5px solid rgba(48, 209, 88, 0.3)"
-      }
-    }, "✓ Done");
-  }
-  if (daysUntil === 0) {
-    return h("span", {
-      style: {
-        padding: "3px 10px", borderRadius: "var(--ios-radius-full)",
-        background: "rgba(255, 159, 10, 0.15)", color: "var(--ios-orange)",
-        fontSize: "11px", fontWeight: "600", border: "0.5px solid rgba(255, 159, 10, 0.35)"
-      }
-    }, "Today");
-  }
-  if (daysUntil === 1) {
-    return h("span", {
-      style: {
-        padding: "3px 10px", borderRadius: "var(--ios-radius-full)",
-        background: "rgba(10, 132, 255, 0.15)", color: "var(--ios-blue)",
-        fontSize: "11px", fontWeight: "600", border: "0.5px solid rgba(10, 132, 255, 0.35)"
-      }
-    }, "Tomorrow");
-  }
-  return h("span", {
-    style: {
-      padding: "3px 10px", borderRadius: "var(--ios-radius-full)",
-      background: "var(--ios-bg-secondary)", color: "var(--ios-text-secondary)",
-      fontSize: "11px", border: "0.5px solid var(--ios-separator)"
-    }
-  }, `In ${daysUntil}d`);
 }
 
 function IOSTeamAvatar({ code, color, size = 40, large = false }) {
@@ -138,7 +97,7 @@ function IOSTeamAvatar({ code, color, size = 40, large = false }) {
   }, code);
 }
 
-function IOSModalSheet({ isOpen, onClose, title, children, maxWidth = "820px" }) {
+function IOSModalSheet({ isOpen, onClose, title, children, maxWidth = "920px" }) {
   useEffect(() => {
     const handleKeyDown = (e) => { if (e.key === "Escape" && isOpen) onClose(); };
     window.addEventListener("keydown", handleKeyDown);
@@ -202,29 +161,27 @@ function IOSNumberInput({ label, value, onChange, min = 0, max = 999 }) {
   );
 }
 
-// ─── 2. MAIN APPLICATION WORKFLOW ─────────────────────────────────────────────
+// ─── MAIN APPLICATION COMPONENT ───────────────────────────────────────────────
 
 function App() {
   const [tab, setTab] = useState("standings");
-  const [teams, setTeams] = useState(DEFAULT_2026_TEAMS);
+  const [teams, setTeams] = useState(DEFAULT_2027_TEAMS);
   const [entries, setEntries] = useState([]);
   const [isEditor, setIsEditor] = useState(false);
   const [showAdminModal, setShowAdminModal] = useState(false);
-  const [showApiModal, setShowApiModal] = useState(false);
   const [adminPin, setAdminPin] = useState("");
   const [adminError, setAdminError] = useState("");
   const [editingEntry, setEditingEntry] = useState(null);
 
-  // Custom API Key & Live State
-  const [customApiKey, setCustomApiKey] = useState(() => localStorage.getItem("d5_cricket_api_key") || "895f5fdc-d1a2-4aeb-98ff-3c5825227bf7");
+  // Live Scores & Simulator
   const [liveScores, setLiveScores] = useState({});
   const [liveLoading, setLiveLoading] = useState(false);
   const [autoRefresh, setAutoRefresh] = useState(false);
   const [lastRefreshedAt, setLastRefreshedAt] = useState(null);
 
-  // Live Game Simulator Engine
+  // Live Simulator Engine
   const [simActive, setSimActive] = useState(false);
-  const [simScore, setSimScore] = useState({ r: 168, w: 3, o: "17.4", target: 194, team1: "CSK", team2: "RCB" });
+  const [simScore, setSimScore] = useState({ r: 172, w: 4, o: "18.1", target: 188, team1: "CSK", team2: "MI" });
 
   // Squads Explorer
   const [selSquadTeam, setSelSquadTeam] = useState("CSK");
@@ -234,11 +191,11 @@ function App() {
   const [histFilter, setHistFilter] = useState("ALL");
   const [selHistMatch, setSelHistMatch] = useState(null);
 
-  // ── Firebase Realtime Sync ─────────────────────────────────────────────────
+  // ── Firebase Realtime Sync (2027 Season Keys) ──────────────────────────────
   useEffect(() => {
     if (window.db) {
-      const teamsRef = window.db.ref("d5_2026_teams");
-      const entriesRef = window.db.ref("d5_2026_entries");
+      const teamsRef = window.db.ref("d5_2027_teams");
+      const entriesRef = window.db.ref("d5_2027_entries");
       const pwRef = window.db.ref("d5_editor_pw");
 
       teamsRef.on("value", (snap) => {
@@ -261,50 +218,6 @@ function App() {
       };
     }
   }, []);
-
-  // ── Multi-Tier Free Cricket API Fetcher ────────────────────────────────────
-  const fetchLiveScores = async () => {
-    setLiveLoading(true);
-    try {
-      const key = customApiKey || "895f5fdc-d1a2-4aeb-98ff-3c5825227bf7";
-      const res = await fetch(`https://api.cricapi.com/v1/currentMatches?apikey=${key}&offset=0`);
-      const data = await res.json();
-      if (data.status === "success" && Array.isArray(data.data)) {
-        const matchMap = {};
-        data.data.forEach((m) => {
-          const matchFix = IPL_SCHEDULE.find((sch) => {
-            const t1 = IPL_TEAMS[sch.team1]?.name?.toLowerCase() || "";
-            const t2 = IPL_TEAMS[sch.team2]?.name?.toLowerCase() || "";
-            const mName = (m.name || "").toLowerCase();
-            return (mName.includes(sch.team1.toLowerCase()) || mName.includes(t1)) &&
-                   (mName.includes(sch.team2.toLowerCase()) || mName.includes(t2));
-          });
-          if (matchFix) {
-            matchMap[matchFix.id] = {
-              status: m.status,
-              score: (m.score || []).map((s) => ({ inning: s.inning, r: s.r, w: s.w, o: s.o })),
-            };
-          }
-        });
-        setLiveScores(matchMap);
-      }
-    } catch (err) {
-      console.warn("Live API fetch fallback:", err.message);
-    } finally {
-      setLiveLoading(false);
-      setLastRefreshedAt(new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }));
-    }
-  };
-
-  useEffect(() => {
-    fetchLiveScores();
-  }, [customApiKey]);
-
-  useEffect(() => {
-    if (!autoRefresh) return;
-    const interval = setInterval(fetchLiveScores, 30000);
-    return () => clearInterval(interval);
-  }, [autoRefresh, customApiKey]);
 
   // ── Live Game Simulator Loop ───────────────────────────────────────────────
   useEffect(() => {
@@ -396,7 +309,7 @@ function App() {
 
   const handleSaveScorecard = (entry) => {
     if (window.db) {
-      window.db.ref(`d5_2026_entries/${entry.id}`).set(entry);
+      window.db.ref(`d5_2027_entries/${entry.id}`).set(entry);
     } else {
       setEntries((prev) => {
         const idx = prev.findIndex((e) => e.id === entry.id);
@@ -408,18 +321,17 @@ function App() {
   };
 
   const handleDeleteScorecard = (id) => {
-    if (confirm("Are you sure you want to remove this match scorecard?")) {
+    if (confirm("Are you sure you want to delete this match scorecard?")) {
       if (window.db) {
-        window.db.ref(`d5_2026_entries/${id}`).remove();
+        window.db.ref(`d5_2027_entries/${id}`).remove();
       } else {
         setEntries((prev) => prev.filter((e) => e.id !== id));
       }
     }
   };
 
-  // ── Render Views ───────────────────────────────────────────────────────────
   return h("div", { style: { minHeight: "100vh", display: "flex", flexDirection: "column", paddingBottom: "90px" } },
-    // 1. Top Bar & Dynamic Island
+    // Top Navigation & Dynamic Island
     h("header", {
       className: "ios-glass-nav",
       style: { position: "sticky", top: 0, zIndex: 100, padding: "10px 18px" }
@@ -447,11 +359,11 @@ function App() {
           }, "🏏"),
           h("div", null,
             h("div", { style: { fontSize: "17px", fontWeight: "700", letterSpacing: "-0.4px" } }, "D5 IPL Fantasy"),
-            h("div", { style: { fontSize: "11px", color: "var(--ios-text-secondary)", fontWeight: "500" } }, "iOS Mobile Edition 2026")
+            h("div", { style: { fontSize: "11px", color: "var(--ios-text-secondary)", fontWeight: "500" } }, "Season 2027 • Manual Control")
           )
         ),
 
-        // 🌟 Apple Dynamic Island / Live Activity Widget
+        // Apple Dynamic Island Live Activity Widget
         h("div", {
           className: "dynamic-island",
           onClick: () => setTab("live"),
@@ -462,36 +374,41 @@ function App() {
             simActive ? h("span", null,
               h("strong", { style: { color: "var(--ios-teal)" } }, `${simScore.team1} ${simScore.r}/${simScore.w}`),
               h("span", { style: { color: "var(--ios-text-secondary)", fontSize: "11px", marginLeft: "4px" } }, `(${simScore.o} ov) vs ${simScore.team2}`)
-            ) : Object.keys(liveScores).length > 0 ? h("span", { style: { color: "var(--ios-teal)", fontWeight: "600" } },
-              `📡 ${Object.keys(liveScores).length} Match Live Now`
             ) : h("span", { style: { color: "var(--ios-text-secondary)" } },
-              "Next: CSK vs RCB • Mar 28"
+              "IPL 2027 Season Setup Active"
             )
           )
         ),
 
-        // Settings / Admin Actions
+        // Action Buttons
         h("div", { style: { display: "flex", alignItems: "center", gap: "8px" } },
-          h(IOSButton, { variant: "ghost", small: true, onClick: () => setShowApiModal(true) }, "🔑 Free API"),
+          h(IOSButton, {
+            variant: "primary",
+            small: true,
+            onClick: () => {
+              if (!isEditor) setIsEditor(true);
+              setEditingEntry(blankEntry(teams));
+            }
+          }, "+ Manual Entry"),
           isEditor
             ? h(IOSButton, { variant: "destructive", small: true, onClick: () => setIsEditor(false) }, "🔓 Lock")
-            : h(IOSButton, { variant: "tinted", small: true, onClick: () => setShowAdminModal(true) }, "🔒 Admin")
+            : h(IOSButton, { variant: "ghost", small: true, onClick: () => setShowAdminModal(true) }, "🔒 Admin")
         )
       )
     ),
 
-    // 2. Main Content Body
+    // Main App Views
     h("main", { style: { flex: 1, maxWidth: "1280px", width: "100%", margin: "0 auto", padding: "20px" } },
-      // 🏆 View 1: Standings
+      // 🏆 View 1: 2027 Standings
       tab === "standings" && h("div", null,
-        h("div", { style: { display: "flex", justifyContent: "space-between", alignItems: "flex-end", marginBottom: "18px" } },
+        h("div", { style: { display: "flex", justifyContent: "space-between", alignItems: "flex-end", marginBottom: "18px", flexWrap: "wrap", gap: "10px" } },
           h("div", null,
-            h("h1", { style: { fontSize: "28px", fontWeight: "800", letterSpacing: "-0.5px" } }, "League Standings"),
-            h("p", { style: { fontSize: "13px", color: "var(--ios-text-secondary)" } }, "Dynamic net differential ranking for D5 fantasy league")
+            h("h1", { style: { fontSize: "28px", fontWeight: "800", letterSpacing: "-0.5px" } }, "IPL 2027 Leaderboard"),
+            h("p", { style: { fontSize: "13px", color: "var(--ios-text-secondary)" } }, "Dynamic net differential ranking for the 2027 tournament")
           ),
-          isEditor && h(IOSButton, { variant: "primary", onClick: () => setEditingEntry(blankEntry(teams)) }, "+ Add Scorecard")
+          h(IOSButton, { variant: "primary", onClick: () => setEditingEntry(blankEntry(teams)) }, "✍️ Enter Match Scorecard")
         ),
-        // Standings Table Card
+        // Standings Table
         h(IOSCard, { style: { padding: 0, overflow: "hidden", marginBottom: "20px" } },
           h("div", { style: { overflowX: "auto" } },
             h("table", { className: "ios-table" },
@@ -541,17 +458,17 @@ function App() {
         // Empty Banner
         entries.length === 0 && h(IOSCard, { style: { textAlign: "center", padding: "36px 20px" } },
           h("div", { style: { fontSize: "40px", marginBottom: "8px" } }, "🏏"),
-          h("h3", { style: { fontSize: "18px", fontWeight: "600", marginBottom: "4px" } }, "No 2026 Matches Recorded Yet"),
-          h("p", { style: { fontSize: "13px", color: "var(--ios-text-secondary)", marginBottom: "16px" } }, "Unlock Admin mode to start logging fantasy match scorecards for the season."),
-          isEditor && h(IOSButton, { variant: "tinted", onClick: () => setEditingEntry(blankEntry(teams)) }, "+ Submit First Match")
+          h("h3", { style: { fontSize: "18px", fontWeight: "600", marginBottom: "4px" } }, "Ready for IPL 2027 Season!"),
+          h("p", { style: { fontSize: "13px", color: "var(--ios-text-secondary)", marginBottom: "16px" } }, "Tap below to manually enter match details, select player rosters, and record scores."),
+          h(IOSButton, { variant: "tinted", onClick: () => setEditingEntry(blankEntry(teams)) }, "+ Manually Add Match #1")
         )
       ),
 
       // 📋 View 2: Scorecards
       tab === "matches" && h("div", null,
         h("div", { style: { display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "18px" } },
-          h("h1", { style: { fontSize: "28px", fontWeight: "800", letterSpacing: "-0.5px" } }, "Match Scorecards"),
-          isEditor && h(IOSButton, { variant: "primary", onClick: () => setEditingEntry(blankEntry(teams)) }, "+ New Scorecard")
+          h("h1", { style: { fontSize: "28px", fontWeight: "800", letterSpacing: "-0.5px" } }, "2027 Match Scorecards"),
+          h(IOSButton, { variant: "primary", onClick: () => setEditingEntry(blankEntry(teams)) }, "+ Create Match Entry")
         ),
         h("div", { style: { display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(320px, 1fr))", gap: "16px" } },
           entries.map((entry) => {
@@ -595,8 +512,8 @@ function App() {
                   );
                 })
               ),
-              isEditor && h("div", { style: { display: "flex", gap: "8px", justifyContent: "flex-end", borderTop: "0.5px solid var(--ios-separator)", paddingTop: "10px" } },
-                h(IOSButton, { variant: "ghost", small: true, onClick: () => setEditingEntry(entry) }, "Edit"),
+              h("div", { style: { display: "flex", gap: "8px", justifyContent: "flex-end", borderTop: "0.5px solid var(--ios-separator)", paddingTop: "10px" } },
+                h(IOSButton, { variant: "ghost", small: true, onClick: () => setEditingEntry(entry) }, "Edit Match"),
                 h(IOSButton, { variant: "destructive", small: true, onClick: () => handleDeleteScorecard(entry.id) }, "Delete")
               )
             );
@@ -604,83 +521,59 @@ function App() {
         )
       ),
 
-      // 📡 View 3: Live Scores, Fixtures & Simulator
+      // 📡 View 3: Live Simulator & 2027 Fixtures
       tab === "live" && h("div", null,
         h("div", { style: { display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "18px", flexWrap: "wrap", gap: "10px" } },
           h("div", null,
-            h("h1", { style: { fontSize: "28px", fontWeight: "800", letterSpacing: "-0.5px" } }, "Live Scores & Schedule"),
-            lastRefreshedAt && h("div", { style: { fontSize: "12px", color: "var(--ios-text-secondary)" } }, `API updated ${lastRefreshedAt}`)
+            h("h1", { style: { fontSize: "28px", fontWeight: "800", letterSpacing: "-0.5px" } }, "Live Match Tracker & Simulator"),
+            h("p", { style: { fontSize: "13px", color: "var(--ios-text-secondary)" } }, "Interactive live game engine & IPL 2027 schedule")
           ),
-          h("div", { style: { display: "flex", gap: "8px", flexWrap: "wrap" } },
+          h("div", { style: { display: "flex", gap: "8px" } },
             h(IOSButton, {
               variant: simActive ? "destructive" : "green",
               small: true,
               onClick: () => setSimActive(!simActive)
-            }, simActive ? "⏹ Stop Sim" : "▶ Live Game Sim"),
-            h(IOSButton, { variant: "tinted", small: true, onClick: fetchLiveScores, loading: liveLoading }, "🔄 Refresh"),
-            h(IOSButton, { variant: autoRefresh ? "destructive" : "ghost", small: true, onClick: () => setAutoRefresh(!autoRefresh) }, autoRefresh ? "⏹ Auto" : "▶ Auto 30s")
+            }, simActive ? "⏹ Stop Simulator" : "▶ Start Live Game Sim")
           )
         ),
-        // Live Game Simulator Card
+        // Simulator Card
         simActive && h(IOSCard, { style: { borderColor: "var(--ios-green)", marginBottom: "20px", background: "rgba(48,209,88,0.06)" } },
           h("div", { style: { display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "12px" } },
-            h(IOSLiveBadge, { text: "LIVE SIMULATOR ACTIVE" }),
-            h("span", { style: { fontSize: "12px", color: "var(--ios-green)", fontWeight: "600" } }, "Updating every 3s")
+            h(IOSLiveBadge, { text: "LIVE GAME SIMULATOR" }),
+            h("span", { style: { fontSize: "12px", color: "var(--ios-green)", fontWeight: "600" } }, "Simulating ball-by-ball (3s)")
           ),
           h("div", { style: { display: "flex", justifyContent: "space-between", alignItems: "center", margin: "14px 0" } },
             h(IOSTeamAvatar, { code: simScore.team1, color: IPL_TEAMS[simScore.team1]?.color || "#888", large: true }),
             h("div", { style: { textAlign: "center" } },
-              h("div", { style: { fontSize: "28px", fontWeight: "800", color: "var(--ios-teal)" } }, `${simScore.r}/${simScore.w}`),
+              h("div", { style: { fontSize: "32px", fontWeight: "800", color: "var(--ios-teal)" } }, `${simScore.r}/${simScore.w}`),
               h("div", { style: { fontSize: "13px", color: "var(--ios-text-secondary)" } }, `Overs: ${simScore.o} • Target: ${simScore.target}`)
             ),
             h(IOSTeamAvatar, { code: simScore.team2, color: IPL_TEAMS[simScore.team2]?.color || "#888", large: true })
           )
         ),
-        // Live API Matches
-        Object.keys(liveScores).length > 0 && h("div", { style: { display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(320px, 1fr))", gap: "16px", marginBottom: "24px" } },
-          IPL_SCHEDULE.filter((m) => liveScores[m.id]).map((m) => {
-            const sd = liveScores[m.id];
-            return h(IOSCard, { key: m.id, style: { borderColor: "var(--ios-red)" } },
-              h(IOSLiveBadge),
-              h("div", { style: { display: "flex", justifyContent: "space-between", margin: "14px 0" } },
-                h(IOSTeamAvatar, { code: m.team1, color: IPL_TEAMS[m.team1]?.color || "#888", large: true }),
-                h("div", { style: { alignSelf: "center", fontWeight: "700", color: "var(--ios-text-tertiary)" } }, "VS"),
-                h(IOSTeamAvatar, { code: m.team2, color: IPL_TEAMS[m.team2]?.color || "#888", large: true })
-              ),
-              (sd.score || []).map((s, i) => h("div", { key: i, style: { display: "flex", justifyContent: "space-between", padding: "6px 0", borderBottom: "0.5px solid var(--ios-separator)" } },
-                h("span", { style: { fontSize: "13px", color: "var(--ios-text-secondary)" } }, s.inning),
-                h("span", { style: { fontWeight: "700", color: "var(--ios-teal)" } }, `${s.r}/${s.w} (${s.o} ov)`)
-              )),
-              sd.status && h("div", { style: { fontSize: "12px", color: "var(--ios-orange)", marginTop: "8px" } }, sd.status)
-            );
-          })
-        ),
-        // Fixture Schedule
-        h("h2", { style: { fontSize: "20px", fontWeight: "700", marginBottom: "12px" } }, "Tournament Schedule"),
+        // 2027 Fixtures
+        h("h2", { style: { fontSize: "20px", fontWeight: "700", marginBottom: "12px" } }, "IPL 2027 Fixture Schedule"),
         h("div", { style: { display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(300px, 1fr))", gap: "14px" } },
-          IPL_SCHEDULE.map((m) => {
-            const d = getDaysUntil(m.date);
-            return h(IOSCard, { key: m.id },
-              h("div", { style: { display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "10px" } },
-                h("span", { style: { fontSize: "12px", color: "var(--ios-text-secondary)" } }, `${fmtDate(m.date)} • ${m.time}`),
-                h(IOSStatusBadge, { status: d < 0 ? "completed" : "upcoming", daysUntil: d })
+          IPL_SCHEDULE_2027.map((m) => h(IOSCard, { key: m.id },
+            h("div", { style: { display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "10px" } },
+              h("span", { style: { fontSize: "12px", color: "var(--ios-text-secondary)" } }, `${fmtDate(m.date)} • ${m.time}`),
+              h("span", { style: { fontSize: "11px", padding: "2px 8px", borderRadius: "var(--ios-radius-full)", background: "var(--ios-bg-secondary)", color: "var(--ios-text-secondary)" } }, "Scheduled")
+            ),
+            h("div", { style: { display: "flex", justifyContent: "space-between", alignItems: "center", margin: "10px 0" } },
+              h("div", { style: { display: "flex", alignItems: "center", gap: "8px" } },
+                h(IOSTeamAvatar, { code: m.team1, color: IPL_TEAMS[m.team1]?.color || "#888", size: 30 }),
+                h("span", { style: { fontWeight: "600", fontSize: "14px" } }, m.team1)
               ),
-              h("div", { style: { display: "flex", justifyContent: "space-between", alignItems: "center", margin: "10px 0" } },
-                h("div", { style: { display: "flex", alignItems: "center", gap: "8px" } },
-                  h(IOSTeamAvatar, { code: m.team1, color: IPL_TEAMS[m.team1]?.color || "#888", size: 30 }),
-                  h("span", { style: { fontWeight: "600", fontSize: "14px" } }, m.team1)
-                ),
-                h("span", { style: { color: "var(--ios-text-tertiary)", fontSize: "13px" } }, "vs"),
-                h("div", { style: { display: "flex", alignItems: "center", gap: "8px" } },
-                  h("span", { style: { fontWeight: "600", fontSize: "14px" } }, m.team2),
-                  h(IOSTeamAvatar, { code: m.team2, color: IPL_TEAMS[m.team2]?.color || "#888", size: 30 })
-                )
-              ),
-              h("div", { style: { fontSize: "11px", color: "var(--ios-text-secondary)", borderTop: "0.5px solid var(--ios-separator)", paddingTop: "8px", marginTop: "6px" } },
-                `📍 ${m.venue}`
+              h("span", { style: { color: "var(--ios-text-tertiary)", fontSize: "13px" } }, "vs"),
+              h("div", { style: { display: "flex", alignItems: "center", gap: "8px" } },
+                h("span", { style: { fontWeight: "600", fontSize: "14px" } }, m.team2),
+                h(IOSTeamAvatar, { code: m.team2, color: IPL_TEAMS[m.team2]?.color || "#888", size: 30 })
               )
-            );
-          })
+            ),
+            h("div", { style: { fontSize: "11px", color: "var(--ios-text-secondary)", borderTop: "0.5px solid var(--ios-separator)", paddingTop: "8px", marginTop: "6px" } },
+              `📍 ${m.venue}`
+            )
+          ))
         )
       ),
 
@@ -688,10 +581,9 @@ function App() {
       tab === "squads" && h("div", null,
         h("div", { style: { display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "18px", flexWrap: "wrap", gap: "10px" } },
           h("div", null,
-            h("h1", { style: { fontSize: "28px", fontWeight: "800", letterSpacing: "-0.5px" } }, "IPL 2026 Squads Directory"),
-            h("p", { style: { fontSize: "13px", color: "var(--ios-text-secondary)" } }, "Official player lists, playing roles, and team rosters")
+            h("h1", { style: { fontSize: "28px", fontWeight: "800", letterSpacing: "-0.5px" } }, "IPL 2027 Player Directory"),
+            h("p", { style: { fontSize: "13px", color: "var(--ios-text-secondary)" } }, "Player profiles & rosters across all 10 franchises")
           ),
-          // Role Filter Pills
           h("div", { style: { display: "flex", gap: "6px", flexWrap: "wrap" } },
             ["ALL", "BAT", "BOWL", "ALL-ROUND", "WK"].map((r) => h("button", {
               key: r,
@@ -733,7 +625,7 @@ function App() {
             );
           })
         ),
-        // Selected Squad Players Card
+        // Selected Squad
         h(IOSCard, null,
           h("div", { style: { display: "flex", alignItems: "center", gap: "12px", marginBottom: "16px" } },
             h(IOSTeamAvatar, { code: selSquadTeam, color: IPL_TEAMS[selSquadTeam]?.color || "#888", large: true }),
@@ -795,7 +687,6 @@ function App() {
             Object.keys(D5_2025.grand || {}).map((t) => h("option", { key: t, value: t }, t))
           )
         ),
-        // Standings Table
         h(IOSCard, { style: { padding: 0, overflow: "hidden", marginBottom: "20px" } },
           h("div", { style: { overflowX: "auto" } },
             h("table", { className: "ios-table" },
@@ -835,8 +726,6 @@ function App() {
             )
           )
         ),
-        // Match Scorecards
-        h("h2", { style: { fontSize: "20px", fontWeight: "700", marginBottom: "12px" } }, "Match Scorecards"),
         h("div", { style: { display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(280px, 1fr))", gap: "14px" } },
           D5_2025.matches
             .filter((m) => histFilter === "ALL" || m.teams[histFilter])
@@ -869,9 +758,9 @@ function App() {
         )
       ),
 
-      // 🎯 View 6: Rules & Scoring Matrix
+      // 🎯 View 6: Rules & Net Differentials
       tab === "rules" && h("div", null,
-        h("h1", { style: { fontSize: "28px", fontWeight: "800", letterSpacing: "-0.5px", marginBottom: "18px" } }, "Scoring Rules & Net Differentials"),
+        h("h1", { style: { fontSize: "28px", fontWeight: "800", letterSpacing: "-0.5px", marginBottom: "18px" } }, "IPL 2027 Scoring Rules"),
         h("div", { style: { display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(320px, 1fr))", gap: "16px", marginBottom: "20px" } },
           h(IOSCard, null,
             h("h3", { style: { color: "var(--ios-teal)", fontSize: "17px", fontWeight: "700", marginBottom: "12px" } }, "⚡ Base Points"),
@@ -905,7 +794,7 @@ function App() {
           )
         ),
         h(IOSCard, { style: { borderColor: "rgba(48,209,88,0.3)" } },
-          h("h3", { style: { color: "var(--ios-green)", fontSize: "17px", fontWeight: "700", marginBottom: "8px" } }, "🌟 Captain & Differential Net Points Algorithm"),
+          h("h3", { style: { color: "var(--ios-green)", fontSize: "17px", fontWeight: "700", marginBottom: "8px" } }, "🌟 Captain & Differential Scoring"),
           h("p", { style: { fontSize: "13.5px", color: "var(--ios-text-secondary)", lineHeight: "1.7", marginBottom: "10px" } },
             "1. ", h("strong", { style: { color: "#fff" } }, "Captain 2× Multiplier: "),
             "Designated captain receives double (2×) all base points and bonuses."
@@ -918,17 +807,16 @@ function App() {
       )
     ),
 
-    // ── 3. FLOATING iOS BOTTOM TAB BAR ────────────────────────────────────────
+    // Floating Bottom Tab Bar
     h("nav", {
       className: "ios-bottom-tabbar",
-      role: "navigation",
-      "aria-label": "Mobile App Bottom Navigation"
+      role: "navigation"
     },
       [
         { id: "standings", label: "Standings", icon: "🏆" },
         { id: "matches", label: "Matches", icon: "📋" },
-        { id: "live", label: "Live", icon: "📡" },
-        { id: "squads", label: "Squads", icon: "👥" },
+        { id: "live", label: "Live Sim", icon: "📡" },
+        { id: "squads", label: "Players", icon: "👥" },
         { id: "archive", label: "2025", icon: "📜" },
         { id: "rules", label: "Rules", icon: "🎯" },
       ].map((item) => {
@@ -944,45 +832,6 @@ function App() {
       })
     ),
 
-    // ── 4. MODALS ─────────────────────────────────────────────────────────────
-    // Modal: Free API Key Settings
-    h(IOSModalSheet, {
-      isOpen: showApiModal,
-      onClose: () => setShowApiModal(false),
-      title: "Free Cricket API Configuration",
-      maxWidth: "480px",
-    },
-      h("div", { style: { display: "flex", flexDirection: "column", gap: "14px" } },
-        h("div", { style: { padding: "12px", background: "rgba(10,132,255,0.1)", border: "0.5px solid rgba(10,132,255,0.3)", borderRadius: "var(--ios-radius-md)", fontSize: "13px" } },
-          "💡 ", h("strong", null, "How to get a 100% Free API Key:"),
-          h("div", { style: { marginTop: "6px", color: "var(--ios-text-secondary)" } },
-            "1. Visit ", h("a", { href: "https://cricketdata.org", target: "_blank", style: { color: "var(--ios-blue)" } }, "cricketdata.org"), " or ", h("a", { href: "https://cricapi.com", target: "_blank", style: { color: "var(--ios-blue)" } }, "cricapi.com"),
-            h("div", null, "2. Sign up for a free account to get your free API key (100 hits/day)."),
-            h("div", null, "3. Paste your key below for instant live scoring.")
-          )
-        ),
-        h("label", { style: { fontSize: "12px", fontWeight: "600", color: "var(--ios-text-secondary)", textTransform: "uppercase" } }, "CricketData / CricAPI Key"),
-        h("input", {
-          className: "ios-input",
-          type: "text",
-          value: customApiKey,
-          onChange: (e) => setCustomApiKey(e.target.value),
-          placeholder: "e.g. 895f5fdc-d1a2-4aeb-98ff-3c5825227bf7",
-        }),
-        h("div", { style: { display: "flex", gap: "8px", justifyContent: "flex-end", marginTop: "8px" } },
-          h(IOSButton, { variant: "ghost", small: true, onClick: () => setShowApiModal(false) }, "Cancel"),
-          h(IOSButton, {
-            variant: "primary", small: true,
-            onClick: () => {
-              localStorage.setItem("d5_cricket_api_key", customApiKey);
-              fetchLiveScores();
-              setShowApiModal(false);
-            }
-          }, "Save & Test Key")
-        )
-      )
-    ),
-
     // Modal: Admin PIN Unlock
     h(IOSModalSheet, {
       isOpen: showAdminModal,
@@ -991,7 +840,7 @@ function App() {
       maxWidth: "400px",
     },
       h("div", { style: { display: "flex", flexDirection: "column", gap: "14px" } },
-        h("p", { style: { fontSize: "13px", color: "var(--ios-text-secondary)" } }, "Enter the League Editor PIN to manage match scorecards and team settings."),
+        h("p", { style: { fontSize: "13px", color: "var(--ios-text-secondary)" } }, "Enter the PIN to unlock full manual editing privilege."),
         h("input", {
           className: "ios-input",
           type: "password",
@@ -1019,14 +868,14 @@ function App() {
       )
     ),
 
-    // Modal: Match Scorecard Editor
+    // 🌟 Manual Match & Player Selection Modal Suite
     editingEntry && h(IOSModalSheet, {
       isOpen: Boolean(editingEntry),
       onClose: () => setEditingEntry(null),
-      title: "Match Scorecard Editor",
-      maxWidth: "880px",
+      title: "IPL 2027 Manual Match Creator & Scorecard",
+      maxWidth: "960px",
     },
-      h(IOSMatchEditorContent, {
+      h(IOSManualMatchEditor, {
         entry: editingEntry,
         teams,
         onSave: handleSaveScorecard,
@@ -1067,11 +916,22 @@ function App() {
   );
 }
 
-// ─── 3. MATCH SCORECARD EDITOR CONTENT ────────────────────────────────────────
+// ─── MANUAL MATCH & PLAYER SELECTION SUITE ────────────────────────────────────
 
-function IOSMatchEditorContent({ entry, teams, onSave, onCancel }) {
+function IOSManualMatchEditor({ entry, teams, onSave, onCancel }) {
   const [draft, setDraft] = useState(() => JSON.parse(JSON.stringify(entry)));
   const [activeTeamId, setActiveTeamId] = useState(teams[0]?.id || "T1");
+
+  // Flattened player list across all IPL squads for easy selection
+  const allIplPlayers = useMemo(() => {
+    const list = [];
+    Object.entries(IPL_SQUADS).forEach(([teamCode, squad]) => {
+      squad.forEach((p) => {
+        list.push({ name: p.name, role: p.role, teamCode });
+      });
+    });
+    return list;
+  }, []);
 
   const updatePlayerField = (teamId, playerIdx, field, val) => {
     setDraft((prev) => {
@@ -1082,6 +942,7 @@ function IOSMatchEditorContent({ entry, teams, onSave, onCancel }) {
   };
 
   const toggleCaptain = (teamId, playerIdx) => {
+    hapticFeedback(15);
     setDraft((prev) => {
       const next = JSON.parse(JSON.stringify(prev));
       next.teamData[teamId].forEach((p, idx) => {
@@ -1091,61 +952,105 @@ function IOSMatchEditorContent({ entry, teams, onSave, onCancel }) {
     });
   };
 
+  // Compute live preview of points in modal
+  const teamTotals = useMemo(() => {
+    return teams.reduce((acc, t) => {
+      const roster = draft.teamData[t.id] || [];
+      acc[t.id] = roster.reduce((sum, p) => sum + calcPts(p), 0);
+      return acc;
+    }, {});
+  }, [draft, teams]);
+
   return h("div", { style: { display: "flex", flexDirection: "column", gap: "16px" } },
-    h("div", { style: { display: "grid", gridTemplateColumns: "1fr 1fr", gap: "12px" } },
-      h("div", null,
-        h("label", { style: { fontSize: "11px", color: "var(--ios-text-secondary)", fontWeight: "600", textTransform: "uppercase", display: "block", marginBottom: "4px" } }, "Scorecard Label"),
-        h("input", {
-          className: "ios-input",
-          type: "text",
-          value: draft.matchLabel || "",
-          onChange: (e) => setDraft({ ...draft, matchLabel: e.target.value }),
-          placeholder: "e.g. Match 1 - CSK vs RCB",
-          style: { width: "100%" }
-        })
-      ),
-      h("div", null,
-        h("label", { style: { fontSize: "11px", color: "var(--ios-text-secondary)", fontWeight: "600", textTransform: "uppercase", display: "block", marginBottom: "4px" } }, "Match Date"),
-        h("input", {
-          className: "ios-input",
-          type: "date",
-          value: draft.date || "",
-          onChange: (e) => setDraft({ ...draft, date: e.target.value }),
-          style: { width: "100%" }
-        })
+    // Step 1: Match Setup Header
+    h("div", { style: { background: "var(--ios-bg-secondary)", borderRadius: "var(--ios-radius-lg)", padding: "14px", border: "0.5px solid var(--ios-separator)" } },
+      h("div", { style: { fontSize: "12px", fontWeight: "700", color: "var(--ios-teal)", textTransform: "uppercase", marginBottom: "8px" } }, "1. Match Details"),
+      h("div", { style: { display: "grid", gridTemplateColumns: "2fr 1fr 1fr", gap: "10px" } },
+        h("div", null,
+          h("label", { style: { fontSize: "11px", color: "var(--ios-text-secondary)", fontWeight: "600", display: "block", marginBottom: "4px" } }, "MATCH TITLE / FIXTURE"),
+          h("input", {
+            className: "ios-input",
+            type: "text",
+            value: draft.matchLabel || "",
+            onChange: (e) => setDraft({ ...draft, matchLabel: e.target.value }),
+            placeholder: "e.g. Match 1 - CSK vs MI",
+            style: { width: "100%" }
+          })
+        ),
+        h("div", null,
+          h("label", { style: { fontSize: "11px", color: "var(--ios-text-secondary)", fontWeight: "600", display: "block", marginBottom: "4px" } }, "DATE"),
+          h("input", {
+            className: "ios-input",
+            type: "date",
+            value: draft.date || "",
+            onChange: (e) => setDraft({ ...draft, date: e.target.value }),
+            style: { width: "100%" }
+          })
+        ),
+        h("div", null,
+          h("label", { style: { fontSize: "11px", color: "var(--ios-text-secondary)", fontWeight: "600", display: "block", marginBottom: "4px" } }, "QUICK PRESET"),
+          h("select", {
+            className: "ios-input",
+            style: { width: "100%" },
+            onChange: (e) => {
+              const fix = IPL_SCHEDULE_2027.find((m) => m.id === e.target.value);
+              if (fix) {
+                setDraft({
+                  ...draft,
+                  matchLabel: `${fix.team1} vs ${fix.team2}`,
+                  date: fix.date,
+                });
+              }
+            }
+          },
+            h("option", { value: "" }, "Select Fixture..."),
+            IPL_SCHEDULE_2027.map((m) => h("option", { key: m.id, value: m.id }, `${m.team1} vs ${m.team2} (${m.date})`))
+          )
+        )
       )
     ),
 
-    // Team Switcher Pills
+    // Step 2: Fantasy Team Switcher Tabs with Live Totals
     h("div", { style: { display: "flex", gap: "8px", overflowX: "auto", paddingBottom: "4px" } },
       teams.map((t) => {
         const isSel = activeTeamId === t.id;
-        const total = (draft.teamData[t.id] || []).reduce((s, p) => s + calcPts(p), 0);
+        const total = teamTotals[t.id] || 0;
         return h("button", {
           key: t.id,
           onClick: () => setActiveTeamId(t.id),
           style: {
-            padding: "8px 14px",
+            padding: "9px 16px",
             borderRadius: "var(--ios-radius-md)",
-            border: isSel ? `1px solid ${t.color}` : "0.5px solid var(--ios-separator)",
+            border: isSel ? `1.5px solid ${t.color}` : "0.5px solid var(--ios-separator)",
             background: isSel ? `${t.color}22` : "var(--ios-bg-secondary)",
             color: isSel ? t.color : "var(--ios-text-secondary)",
-            fontWeight: "600",
+            fontWeight: "700",
             fontSize: "13px",
             cursor: "pointer",
             display: "flex",
             alignItems: "center",
-            gap: "6px",
+            gap: "8px",
+            flexShrink: 0,
           }
         },
           h("span", { style: { width: "8px", height: "8px", borderRadius: "50%", background: t.color } }),
-          `${t.name} (${total} pts)`
+          `${t.name}: `,
+          h("span", { style: { color: "#fff", fontWeight: "800" } }, `${total} pts`)
         );
       })
     ),
 
-    // Player Rows
+    // Step 3: Player Selection Roster & Stats Grid for Active Team
     h("div", { style: { display: "flex", flexDirection: "column", gap: "10px" } },
+      h("div", { style: { display: "flex", justifyContent: "space-between", alignItems: "center" } },
+        h("div", { style: { fontSize: "12px", fontWeight: "700", color: "var(--ios-orange)", textTransform: "uppercase" } },
+          `2. ${teams.find((t) => t.id === activeTeamId)?.name} 5-Player Roster & Match Stats`
+        ),
+        h("span", { style: { fontSize: "11px", color: "var(--ios-text-secondary)" } },
+          "💡 Type player name or pick from dropdown • Click ★ to set Captain (2×)"
+        )
+      ),
+
       (draft.teamData[activeTeamId] || []).map((player, pIdx) => {
         const pts = calcPts(player);
         return h("div", {
@@ -1156,48 +1061,76 @@ function IOSMatchEditorContent({ entry, teams, onSave, onCancel }) {
             borderRadius: "var(--ios-radius-md)",
             padding: "12px",
             display: "grid",
-            gridTemplateColumns: "150px 1fr 1fr 1fr 1fr 1fr 50px 70px",
+            gridTemplateColumns: "180px 1fr 1fr 1fr 1fr 1fr 50px 75px",
             gap: "8px",
             alignItems: "center",
           }
         },
+          // Player Name & Captain Picker
           h("div", null,
             h("input", {
               className: "ios-input",
+              list: `ipl-players-${activeTeamId}-${pIdx}`,
               type: "text",
               value: player.name || "",
               onChange: (e) => updatePlayerField(activeTeamId, pIdx, "name", e.target.value),
               placeholder: `Player ${pIdx + 1}`,
-              style: { width: "100%", padding: "6px 8px", fontSize: "13px" }
+              style: { width: "100%", padding: "6px 8px", fontSize: "13px", fontWeight: "600" }
             }),
+            h("datalist", { id: `ipl-players-${activeTeamId}-${pIdx}` },
+              allIplPlayers.map((p, idx) => h("option", { key: idx, value: p.name }, `${p.teamCode} - ${p.role}`))
+            ),
             h("button", {
               onClick: () => toggleCaptain(activeTeamId, pIdx),
               style: {
                 background: "none", border: "none",
                 color: player.isCaptain ? "var(--ios-yellow)" : "var(--ios-text-tertiary)",
-                fontSize: "11px", fontWeight: "600", cursor: "pointer", marginTop: "4px", display: "block"
+                fontSize: "11px", fontWeight: "700", cursor: "pointer", marginTop: "4px", display: "block"
               }
-            }, player.isCaptain ? "★ Captain (2×)" : "☆ Set Captain")
+            }, player.isCaptain ? "★ Captain (2× Multiplier)" : "☆ Set as Captain")
           ),
-          h(IOSNumberInput, { label: "Runs", value: player.runs || 0, onChange: (v) => updatePlayerField(activeTeamId, pIdx, "runs", v) }),
-          h(IOSNumberInput, { label: "Wkts", value: player.wkts || 0, onChange: (v) => updatePlayerField(activeTeamId, pIdx, "wkts", v) }),
-          h(IOSNumberInput, { label: "Catch", value: player.catch || 0, onChange: (v) => updatePlayerField(activeTeamId, pIdx, "catch", v) }),
-          h(IOSNumberInput, { label: "RO/St", value: (player.ro || 0) + (player.stmp || 0), onChange: (v) => updatePlayerField(activeTeamId, pIdx, "ro", v) }),
-          h(IOSNumberInput, { label: "6s", value: player.b6s || 0, onChange: (v) => updatePlayerField(activeTeamId, pIdx, "b6s", v) }),
-          h(IOSNumberInput, { label: "Duck", value: player.duck || 0, min: 0, max: 1, onChange: (v) => updatePlayerField(activeTeamId, pIdx, "duck", v) }),
-          h("div", { style: { textAlign: "right", fontWeight: "700", fontSize: "17px", color: "var(--ios-green)" } }, pts)
+          h(IOSNumberInput, { label: "Runs (+5)", value: player.runs || 0, onChange: (v) => updatePlayerField(activeTeamId, pIdx, "runs", v) }),
+          h(IOSNumberInput, { label: "Wkts (+100)", value: player.wkts || 0, onChange: (v) => updatePlayerField(activeTeamId, pIdx, "wkts", v) }),
+          h(IOSNumberInput, { label: "Catches (+50)", value: player.catch || 0, onChange: (v) => updatePlayerField(activeTeamId, pIdx, "catch", v) }),
+          h(IOSNumberInput, { label: "RO/St (+50)", value: (player.ro || 0) + (player.stmp || 0), onChange: (v) => updatePlayerField(activeTeamId, pIdx, "ro", v) }),
+          h(IOSNumberInput, { label: "Sixes (Bonus)", value: player.b6s || 0, onChange: (v) => updatePlayerField(activeTeamId, pIdx, "b6s", v) }),
+          h(IOSNumberInput, { label: "Duck (-50)", value: player.duck || 0, min: 0, max: 1, onChange: (v) => updatePlayerField(activeTeamId, pIdx, "duck", v) }),
+          h("div", { style: { textAlign: "right", fontWeight: "800", fontSize: "17px", color: player.isCaptain ? "var(--ios-yellow)" : "var(--ios-green)" } },
+            `${pts} pts`
+          )
         );
       })
     ),
 
-    h("div", { style: { display: "flex", gap: "10px", justifyContent: "flex-end", marginTop: "10px" } },
-      h(IOSButton, { variant: "ghost", onClick: onCancel }, "Cancel"),
-      h(IOSButton, { variant: "primary", onClick: () => onSave(draft) }, "Save Scorecard")
+    // Footer actions & Live Winner Preview
+    h("div", {
+      style: {
+        display: "flex",
+        justifyContent: "space-between",
+        alignItems: "center",
+        borderTop: "0.5px solid var(--ios-separator)",
+        paddingTop: "14px",
+        marginTop: "10px",
+      }
+    },
+      h("div", { style: { fontSize: "13px", color: "var(--ios-text-secondary)" } },
+        "Match Total Points: ",
+        Object.entries(teamTotals).map(([tId, pts]) => {
+          const t = teams.find((tm) => tm.id === tId);
+          return h("span", { key: tId, style: { color: t?.color || "#fff", fontWeight: "700", marginRight: "10px" } },
+            `${t?.name}: ${pts}`
+          );
+        })
+      ),
+      h("div", { style: { display: "flex", gap: "10px" } },
+        h(IOSButton, { variant: "ghost", onClick: onCancel }, "Cancel"),
+        h(IOSButton, { variant: "primary", onClick: () => onSave(draft) }, "💾 Save Match Scorecard")
+      )
     )
   );
 }
 
-// ─── 4. REGISTER SERVICE WORKER & BOOTSTRAP ───────────────────────────────────
+// ─── REGISTER SERVICE WORKER & BOOTSTRAP ─────────────────────────────────────
 if (typeof navigator !== "undefined" && "serviceWorker" in navigator) {
   navigator.serviceWorker.register("./sw.js").catch(() => {});
 }
