@@ -1,111 +1,87 @@
 /**
- * Live Cricket Score Aggregator Service
+ * Live Cricket Score Service — ESPNCricinfo Public Feed (Unlimited & Zero-Key)
  * D5 IPL Fantasy Platform
  */
 
-import { IPL_SCHEDULE, IPL_TEAMS } from "../../core/constants.js";
-
 class LiveScoreService {
   constructor() {
-    this.cache = {};
-    this.lastFetchedAt = 0;
-    this.cacheTTLMs = 30000; // 30 seconds
-    this.apiKey = process.env.CRICKET_API_KEY || "895f5fdc-d1a2-4aeb-98ff-3c5825227bf7";
+    this.cache = null;
+    this.lastFetchTime = 0;
+    this.CACHE_TTL_MS = 30000; // 30-second in-memory cache
+    this.espnFeedUrl = "https://static.cricinfo.com/rss/livescores.xml";
+  }
+
+  parseEspnXml(xmlText) {
+    const matches = [];
+    const itemRegex = /<item>([\s\S]*?)<\/item>/gi;
+    let match;
+
+    while ((match = itemRegex.exec(xmlText)) !== null) {
+      const itemContent = match[1];
+      const titleMatch = /<title><!\[CDATA\[(.*?)\]\]><\/title>|<title>(.*?)<\/title>/i.exec(itemContent);
+      const descMatch = /<description><!\[CDATA\[(.*?)\]\]><\/description>|<description>(.*?)<\/description>/i.exec(itemContent);
+      const linkMatch = /<link>(.*?)<\/link>/i.exec(itemContent);
+
+      const title = (titleMatch?.[1] || titleMatch?.[2] || "").trim();
+      const description = (descMatch?.[1] || descMatch?.[2] || "").trim();
+      const link = (linkMatch?.[1] || "").trim();
+
+      if (title) {
+        matches.push({
+          title,
+          description,
+          link,
+          parsedAt: new Date().toISOString(),
+        });
+      }
+    }
+
+    return matches;
   }
 
   async getLiveScores() {
     const now = Date.now();
-    if (this.cache && (now - this.lastFetchedAt < this.cacheTTLMs)) {
+    if (this.cache && (now - this.lastFetchTime < this.CACHE_TTL_MS)) {
       return {
-        scores: this.cache,
+        source: "ESPNCricinfo Public RSS (Cached)",
         cached: true,
-        lastUpdated: new Date(this.lastFetchedAt).toISOString(),
+        ttlRemaining: Math.round((this.CACHE_TTL_MS - (now - this.lastFetchTime)) / 1000),
+        data: this.cache,
       };
     }
 
     try {
-      // Third-party API call (cricketdata.org)
-      const res = await fetch(
-        `https://api.cricapi.com/v1/currentMatches?apikey=${this.apiKey}&offset=0`,
-        { headers: { Accept: "application/json" }, signal: AbortSignal.timeout(5000) }
-      );
+      const response = await fetch(this.espnFeedUrl, {
+        headers: {
+          "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) D5IPL/2.0",
+        },
+      });
 
-      if (!res.ok) {
-        throw new Error(`API responded with HTTP ${res.status}`);
+      if (!response.ok) {
+        throw new Error(`ESPNCricinfo returned HTTP ${response.status}`);
       }
 
-      const data = await res.json();
-      const matchMap = {};
+      const xmlText = await response.text();
+      const parsedMatches = this.parseEspnXml(xmlText);
 
-      if (data.status === "success" && Array.isArray(data.data)) {
-        data.data.forEach((m) => {
-          const matchedFixture = IPL_SCHEDULE.find((sch) => {
-            const t1 = IPL_TEAMS[sch.team1]?.name?.toLowerCase() || "";
-            const t2 = IPL_TEAMS[sch.team2]?.name?.toLowerCase() || "";
-            const mName = (m.name || "").toLowerCase();
-            return (mName.includes(sch.team1.toLowerCase()) || mName.includes(t1)) &&
-                   (mName.includes(sch.team2.toLowerCase()) || mName.includes(t2));
-          });
-
-          if (matchedFixture) {
-            matchMap[matchedFixture.id] = {
-              matchId: matchedFixture.id,
-              name: m.name,
-              status: m.status,
-              matchStarted: m.matchStarted,
-              matchEnded: m.matchEnded,
-              score: (m.score || []).map((s) => ({
-                inning: s.inning,
-                r: s.r,
-                w: s.w,
-                o: s.o,
-              })),
-            };
-          }
-        });
-      }
-
-      this.cache = matchMap;
-      this.lastFetchedAt = now;
+      this.cache = parsedMatches;
+      this.lastFetchTime = now;
 
       return {
-        scores: this.cache,
+        source: "ESPNCricinfo Public Live Feed (Unlimited / Zero-Key)",
         cached: false,
-        lastUpdated: new Date(this.lastFetchedAt).toISOString(),
+        count: parsedMatches.length,
+        data: parsedMatches,
       };
-    } catch (err) {
-      console.warn("[LiveScoreService] Failed to fetch upstream live scores:", err.message);
-      // Return cached or empty map on failure
+    } catch (error) {
+      console.warn("ESPNCricinfo live feed warning:", error.message);
       return {
-        scores: this.cache || {},
-        cached: true,
-        fallback: true,
-        error: err.message,
-        lastUpdated: new Date(this.lastFetchedAt || Date.now()).toISOString(),
+        source: "ESPNCricinfo Fallback",
+        error: error.message,
+        data: this.cache || [],
       };
     }
-  }
-
-  getUpcomingFixtures() {
-    const todayStr = new Date().toISOString().slice(0, 10);
-    return IPL_SCHEDULE.map((m) => {
-      const matchDate = m.date;
-      const isPast = matchDate < todayStr;
-      const isToday = matchDate === todayStr;
-
-      let status = "upcoming";
-      if (isPast) status = "completed";
-      else if (isToday) status = "today";
-
-      return {
-        ...m,
-        team1Info: IPL_TEAMS[m.team1] || { name: m.team1, color: "#888" },
-        team2Info: IPL_TEAMS[m.team2] || { name: m.team2, color: "#888" },
-        status,
-      };
-    });
   }
 }
 
 export const liveScoreService = new LiveScoreService();
-export default liveScoreService;

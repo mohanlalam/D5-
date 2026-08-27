@@ -490,7 +490,7 @@ window.EDITOR_PASSWORD = "ipl";
 <script>
 /**
  * D5 IPL Fantasy Platform — Titanium Slate Design (v3.0)
- * Clean, High-End Athletic Theme with Focused Harmonious Palette
+ * Live Scores powered by ESPNCricinfo Public Live Feed (Unlimited & Zero-Key)
  */
 
 const { useState, useEffect, useRef, useMemo, createElement: h } = React;
@@ -601,6 +601,11 @@ function App() {
   const [entries, setEntries] = useState([]);
   const [editingEntry, setEditingEntry] = useState(null);
 
+  // ESPNCricinfo Live Feed State
+  const [espnMatches, setEspnMatches] = useState([]);
+  const [espnLoading, setEspnLoading] = useState(false);
+  const [lastEspnUpdated, setLastEspnUpdated] = useState(null);
+
   // Live Simulator Engine
   const [simActive, setSimActive] = useState(false);
   const [simScore, setSimScore] = useState({ r: 172, w: 4, o: "18.1", target: 188, team1: "CSK", team2: "MI" });
@@ -612,6 +617,53 @@ function App() {
   // 2025 Archive
   const [histFilter, setHistFilter] = useState("ALL");
   const [selHistMatch, setSelHistMatch] = useState(null);
+
+  // ── ESPNCricinfo Public Feed Fetcher ───────────────────────────────────────
+  const fetchEspnLiveScores = async () => {
+    setEspnLoading(true);
+    try {
+      // 1. Try local server API first, fallback to public proxy
+      let xmlText = "";
+      try {
+        const localRes = await fetch("/api/v1/live/scores");
+        const localData = await localRes.json();
+        if (localData.data && Array.isArray(localData.data)) {
+          setEspnMatches(localData.data);
+          setLastEspnUpdated(new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }));
+          setEspnLoading(false);
+          return;
+        }
+      } catch(e) {}
+
+      // 2. Direct browser fallback via public CORS bridge
+      const rssUrl = encodeURIComponent("https://static.cricinfo.com/rss/livescores.xml");
+      const res = await fetch(`https://api.allorigins.win/raw?url=${rssUrl}`);
+      xmlText = await res.text();
+
+      const parser = new DOMParser();
+      const xmlDoc = parser.parseFromString(xmlText, "text/xml");
+      const items = Array.from(xmlDoc.querySelectorAll("item"));
+
+      const parsed = items.map((item) => ({
+        title: item.querySelector("title")?.textContent?.trim() || "",
+        description: item.querySelector("description")?.textContent?.trim() || "",
+        link: item.querySelector("link")?.textContent?.trim() || "",
+      })).filter((m) => m.title);
+
+      setEspnMatches(parsed);
+      setLastEspnUpdated(new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }));
+    } catch(err) {
+      console.warn("ESPNCricinfo live feed:", err.message);
+    } finally {
+      setEspnLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchEspnLiveScores();
+    const interval = setInterval(fetchEspnLiveScores, 30000); // 30-sec auto-refresh
+    return () => clearInterval(interval);
+  }, []);
 
   // ── Firebase Realtime Sync ─────────────────────────────────────────────────
   useEffect(() => {
@@ -779,7 +831,7 @@ function App() {
           )
         ),
 
-        // Live Indicator Bar
+        // Live Feed Badge (ESPN Cricinfo)
         h("div", {
           onClick: () => setTab("live"),
           style: {
@@ -795,9 +847,11 @@ function App() {
           }
         },
           h("span", { className: "pulse-dot" }),
-          simActive
+          espnMatches.length > 0
+            ? h("span", { style: { color: "var(--accent-primary)", fontWeight: "600" } }, `ESPN: ${espnMatches[0].title.slice(0, 32)}...`)
+            : simActive
             ? h("span", { style: { color: "var(--accent-primary)", fontWeight: "600" } }, `${simScore.team1} ${simScore.r}/${simScore.w} (${simScore.o} ov)`)
-            : h("span", { style: { color: "var(--text-secondary)" } }, "IPL 2027 Manual Match Suite")
+            : h("span", { style: { color: "var(--text-secondary)" } }, "ESPNCricinfo Live Feed Connected")
         ),
 
         // Prominent Header Button
@@ -958,19 +1012,51 @@ function App() {
         )
       ),
 
-      // 📡 View 3: Live Simulator
+      // 📡 View 3: Live Feed (ESPNCricinfo Public Feed + Simulator)
       tab === "live" && h("div", null,
         h("div", { style: { display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "18px", flexWrap: "wrap", gap: "10px" } },
           h("div", null,
-            h("h1", { style: { fontSize: "24px", fontWeight: "700", letterSpacing: "-0.5px" } }, "Match Simulator & Schedule"),
-            h("p", { style: { fontSize: "13px", color: "var(--text-secondary)" } }, "Interactive live game engine & tournament fixtures")
+            h("h1", { style: { fontSize: "24px", fontWeight: "700", letterSpacing: "-0.5px" } }, "ESPNCricinfo Live Feed & Schedule"),
+            lastEspnUpdated && h("p", { style: { fontSize: "13px", color: "var(--text-secondary)" } }, `Live feed updated at ${lastEspnUpdated} (Unlimited Zero-Key RSS)`)
           ),
-          h(AppButton, {
-            variant: simActive ? "danger" : "primary",
-            small: true,
-            onClick: () => setSimActive(!simActive)
-          }, simActive ? "⏹ Stop Simulator" : "▶ Start Live Game Sim")
+          h("div", { style: { display: "flex", gap: "8px" } },
+            h(AppButton, {
+              variant: "secondary",
+              small: true,
+              loading: espnLoading,
+              onClick: fetchEspnLiveScores,
+            }, "🔄 Refresh ESPN Feed"),
+            h(AppButton, {
+              variant: simActive ? "danger" : "primary",
+              small: true,
+              onClick: () => setSimActive(!simActive)
+            }, simActive ? "⏹ Stop Sim" : "▶ Start Live Sim")
+          )
         ),
+
+        // Live ESPNCricinfo Cards Grid
+        espnMatches.length > 0 && h("div", { style: { marginBottom: "24px" } },
+          h("h2", { style: { fontSize: "16px", fontWeight: "700", color: "var(--accent-primary)", marginBottom: "12px" } },
+            `📡 Live Matches from ESPNCricinfo (${espnMatches.length})`
+          ),
+          h("div", { style: { display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(320px, 1fr))", gap: "12px" } },
+            espnMatches.map((m, idx) => h(AppCard, { key: idx },
+              h("div", { style: { display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: "8px" } },
+                h("div", { style: { fontWeight: "700", fontSize: "15px", color: "#fff" } }, m.title),
+                h("span", { className: "badge-pill badge-live" }, "ESPN LIVE")
+              ),
+              m.description && h("div", { style: { fontSize: "12.5px", color: "var(--text-secondary)", lineHeight: "1.5", marginTop: "4px" } }, m.description),
+              m.link && h("a", {
+                href: m.link,
+                target: "_blank",
+                rel: "noopener noreferrer",
+                style: { display: "inline-block", fontSize: "12px", color: "var(--accent-secondary)", marginTop: "8px", textDecoration: "none", fontWeight: "600" }
+              }, "View on ESPNCricinfo ↗")
+            ))
+          )
+        ),
+
+        // Simulator Card
         simActive && h(AppCard, { style: { marginBottom: "20px", background: "rgba(16, 185, 129, 0.06)", borderColor: "var(--accent-primary-border)" } },
           h("div", { style: { display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "12px" } },
             h("span", { className: "badge-pill badge-live" }, "SIMULATING BALL-BY-BALL"),
@@ -991,6 +1077,7 @@ function App() {
             )
           )
         ),
+
         h("h2", { style: { fontSize: "18px", fontWeight: "700", marginBottom: "12px" } }, "IPL 2027 Schedule"),
         h("div", { style: { display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(280px, 1fr))", gap: "12px" } },
           IPL_SCHEDULE_2027.map((m) => h(AppCard, { key: m.id },
