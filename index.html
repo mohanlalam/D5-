@@ -13,209 +13,347 @@
   <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-database-compat.js"></script>
   <style>
 /* ==========================================================================
-   D5 IPL Fantasy Platform — Production Design System & Styling
+   D5 IPL Fantasy Platform — iOS Human Interface Design System (v2.0)
+   Designed according to Apple HIG: Frosted Glass, Inset Groups & Tactile Micro-interactions
    ========================================================================== */
 
 :root {
-  --bg-primary: #0b0d12;
-  --bg-surface: #141721;
-  --bg-surface-elevated: #1b202e;
-  --bg-surface-hover: #22293b;
+  /* iOS Dark Palette & Semantic Colors */
+  --ios-bg-base: #000000;
+  --ios-bg-grouped: #000000;
+  --ios-bg-secondary: #1c1c1e;
+  --ios-bg-tertiary: #2c2c2e;
+  --ios-bg-quaternary: #3a3a3c;
   
-  --border-subtle: #242b3d;
-  --border-focus: #3d4a68;
+  --ios-glass-header: rgba(28, 28, 30, 0.78);
+  --ios-glass-card: rgba(28, 28, 30, 0.65);
+  --ios-glass-elevated: rgba(44, 44, 46, 0.75);
+  --ios-glass-sheet: rgba(24, 24, 26, 0.88);
   
-  --accent-red: #d11a2a;
-  --accent-red-glow: rgba(209, 26, 42, 0.35);
-  --accent-cyan: #00c9ff;
-  --accent-cyan-glow: rgba(0, 201, 255, 0.25);
-  --accent-green: #a8ff3e;
-  --accent-green-glow: rgba(168, 255, 62, 0.25);
-  --accent-amber: #ffb830;
-  --accent-amber-glow: rgba(255, 184, 48, 0.25);
+  --ios-separator: rgba(84, 84, 88, 0.45);
+  --ios-separator-opaque: #38383a;
   
-  --text-primary: #f3f5f8;
-  --text-secondary: #9aa4b8;
-  --text-muted: #5e6982;
+  /* Apple System Accents */
+  --ios-blue: #0a84ff;
+  --ios-blue-rgb: 10, 132, 255;
+  --ios-green: #30d158;
+  --ios-green-rgb: 48, 209, 88;
+  --ios-red: #ff453a;
+  --ios-red-rgb: 255, 69, 58;
+  --ios-orange: #ff9f0a;
+  --ios-yellow: #ffd60a;
+  --ios-purple: #bf5af2;
+  --ios-teal: #64d2ff;
+  --ios-indigo: #5e5ce6;
+  --ios-pink: #ff375f;
   
-  --font-heading: 'Bebas Neue', cursive, sans-serif;
-  --font-body: 'DM Sans', system-ui, -apple-system, sans-serif;
+  /* Typography */
+  --ios-text-primary: #ffffff;
+  --ios-text-secondary: rgba(235, 235, 245, 0.6);
+  --ios-text-tertiary: rgba(235, 235, 245, 0.3);
+  --ios-text-quaternary: rgba(235, 235, 245, 0.18);
   
-  --radius-sm: 8px;
-  --radius-md: 14px;
-  --radius-lg: 20px;
-  --radius-full: 9999px;
+  --font-ios-display: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro", "SF Pro Text", "Helvetica Neue", Arial, sans-serif;
+  --font-ios-heading: 'Bebas Neue', var(--font-ios-display);
+  --font-ios-text: -apple-system, BlinkMacSystemFont, "SF Pro Text", "SF Pro", "Helvetica Neue", Arial, sans-serif;
+  --font-ios-mono: "SF Mono", Menlo, Monaco, Consolas, monospace;
   
-  --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.3);
-  --shadow-md: 0 8px 24px rgba(0, 0, 0, 0.45);
-  --shadow-lg: 0 16px 40px rgba(0, 0, 0, 0.6);
-  --transition-fast: 0.15s ease;
-  --transition-normal: 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+  /* Apple Radii & Elevation */
+  --ios-radius-xs: 6px;
+  --ios-radius-sm: 10px;
+  --ios-radius-md: 14px;
+  --ios-radius-lg: 20px;
+  --ios-radius-xl: 28px;
+  --ios-radius-full: 9999px;
+  
+  --ios-shadow-subtle: 0 2px 10px rgba(0, 0, 0, 0.35);
+  --ios-shadow-sheet: 0 -8px 32px rgba(0, 0, 0, 0.65);
+  --ios-shadow-glass: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+  
+  /* Apple Timing Curves (iOS Spring Feels) */
+  --ios-ease-spring: cubic-bezier(0.175, 0.885, 0.32, 1.15);
+  --ios-ease-smooth: cubic-bezier(0.32, 0.72, 0, 1);
 }
 
 *, *::before, *::after {
   box-sizing: border-box;
   margin: 0;
   padding: 0;
+  -webkit-tap-highlight-color: transparent;
 }
 
 body {
-  background-color: var(--bg-primary);
-  color: var(--text-primary);
-  font-family: var(--font-body);
-  min-height: 100vh;
-  line-height: 1.5;
+  background-color: var(--ios-bg-base);
+  color: var(--ios-text-primary);
+  font-family: var(--font-ios-text);
+  font-size: 15px;
+  line-height: 1.45;
   -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
   overflow-x: hidden;
+  letter-spacing: -0.2px;
 }
 
-/* Custom Scrollbar */
+/* iOS Smooth Scrollbar */
 ::-webkit-scrollbar {
-  width: 6px;
-  height: 6px;
+  width: 5px;
+  height: 5px;
 }
 ::-webkit-scrollbar-track {
-  background: var(--bg-primary);
+  background: transparent;
 }
 ::-webkit-scrollbar-thumb {
-  background: var(--border-subtle);
-  border-radius: var(--radius-full);
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: var(--ios-radius-full);
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: var(--accent-red);
+  background: rgba(255, 255, 255, 0.35);
 }
 
-/* Headings */
-h1, h2, h3, h4, .font-heading {
-  font-family: var(--font-heading);
-  letter-spacing: 1.5px;
-  text-transform: uppercase;
-  font-weight: 400;
+/* iOS Glass Surfaces */
+.ios-glass {
+  background: var(--ios-glass-card);
+  backdrop-filter: blur(24px) saturate(190%);
+  -webkit-backdrop-filter: blur(24px) saturate(190%);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow: var(--ios-shadow-glass);
 }
 
-/* Base Inputs */
-input, select, textarea {
-  font-family: var(--font-body);
-  background: var(--bg-surface);
-  border: 1px solid var(--border-subtle);
-  color: var(--text-primary);
-  border-radius: var(--radius-sm);
-  padding: 10px 14px;
-  font-size: 13.5px;
-  outline: none;
-  transition: border-color var(--transition-fast), box-shadow var(--transition-fast);
+.ios-glass-nav {
+  background: var(--ios-glass-header);
+  backdrop-filter: blur(30px) saturate(200%);
+  -webkit-backdrop-filter: blur(30px) saturate(200%);
+  border-bottom: 0.5px solid var(--ios-separator);
 }
 
-input:focus, select:focus, textarea:focus {
-  border-color: var(--accent-cyan);
-  box-shadow: 0 0 0 3px var(--accent-cyan-glow);
+/* iOS Inset Group Container */
+.ios-inset-group {
+  background: var(--ios-bg-secondary);
+  border-radius: var(--ios-radius-lg);
+  overflow: hidden;
+  border: 0.5px solid var(--ios-separator);
 }
 
-/* Animations */
-@keyframes pulseGlow {
-  0%, 100% { opacity: 1; transform: scale(1); }
-  50% { opacity: 0.5; transform: scale(0.92); }
+.ios-cell {
+  padding: 13px 16px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-bottom: 0.5px solid var(--ios-separator);
+  transition: background-color 0.15s ease;
 }
 
-@keyframes spin {
-  to { transform: rotate(360deg); }
-}
-
-@keyframes fadeIn {
-  from { opacity: 0; transform: translateY(8px); }
-  to { opacity: 1; transform: translateY(0); }
-}
-
-.animate-fade-in {
-  animation: fadeIn var(--transition-normal) forwards;
-}
-
-/* Glassmorphism & Cards */
-.card-glass {
-  background: var(--bg-surface);
-  border: 1px solid var(--border-subtle);
-  border-radius: var(--radius-md);
-  box-shadow: var(--shadow-sm);
-  transition: border-color var(--transition-normal), transform var(--transition-normal), box-shadow var(--transition-normal);
-}
-
-.card-glass:hover {
-  border-color: var(--border-focus);
-}
-
-/* Responsive Table Container */
-.table-responsive {
-  width: 100%;
-  overflow-x: auto;
-  border-radius: var(--radius-md);
-  border: 1px solid var(--border-subtle);
-}
-
-table {
-  width: 100%;
-  border-collapse: collapse;
-  text-align: left;
-}
-
-th {
-  background: var(--bg-surface-elevated);
-  font-family: var(--font-heading);
-  color: var(--text-muted);
-  font-size: 13px;
-  letter-spacing: 1.5px;
-  padding: 12px 16px;
-  border-bottom: 1px solid var(--border-subtle);
-  white-space: nowrap;
-}
-
-td {
-  padding: 14px 16px;
-  border-bottom: 1px solid var(--border-subtle);
-  font-size: 13.5px;
-}
-
-tr:last-child td {
+.ios-cell:last-child {
   border-bottom: none;
 }
 
-tbody tr:hover {
-  background: rgba(255, 255, 255, 0.02);
+.ios-cell:active {
+  background-color: var(--ios-bg-tertiary);
 }
 
-/* Utility Badges */
-.badge-live {
+/* iOS Segmented Control */
+.ios-segmented-control {
+  display: inline-flex;
+  background: rgba(118, 118, 128, 0.24);
+  padding: 3px;
+  border-radius: var(--ios-radius-sm);
+  gap: 2px;
+  position: relative;
+  user-select: none;
+}
+
+.ios-segmented-btn {
+  padding: 6px 14px;
+  border-radius: 7px;
+  border: none;
+  font-size: 13px;
+  font-weight: 500;
+  font-family: var(--font-ios-text);
+  color: var(--ios-text-secondary);
+  background: transparent;
+  cursor: pointer;
+  transition: all 0.22s var(--ios-ease-smooth);
   display: inline-flex;
   align-items: center;
   gap: 6px;
-  padding: 3px 10px;
-  border-radius: var(--radius-full);
-  background: rgba(209, 26, 42, 0.15);
-  border: 1px solid var(--accent-red);
-  color: #ff5e6d;
-  font-size: 11px;
-  font-weight: 700;
-  letter-spacing: 1px;
+  white-space: nowrap;
 }
 
-.badge-live-dot {
+.ios-segmented-btn.active {
+  background: rgba(255, 255, 255, 0.16);
+  color: #ffffff;
+  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.25), 0 1px 1px rgba(0, 0, 0, 0.15);
+  font-weight: 600;
+}
+
+/* iOS Spring Buttons */
+.ios-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  font-family: var(--font-ios-text);
+  font-size: 14px;
+  font-weight: 600;
+  border-radius: var(--ios-radius-full);
+  border: none;
+  cursor: pointer;
+  padding: 9px 18px;
+  transition: transform 0.18s var(--ios-ease-spring), opacity 0.15s ease, background 0.2s ease;
+}
+
+.ios-btn:active:not(:disabled) {
+  transform: scale(0.95);
+  opacity: 0.85;
+}
+
+.ios-btn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.ios-btn-primary {
+  background: var(--ios-blue);
+  color: #ffffff;
+}
+
+.ios-btn-tinted {
+  background: rgba(10, 132, 255, 0.15);
+  color: var(--ios-blue);
+}
+
+.ios-btn-destructive {
+  background: rgba(255, 69, 58, 0.15);
+  color: var(--ios-red);
+  border: 1px solid rgba(255, 69, 58, 0.3);
+}
+
+.ios-btn-ghost {
+  background: rgba(255, 255, 255, 0.08);
+  color: var(--ios-text-primary);
+}
+
+/* iOS Inputs */
+.ios-input {
+  background: var(--ios-bg-tertiary);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  color: var(--ios-text-primary);
+  border-radius: var(--ios-radius-sm);
+  padding: 10px 14px;
+  font-size: 14px;
+  font-family: var(--font-ios-text);
+  outline: none;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.ios-input:focus {
+  border-color: var(--ios-blue);
+  box-shadow: 0 0 0 3px rgba(10, 132, 255, 0.25);
+}
+
+/* iOS Modal Sheet */
+.ios-sheet-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.65);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  z-index: 1000;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  animation: iosFadeIn 0.25s var(--ios-ease-smooth);
+}
+
+@media (min-width: 768px) {
+  .ios-sheet-backdrop {
+    align-items: center;
+  }
+}
+
+.ios-sheet-card {
+  background: var(--ios-glass-sheet);
+  backdrop-filter: blur(30px) saturate(200%);
+  -webkit-backdrop-filter: blur(30px) saturate(200%);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: var(--ios-radius-xl) var(--ios-radius-xl) 0 0;
+  box-shadow: var(--ios-shadow-sheet);
+  width: 100%;
+  max-width: 820px;
+  max-height: 90vh;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  animation: iosSlideUp 0.32s var(--ios-ease-smooth);
+}
+
+@media (min-width: 768px) {
+  .ios-sheet-card {
+    border-radius: var(--ios-radius-xl);
+    max-height: 85vh;
+  }
+}
+
+/* iOS Grabber */
+.ios-grabber {
+  width: 36px;
+  height: 4.5px;
+  background: rgba(255, 255, 255, 0.28);
+  border-radius: var(--ios-radius-full);
+  margin: 10px auto 4px;
+}
+
+/* Live Pulse */
+@keyframes iosLivePulse {
+  0% { transform: scale(1); opacity: 1; }
+  50% { transform: scale(1.35); opacity: 0.45; }
+  100% { transform: scale(1); opacity: 1; }
+}
+
+.ios-pulse-dot {
   width: 7px;
   height: 7px;
-  background: var(--accent-red);
   border-radius: 50%;
-  animation: pulseGlow 1.2s infinite ease-in-out;
+  background: var(--ios-red);
+  display: inline-block;
+  animation: iosLivePulse 1.4s infinite ease-in-out;
 }
 
-/* Grid Layouts */
-.grid-responsive {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
-  gap: 16px;
+@keyframes iosFadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
 }
 
-@media (max-width: 768px) {
-  .grid-responsive {
-    grid-template-columns: 1fr;
-  }
+@keyframes iosSlideUp {
+  from { transform: translateY(100%); }
+  to { transform: translateY(0); }
+}
+
+/* Responsive Table */
+.ios-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.ios-table th {
+  padding: 10px 14px;
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.8px;
+  color: var(--ios-text-secondary);
+  border-bottom: 0.5px solid var(--ios-separator);
+  background: var(--ios-bg-secondary);
+}
+
+.ios-table td {
+  padding: 12px 14px;
+  border-bottom: 0.5px solid var(--ios-separator);
+  font-size: 14px;
+}
+
+.ios-table tr:last-child td {
+  border-bottom: none;
 }
 
 </style>
@@ -327,114 +465,325 @@ window.EDITOR_PASSWORD = "ipl";
 
 <script>
 /**
- * Production Frontend Application Core
- * D5 IPL Fantasy Platform
- * High-performance React 18 UI with Zero-Runtime-Babel overhead
+ * iOS Human Interface Component Architecture & Application Core
+ * D5 IPL Fantasy Platform (v2.0)
+ * 
+ * Production-ready, accessible, and responsive React 18 UI
  */
 
 const { useState, useEffect, useRef, useMemo, createElement: h } = React;
 
-// ─── UI PRIMITIVES & DESIGN SYSTEM COMPONENTS ─────────────────────────────────
+// ─── 1. REUSABLE ACCESSIBLE iOS UI COMPONENTS ─────────────────────────────────
 
-function Btn({ onClick, children, variant = "primary", disabled = false, small = false, style = {} }) {
-  const baseStyle = {
-    padding: small ? "6px 14px" : "10px 22px",
-    borderRadius: "24px",
-    cursor: disabled ? "not-allowed" : "pointer",
-    fontFamily: "var(--font-heading)",
-    fontSize: small ? "13px" : "15px",
-    letterSpacing: "1.5px",
-    textTransform: "uppercase",
-    transition: "all 0.2s ease",
-    border: "none",
-    opacity: disabled ? 0.45 : 1,
-    display: "inline-flex",
-    alignItems: "center",
-    justifyContent: "center",
-    gap: "8px",
-    outline: "none",
-  };
-
-  const variants = {
-    primary: { background: "linear-gradient(135deg, #d11a2a, #ff2d3d)", color: "#fff", boxShadow: "0 4px 14px rgba(209,26,42,0.35)" },
-    danger: { background: "rgba(209,26,42,0.15)", color: "#ff5e6d", border: "1px solid rgba(209,26,42,0.3)" },
-    ghost: { background: "var(--bg-surface-elevated)", color: "var(--text-secondary)", border: "1px solid var(--border-subtle)" },
-    success: { background: "linear-gradient(135deg, #00c853, #69f0ae)", color: "#000", boxShadow: "0 4px 14px rgba(0,200,83,0.3)" },
-    warning: { background: "linear-gradient(135deg, #ffb830, #ffd54f)", color: "#000", boxShadow: "0 4px 12px rgba(255,184,48,0.3)" },
-    cyan: { background: "linear-gradient(135deg, #00c9ff, #92fe9d)", color: "#000", boxShadow: "0 4px 12px rgba(0,201,255,0.3)" },
-  };
-
+/**
+ * iOS Tactile Push Button
+ * @param {Object} props
+ * @param {('primary'|'tinted'|'destructive'|'ghost'|'plain')} [props.variant='primary']
+ * @param {boolean} [props.small=false]
+ * @param {boolean} [props.disabled=false]
+ * @param {boolean} [props.loading=false]
+ * @param {Function} props.onClick
+ */
+function IOSButton({ onClick, children, variant = "primary", disabled = false, small = false, loading = false, style = {}, ariaLabel }) {
+  const variantClass = `ios-btn ios-btn-${variant}`;
   return h("button", {
     onClick,
-    disabled,
-    style: { ...baseStyle, ...(variants[variant] || variants.primary), ...style },
-  }, children);
+    disabled: disabled || loading,
+    className: variantClass,
+    "aria-label": ariaLabel,
+    "aria-busy": loading,
+    style: {
+      padding: small ? "6px 14px" : "10px 20px",
+      fontSize: small ? "13px" : "15px",
+      ...style,
+    }
+  },
+    loading && h("span", {
+      style: {
+        width: "14px", height: "14px", border: "2px solid rgba(255,255,255,0.3)",
+        borderTopColor: "#fff", borderRadius: "50%", animation: "spin 0.6s linear infinite", display: "inline-block"
+      }
+    }),
+    children
+  );
 }
 
-function Card({ children, style = {}, className = "" }) {
+/**
+ * iOS Accessible Segmented Control
+ * @param {Object} props
+ * @param {Array<{ id: string, label: string, icon?: string }>} props.items
+ * @param {string} props.selectedId
+ * @param {Function} props.onChange
+ */
+function IOSSegmentedControl({ items, selectedId, onChange, ariaLabel = "View Navigation" }) {
   return h("div", {
-    className: `card-glass animate-fade-in ${className}`,
-    style: { padding: "20px", ...style },
+    className: "ios-segmented-control",
+    role: "tablist",
+    "aria-label": ariaLabel,
+  },
+    items.map((item) => {
+      const isSelected = item.id === selectedId;
+      return h("button", {
+        key: item.id,
+        role: "tab",
+        "aria-selected": isSelected,
+        className: `ios-segmented-btn ${isSelected ? "active" : ""}`,
+        onClick: () => onChange(item.id),
+      },
+        item.icon && h("span", { style: { fontSize: "14px" } }, item.icon),
+        item.label
+      );
+    })
+  );
+}
+
+/**
+ * iOS Frosted Glass Card
+ */
+function IOSCard({ children, style = {}, className = "", onClick, ariaRole }) {
+  return h("div", {
+    className: `ios-glass ${className}`,
+    role: ariaRole,
+    onClick,
+    style: {
+      borderRadius: "var(--ios-radius-lg)",
+      padding: "18px",
+      transition: "all 0.2s var(--ios-ease-smooth)",
+      cursor: onClick ? "pointer" : "default",
+      ...style,
+    }
   }, children);
 }
 
-function LiveBadge() {
-  return h("span", { className: "badge-live" },
-    h("span", { className: "badge-live-dot" }),
+/**
+ * iOS Inset Grouped Container & Cells (Apple Settings Style)
+ */
+function IOSGroupedList({ children, title, footer, style = {} }) {
+  return h("div", { style: { marginBottom: "20px", ...style } },
+    title && h("div", {
+      style: {
+        fontSize: "12px",
+        fontWeight: "600",
+        textTransform: "uppercase",
+        letterSpacing: "0.8px",
+        color: "var(--ios-text-secondary)",
+        padding: "0 14px 6px",
+      }
+    }, title),
+    h("div", { className: "ios-inset-group" }, children),
+    footer && h("div", {
+      style: {
+        fontSize: "12px",
+        color: "var(--ios-text-tertiary)",
+        padding: "6px 14px 0",
+      }
+    }, footer)
+  );
+}
+
+function IOSCell({ label, value, sublabel, icon, onClick, trailingArrow = false, style = {} }) {
+  return h("div", {
+    className: "ios-cell",
+    onClick,
+    style: { cursor: onClick ? "pointer" : "default", ...style },
+  },
+    h("div", { style: { display: "flex", alignItems: "center", gap: "12px" } },
+      icon && h("div", {
+        style: {
+          width: "28px", height: "28px", borderRadius: "7px",
+          background: "var(--ios-bg-tertiary)", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "14px"
+        }
+      }, icon),
+      h("div", null,
+        h("div", { style: { fontWeight: "500", color: "var(--ios-text-primary)" } }, label),
+        sublabel && h("div", { style: { fontSize: "12px", color: "var(--ios-text-secondary)" } }, sublabel)
+      )
+    ),
+    h("div", { style: { display: "flex", alignItems: "center", gap: "8px" } },
+      value && h("span", { style: { color: "var(--ios-text-secondary)", fontSize: "14px" } }, value),
+      trailingArrow && h("span", { style: { color: "var(--ios-text-tertiary)", fontSize: "14px" } }, "›")
+    )
+  );
+}
+
+/**
+ * iOS Pill Badges & Live Status Indicator
+ */
+function IOSLiveBadge() {
+  return h("span", {
+    style: {
+      display: "inline-flex",
+      alignItems: "center",
+      gap: "6px",
+      padding: "3px 10px",
+      borderRadius: "var(--ios-radius-full)",
+      background: "rgba(255, 69, 58, 0.15)",
+      border: "0.5px solid rgba(255, 69, 58, 0.4)",
+      color: "var(--ios-red)",
+      fontSize: "11px",
+      fontWeight: "700",
+      letterSpacing: "0.6px",
+    }
+  },
+    h("span", { className: "ios-pulse-dot" }),
     "LIVE"
   );
 }
 
-function StatusBadge({ status, daysUntil }) {
-  if (status === "live") return h(LiveBadge);
+function IOSStatusBadge({ status, daysUntil }) {
+  if (status === "live") return h(IOSLiveBadge);
   if (status === "completed") {
     return h("span", {
-      style: { padding: "3px 10px", borderRadius: "12px", background: "rgba(168,255,62,0.12)", color: "#a8ff3e", fontSize: "11px", border: "1px solid rgba(168,255,62,0.3)", fontWeight: "600" }
+      style: {
+        padding: "3px 10px", borderRadius: "var(--ios-radius-full)",
+        background: "rgba(48, 209, 88, 0.12)", color: "var(--ios-green)",
+        fontSize: "11px", fontWeight: "600", border: "0.5px solid rgba(48, 209, 88, 0.3)"
+      }
     }, "✓ Done");
   }
   if (daysUntil === 0) {
     return h("span", {
-      style: { padding: "3px 10px", borderRadius: "12px", background: "rgba(255,184,48,0.15)", color: "#ffb830", fontSize: "11px", border: "1px solid rgba(255,184,48,0.3)", fontWeight: "600" }
+      style: {
+        padding: "3px 10px", borderRadius: "var(--ios-radius-full)",
+        background: "rgba(255, 159, 10, 0.15)", color: "var(--ios-orange)",
+        fontSize: "11px", fontWeight: "600", border: "0.5px solid rgba(255, 159, 10, 0.35)"
+      }
     }, "Today");
   }
   if (daysUntil === 1) {
     return h("span", {
-      style: { padding: "3px 10px", borderRadius: "12px", background: "rgba(0,201,255,0.15)", color: "#00c9ff", fontSize: "11px", border: "1px solid rgba(0,201,255,0.3)", fontWeight: "600" }
+      style: {
+        padding: "3px 10px", borderRadius: "var(--ios-radius-full)",
+        background: "rgba(10, 132, 255, 0.15)", color: "var(--ios-blue)",
+        fontSize: "11px", fontWeight: "600", border: "0.5px solid rgba(10, 132, 255, 0.35)"
+      }
     }, "Tomorrow");
   }
   return h("span", {
-    style: { padding: "3px 10px", borderRadius: "12px", background: "var(--bg-surface-elevated)", color: "var(--text-muted)", fontSize: "11px", border: "1px solid var(--border-subtle)" }
+    style: {
+      padding: "3px 10px", borderRadius: "var(--ios-radius-full)",
+      background: "var(--ios-bg-secondary)", color: "var(--ios-text-secondary)",
+      fontSize: "11px", border: "0.5px solid var(--ios-separator)"
+    }
   }, `In ${daysUntil}d`);
 }
 
-function TeamChip({ code, large = false }) {
-  const t = IPL_TEAMS[code] || { name: code, color: "#888" };
-  const size = large ? 54 : 38;
-  return h("div", { style: { display: "flex", flexDirection: "column", alignItems: "center", gap: "6px" } },
+/**
+ * iOS Bottom Sheet / Modal Dialog with Grabber Handle
+ */
+function IOSModalSheet({ isOpen, onClose, title, children, maxWidth = "820px" }) {
+  useEffect(() => {
+    const handleKeyDown = (e) => {
+      if (e.key === "Escape" && isOpen) onClose();
+    };
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, [isOpen, onClose]);
+
+  if (!isOpen) return null;
+
+  return h("div", {
+    className: "ios-sheet-backdrop",
+    onClick: (e) => { if (e.target === e.currentTarget) onClose(); },
+    role: "dialog",
+    "aria-modal": true,
+    "aria-labelledby": "ios-modal-title",
+  },
     h("div", {
-      style: {
-        width: `${size}px`,
-        height: `${size}px`,
-        borderRadius: "50%",
-        background: `${t.color}22`,
-        border: `2px solid ${t.color}`,
-        display: "flex",
-        alignItems: "center",
-        justifyContent: "center",
-        fontFamily: "var(--font-heading)",
-        fontSize: large ? "17px" : "13px",
-        color: t.color,
-        boxShadow: `0 2px 10px ${t.color}33`,
-      }
-    }, code),
-    large && h("span", { style: { fontSize: "11px", color: "var(--text-secondary)", textAlign: "center", maxWidth: "80px", lineHeight: "1.2" } }, t.name)
+      className: "ios-sheet-card",
+      style: { maxWidth },
+    },
+      h("div", { className: "ios-grabber" }),
+      h("div", {
+        style: {
+          display: "flex",
+          justifyContent: "space-between",
+          alignItems: "center",
+          padding: "12px 20px",
+          borderBottom: "0.5px solid var(--ios-separator)",
+        }
+      },
+        h("h2", { id: "ios-modal-title", style: { fontSize: "17px", fontWeight: "600", color: "var(--ios-text-primary)" } }, title),
+        h("button", {
+          onClick: onClose,
+          "aria-label": "Close Modal",
+          style: {
+            background: "rgba(118, 118, 128, 0.24)",
+            border: "none",
+            width: "28px",
+            height: "28px",
+            borderRadius: "50%",
+            color: "var(--ios-text-secondary)",
+            fontSize: "15px",
+            cursor: "pointer",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+          }
+        }, "✕")
+      ),
+      h("div", { style: { padding: "20px", overflowY: "auto", flex: 1 } }, children)
+    )
   );
 }
 
-// ─── MAIN APPLICATION COMPONENT ───────────────────────────────────────────────
+/**
+ * iOS Team Avatar with Halo Ring
+ */
+function IOSTeamAvatar({ code, color, size = 42, large = false }) {
+  const finalSize = large ? 56 : size;
+  return h("div", {
+    style: {
+      width: `${finalSize}px`,
+      height: `${finalSize}px`,
+      borderRadius: "50%",
+      background: `linear-gradient(135deg, ${color}28, ${color}12)`,
+      border: `2px solid ${color}`,
+      display: "flex",
+      alignItems: "center",
+      justifyContent: "center",
+      fontWeight: "700",
+      fontSize: large ? "17px" : "13px",
+      color: color,
+      boxShadow: `0 4px 14px ${color}33`,
+      flexShrink: 0,
+    }
+  }, code);
+}
+
+/**
+ * iOS Stepper / Score Input Component
+ */
+function IOSNumberInput({ label, value, onChange, min = 0, max = 999, step = 1 }) {
+  return h("div", { style: { display: "flex", flexDirection: "column", gap: "3px" } },
+    label && h("span", { style: { fontSize: "10px", fontWeight: "600", color: "var(--ios-text-secondary)", textTransform: "uppercase" } }, label),
+    h("div", { style: { display: "flex", alignItems: "center", background: "var(--ios-bg-tertiary)", borderRadius: "var(--ios-radius-sm)", border: "0.5px solid var(--ios-separator)" } },
+      h("input", {
+        type: "number",
+        min,
+        max,
+        value,
+        onChange: (e) => onChange(Number(e.target.value)),
+        style: {
+          width: "100%",
+          background: "transparent",
+          border: "none",
+          color: "var(--ios-text-primary)",
+          padding: "6px 8px",
+          fontSize: "13px",
+          textAlign: "center",
+          outline: "none",
+          fontWeight: "600",
+        }
+      })
+    )
+  );
+}
+
+// ─── 2. MAIN APPLICATION WORKFLOW & SCREENS ───────────────────────────────────
 
 function App() {
-  const [tab, setTab] = useState("leaderboard");
+  const [tab, setTab] = useState("standings");
   const [teams, setTeams] = useState(DEFAULT_2026_TEAMS);
   const [entries, setEntries] = useState([]);
   const [isEditor, setIsEditor] = useState(false);
@@ -443,17 +792,17 @@ function App() {
   const [adminError, setAdminError] = useState("");
   const [editingEntry, setEditingEntry] = useState(null);
 
-  // Live Scores State
+  // Live Scores
   const [liveScores, setLiveScores] = useState({});
   const [liveLoading, setLiveLoading] = useState(false);
   const [autoRefresh, setAutoRefresh] = useState(false);
   const [lastRefreshedAt, setLastRefreshedAt] = useState(null);
 
-  // 2025 History Filters
-  const [histTeamFilter, setHistTeamFilter] = useState("ALL");
+  // Historical 2025
+  const [histFilter, setHistFilter] = useState("ALL");
   const [selHistMatch, setSelHistMatch] = useState(null);
 
-  // ── Firebase & Realtime Sync ───────────────────────────────────────────────
+  // ── Firebase Realtime Synchronization ──────────────────────────────────────
   useEffect(() => {
     if (window.db) {
       const teamsRef = window.db.ref("d5_2026_teams");
@@ -464,12 +813,10 @@ function App() {
         const val = snap.val();
         if (val) setTeams(val);
       });
-
       entriesRef.on("value", (snap) => {
         const val = snap.val();
         setEntries(val ? Object.values(val) : []);
       });
-
       pwRef.on("value", (snap) => {
         const val = snap.val();
         if (val) window.EDITOR_PASSWORD = val;
@@ -483,7 +830,7 @@ function App() {
     }
   }, []);
 
-  // ── Live Cricket Data Polling ──────────────────────────────────────────────
+  // ── Live Match Fetching ───────────────────────────────────────────────────
   const fetchLiveScores = async () => {
     setLiveLoading(true);
     try {
@@ -509,10 +856,10 @@ function App() {
         setLiveScores(matchMap);
       }
     } catch (err) {
-      console.warn("Live score update fallback:", err.message);
+      console.warn("Live score proxy:", err.message);
     } finally {
       setLiveLoading(false);
-      setLastRefreshedAt(new Date().toLocaleTimeString());
+      setLastRefreshedAt(new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }));
     }
   };
 
@@ -526,7 +873,7 @@ function App() {
     return () => clearInterval(interval);
   }, [autoRefresh]);
 
-  // ── Differential Scoring & Standings Calculations ──────────────────────────
+  // ── Standings Computation ──────────────────────────────────────────────────
   const standingsData = useMemo(() => {
     const matchScores = entries.map((entry) => {
       const scores = teams.reduce((acc, t) => {
@@ -594,8 +941,8 @@ function App() {
     return { matchScores, leaderboard };
   }, [teams, entries]);
 
-  // ── Actions ─────────────────────────────────────────────────────────────────
-  const handleSaveEntry = (entry) => {
+  // ── Handlers ───────────────────────────────────────────────────────────────
+  const handleSaveScorecard = (entry) => {
     if (window.db) {
       window.db.ref(`d5_2026_entries/${entry.id}`).set(entry);
     } else {
@@ -610,8 +957,8 @@ function App() {
     setEditingEntry(null);
   };
 
-  const handleDeleteEntry = (id) => {
-    if (confirm("Are you sure you want to delete this match scorecard?")) {
+  const handleDeleteScorecard = (id) => {
+    if (confirm("Are you sure you want to remove this match scorecard?")) {
       if (window.db) {
         window.db.ref(`d5_2026_entries/${id}`).remove();
       } else {
@@ -620,143 +967,111 @@ function App() {
     }
   };
 
-  // ── Render Views ────────────────────────────────────────────────────────────
-  return h("div", { style: { minHeight: "100vh", display: "flex", flexDirection: "column" } },
-    // Top Navigation Header
+  // ── Render Views ───────────────────────────────────────────────────────────
+  return h("div", { style: { minHeight: "100vh", display: "flex", flexDirection: "column", paddingBottom: "80px" } },
+    // iOS Frosted Navigation Bar
     h("header", {
-      style: {
-        background: "rgba(20,23,33,0.85)",
-        backdropFilter: "blur(12px)",
-        borderBottom: "1px solid var(--border-subtle)",
-        position: "sticky",
-        top: 0,
-        zIndex: 100,
-        padding: "12px 24px",
-      }
+      className: "ios-glass-nav",
+      style: { position: "sticky", top: 0, zIndex: 100, padding: "14px 20px" }
     },
       h("div", {
         style: {
-          maxWidth: "1400px",
+          maxWidth: "1280px",
           margin: "0 auto",
           display: "flex",
           alignItems: "center",
           justifyContent: "space-between",
           flexWrap: "wrap",
-          gap: "14px",
+          gap: "12px",
         }
       },
-        // Brand Title
-        h("div", { style: { display: "flex", alignItems: "center", gap: "12px" } },
+        // Apple Brand Header
+        h("div", { style: { display: "flex", alignItems: "center", gap: "10px" } },
           h("div", {
             style: {
-              width: "36px",
-              height: "36px",
-              borderRadius: "10px",
-              background: "linear-gradient(135deg, #d11a2a, #ff2d3d)",
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-              fontSize: "18px",
-              boxShadow: "0 4px 12px rgba(209,26,42,0.4)",
+              width: "34px", height: "34px", borderRadius: "10px",
+              background: "linear-gradient(135deg, var(--ios-red), #ff2d55)",
+              display: "flex", alignItems: "center", justifyContent: "center", fontSize: "16px",
+              boxShadow: "0 3px 10px rgba(255, 59, 48, 0.35)",
             }
           }, "🏏"),
           h("div", null,
-            h("div", { style: { fontFamily: "var(--font-heading)", fontSize: "24px", letterSpacing: "2px", lineHeight: "1" } }, "D5 IPL FANTASY"),
-            h("div", { style: { fontSize: "10px", color: "var(--text-muted)", letterSpacing: "1.5px", textTransform: "uppercase" } }, "Official League Platform 2026")
+            h("div", { style: { fontSize: "17px", fontWeight: "700", letterSpacing: "-0.4px" } }, "D5 IPL Fantasy"),
+            h("div", { style: { fontSize: "11px", color: "var(--ios-text-secondary)", fontWeight: "500" } }, "Season 2026 • Live League")
           )
         ),
-        // Tabs
-        h("nav", { style: { display: "flex", gap: "6px", flexWrap: "wrap" } },
-          [
-            { id: "leaderboard", label: "🏆 Standings" },
-            { id: "matches", label: "📋 Match Scorecards" },
-            { id: "live", label: "📡 Live & Fixtures" },
-            { id: "archive", label: "📜 2025 History" },
-            { id: "rules", label: "🎯 Rules & Scoring" },
-          ].map((t) => h("button", {
-            key: t.id,
-            onClick: () => setTab(t.id),
-            style: {
-              padding: "8px 16px",
-              borderRadius: "20px",
-              border: "none",
-              background: tab === t.id ? "linear-gradient(135deg, #d11a2a, #ff2d3d)" : "transparent",
-              color: tab === t.id ? "#fff" : "var(--text-secondary)",
-              fontFamily: "var(--font-heading)",
-              fontSize: "14px",
-              letterSpacing: "1px",
-              cursor: "pointer",
-              transition: "all 0.2s ease",
-            }
-          }, t.label))
-        ),
-        // Admin Lock
-        h("div", { style: { display: "flex", alignItems: "center", gap: "10px" } },
+        // iOS Segmented Navigation Control
+        h(IOSSegmentedControl, {
+          selectedId: tab,
+          onChange: setTab,
+          items: [
+            { id: "standings", label: "Standings", icon: "🏆" },
+            { id: "matches", label: "Scorecards", icon: "📋" },
+            { id: "live", label: "Live & Matches", icon: "📡" },
+            { id: "archive", label: "2025 Archive", icon: "📜" },
+            { id: "rules", label: "Rules", icon: "🎯" },
+          ]
+        }),
+        // Admin Auth Action
+        h("div", { style: { display: "flex", alignItems: "center", gap: "8px" } },
           isEditor
-            ? h(Btn, { variant: "danger", small: true, onClick: () => setIsEditor(false) }, "🔓 Lock Editor")
-            : h(Btn, { variant: "ghost", small: true, onClick: () => setShowAdminModal(true) }, "🔒 Admin Unlock")
+            ? h(IOSButton, { variant: "destructive", small: true, onClick: () => setIsEditor(false) }, "🔓 Lock Editor")
+            : h(IOSButton, { variant: "ghost", small: true, onClick: () => setShowAdminModal(true) }, "🔒 Admin")
         )
       )
     ),
 
-    // Content Body
-    h("main", { style: { flex: 1, maxWidth: "1400px", width: "100%", margin: "0 auto", padding: "24px" } },
-      // Tab 1: Leaderboard
-      tab === "leaderboard" && h("div", null,
-        h("div", { style: { display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "20px", flexWrap: "wrap", gap: "12px" } },
+    // Main App View Content
+    h("main", { style: { flex: 1, maxWidth: "1280px", width: "100%", margin: "0 auto", padding: "20px" } },
+      // 🏆 View 1: Standings
+      tab === "standings" && h("div", null,
+        h("div", { style: { display: "flex", justifyContent: "space-between", alignItems: "flex-end", marginBottom: "18px" } },
           h("div", null,
-            h("h1", { style: { fontSize: "28px" } }, "🏆 Tournament Standings (2026)"),
-            h("div", { style: { fontSize: "13px", color: "var(--text-muted)" } }, "Standings dynamically calculated via the D5 differential net scoring engine")
+            h("h1", { style: { fontSize: "28px", fontWeight: "800", letterSpacing: "-0.5px" } }, "Leaderboard"),
+            h("p", { style: { fontSize: "13px", color: "var(--ios-text-secondary)" } }, "Standings calculated using the D5 differential net scoring system")
           ),
-          isEditor && h(Btn, { variant: "primary", onClick: () => setEditingEntry(blankEntry(teams)) }, "+ Add Match Scorecard")
+          isEditor && h(IOSButton, { variant: "primary", onClick: () => setEditingEntry(blankEntry(teams)) }, "+ Add Scorecard")
         ),
-        // Standings Table Card
-        h(Card, { style: { marginBottom: "24px", padding: 0, overflow: "hidden" } },
-          h("div", { className: "table-responsive" },
-            h("table", null,
+        // Standings Inset Table
+        h(IOSCard, { style: { padding: 0, overflow: "hidden", marginBottom: "20px" } },
+          h("div", { style: { overflowX: "auto" } },
+            h("table", { className: "ios-table" },
               h("thead", null,
                 h("tr", null,
-                  h("th", { style: { textAlign: "center", width: "70px" } }, "POS"),
+                  h("th", { style: { width: "60px", textAlign: "center" } }, "POS"),
                   h("th", null, "TEAM"),
                   h("th", { style: { textAlign: "center" } }, "MATCHES"),
                   h("th", { style: { textAlign: "center" } }, "WINS"),
-                  h("th", { style: { textAlign: "center" } }, "BEST MATCH"),
-                  h("th", { style: { textAlign: "center" } }, "RAW TOTAL"),
-                  h("th", { style: { textAlign: "center", color: "var(--accent-amber)" } }, "NET GRAND POINTS")
+                  h("th", { style: { textAlign: "center" } }, "BEST"),
+                  h("th", { style: { textAlign: "center" } }, "RAW PTS"),
+                  h("th", { style: { textAlign: "right", paddingRight: "20px" } }, "NET GRAND PTS")
                 )
               ),
               h("tbody", null,
                 standingsData.leaderboard.map((team, idx) => h("tr", { key: team.id },
-                  h("td", { style: { textAlign: "center", fontFamily: "var(--font-heading)", fontSize: "18px", color: idx === 0 ? "var(--accent-amber)" : "var(--text-muted)" } },
-                    idx === 0 ? "👑 1" : `#${idx + 1}`
+                  h("td", { style: { textAlign: "center", fontWeight: "700", color: idx === 0 ? "var(--ios-yellow)" : "var(--ios-text-secondary)" } },
+                    idx === 0 ? "👑 1" : `${idx + 1}`
                   ),
                   h("td", null,
                     h("div", { style: { display: "flex", alignItems: "center", gap: "12px" } },
-                      h("div", {
-                        style: {
-                          width: "38px", height: "38px", borderRadius: "50%",
-                          background: `${team.color}22`, border: `2px solid ${team.color}`,
-                          display: "flex", alignItems: "center", justifyContent: "center",
-                          fontFamily: "var(--font-heading)", fontSize: "14px", color: team.color,
-                        }
-                      }, team.name.slice(0, 3).toUpperCase()),
+                      h(IOSTeamAvatar, { code: team.name.slice(0, 3).toUpperCase(), color: team.color, size: 34 }),
                       h("div", null,
-                        h("div", { style: { fontFamily: "var(--font-heading)", fontSize: "17px", color: "#fff" } }, team.name),
-                        h("div", { style: { fontSize: "11px", color: "var(--text-muted)" } }, `Avg: ${team.avgScore} pts/match`)
+                        h("div", { style: { fontWeight: "600", color: "#fff" } }, team.name),
+                        h("div", { style: { fontSize: "12px", color: "var(--ios-text-secondary)" } }, `Avg: ${team.avgScore} pts`)
                       )
                     )
                   ),
-                  h("td", { style: { textAlign: "center", fontFamily: "var(--font-heading)", fontSize: "18px" } }, team.played),
-                  h("td", { style: { textAlign: "center", fontFamily: "var(--font-heading)", fontSize: "18px", color: "var(--accent-green)" } }, team.wins),
-                  h("td", { style: { textAlign: "center", fontFamily: "var(--font-heading)", fontSize: "18px", color: "var(--accent-cyan)" } }, team.bestMatch),
-                  h("td", { style: { textAlign: "center", fontFamily: "var(--font-heading)", fontSize: "18px", color: "var(--text-secondary)" } }, team.rawPointsTotal),
+                  h("td", { style: { textAlign: "center", fontWeight: "500" } }, team.played),
+                  h("td", { style: { textAlign: "center", fontWeight: "600", color: "var(--ios-green)" } }, team.wins),
+                  h("td", { style: { textAlign: "center", color: "var(--ios-teal)" } }, team.bestMatch),
+                  h("td", { style: { textAlign: "center", color: "var(--ios-text-secondary)" } }, team.rawPointsTotal),
                   h("td", {
                     style: {
-                      textAlign: "center",
-                      fontFamily: "var(--font-heading)",
-                      fontSize: "24px",
-                      color: team.grandPoints >= 0 ? "var(--accent-green)" : "var(--accent-red)",
-                      fontWeight: "bold",
+                      textAlign: "right",
+                      paddingRight: "20px",
+                      fontWeight: "700",
+                      fontSize: "17px",
+                      color: team.grandPoints >= 0 ? "var(--ios-green)" : "var(--ios-red)",
                     }
                   }, `${team.grandPoints >= 0 ? "+" : ""}${team.grandPoints}`)
                 ))
@@ -764,122 +1079,131 @@ function App() {
             )
           )
         ),
-        // Empty State or Match Summary Cards
-        entries.length === 0 && h(Card, { style: { textAlign: "center", padding: "40px" } },
-          h("div", { style: { fontSize: "42px", marginBottom: "12px" } }, "🏏"),
-          h("h3", { style: { fontSize: "20px", marginBottom: "8px" } }, "No 2026 Fantasy Matches Logged Yet"),
-          h("p", { style: { fontSize: "13px", color: "var(--text-muted)", marginBottom: "16px" } }, "Unlock Admin mode to submit the first match scorecard of the season!"),
-          isEditor && h(Btn, { variant: "primary", onClick: () => setEditingEntry(blankEntry(teams)) }, "+ Add First Match")
+        // Empty State Banner
+        entries.length === 0 && h(IOSCard, { style: { textAlign: "center", padding: "40px 20px" } },
+          h("div", { style: { fontSize: "40px", marginBottom: "10px" } }, "🏏"),
+          h("h3", { style: { fontSize: "18px", fontWeight: "600", marginBottom: "4px" } }, "No 2026 Matches Recorded Yet"),
+          h("p", { style: { fontSize: "13px", color: "var(--ios-text-secondary)", marginBottom: "16px" } }, "Unlock Admin mode to start logging fantasy match scorecards for the season."),
+          isEditor && h(IOSButton, { variant: "tinted", onClick: () => setEditingEntry(blankEntry(teams)) }, "+ Submit First Match")
         )
       ),
 
-      // Tab 2: Matches
+      // 📋 View 2: Scorecards
       tab === "matches" && h("div", null,
-        h("div", { style: { display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "20px", flexWrap: "wrap", gap: "12px" } },
-          h("h1", { style: { fontSize: "28px" } }, "📋 2026 Season Match Scorecards"),
-          isEditor && h(Btn, { variant: "primary", onClick: () => setEditingEntry(blankEntry(teams)) }, "+ New Match Scorecard")
+        h("div", { style: { display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "18px" } },
+          h("h1", { style: { fontSize: "28px", fontWeight: "800", letterSpacing: "-0.5px" } }, "Match Scorecards"),
+          isEditor && h(IOSButton, { variant: "primary", onClick: () => setEditingEntry(blankEntry(teams)) }, "+ New Scorecard")
         ),
-        h("div", { className: "grid-responsive" },
+        h("div", { style: { display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(320px, 1fr))", gap: "16px" } },
           entries.map((entry) => {
             const mScore = standingsData.matchScores.find((m) => m.id === entry.id);
             const winner = teams.find((t) => t.id === mScore?.winnerId);
-            return h(Card, { key: entry.id, style: { position: "relative" } },
-              h("div", { style: { display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: "14px" } },
+            return h(IOSCard, { key: entry.id },
+              h("div", { style: { display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: "12px" } },
                 h("div", null,
-                  h("div", { style: { fontFamily: "var(--font-heading)", fontSize: "18px", color: "#fff" } }, entry.matchLabel || "Match Scorecard"),
-                  h("div", { style: { fontSize: "12px", color: "var(--text-muted)" } }, fmtDate(entry.date))
+                  h("div", { style: { fontWeight: "700", fontSize: "16px" } }, entry.matchLabel || "Match Scorecard"),
+                  h("div", { style: { fontSize: "12px", color: "var(--ios-text-secondary)" } }, fmtDate(entry.date))
                 ),
                 winner && h("span", {
-                  style: { padding: "4px 10px", borderRadius: "12px", background: `${winner.color}22`, border: `1px solid ${winner.color}`, color: winner.color, fontFamily: "var(--font-heading)", fontSize: "12px" }
+                  style: {
+                    padding: "3px 10px", borderRadius: "var(--ios-radius-full)",
+                    background: `${winner.color}20`, border: `0.5px solid ${winner.color}`,
+                    color: winner.color, fontSize: "11px", fontWeight: "600"
+                  }
                 }, `🏆 Winner: ${winner.name}`)
               ),
-              // Team scores breakdown
+              // Matchup Team Cells
               h("div", { style: { display: "grid", gridTemplateColumns: "1fr 1fr", gap: "10px", margin: "14px 0" } },
                 teams.map((t) => {
                   const pts = mScore?.scores[t.id] || 0;
                   const netPts = mScore?.net[t.id] || 0;
-                  const isTop = t.id === winner?.id;
+                  const isWinner = t.id === winner?.id;
                   return h("div", {
                     key: t.id,
                     style: {
-                      background: "var(--bg-surface-elevated)",
-                      border: `1px solid ${isTop ? t.color : "var(--border-subtle)"}`,
-                      borderRadius: "10px",
-                      padding: "10px",
+                      background: "var(--ios-bg-secondary)",
+                      border: `0.5px solid ${isWinner ? t.color : "var(--ios-separator)"}`,
+                      borderRadius: "var(--ios-radius-md)",
+                      padding: "10px 12px",
                     }
                   },
                     h("div", { style: { display: "flex", justifyContent: "space-between", alignItems: "center" } },
-                      h("span", { style: { color: t.color, fontFamily: "var(--font-heading)", fontSize: "14px" } }, t.name),
-                      h("span", { style: { fontFamily: "var(--font-heading)", fontSize: "18px", color: "#fff" } }, pts)
+                      h("span", { style: { color: t.color, fontWeight: "600", fontSize: "13px" } }, t.name),
+                      h("span", { style: { fontWeight: "700", fontSize: "16px", color: "#fff" } }, pts)
                     ),
-                    h("div", { style: { fontSize: "11px", color: netPts >= 0 ? "var(--accent-green)" : "var(--accent-red)", marginTop: "4px" } },
+                    h("div", { style: { fontSize: "11px", color: netPts >= 0 ? "var(--ios-green)" : "var(--ios-red)", marginTop: "4px" } },
                       `Net: ${netPts >= 0 ? "+" : ""}${netPts}`
                     )
                   );
                 })
               ),
-              // Admin controls
-              isEditor && h("div", { style: { display: "flex", gap: "8px", justifyContent: "flex-end", marginTop: "12px", borderTop: "1px solid var(--border-subtle)", paddingTop: "10px" } },
-                h(Btn, { variant: "ghost", small: true, onClick: () => setEditingEntry(entry) }, "✏️ Edit"),
-                h(Btn, { variant: "danger", small: true, onClick: () => handleDeleteEntry(entry.id) }, "🗑️ Delete")
+              // Action buttons
+              isEditor && h("div", { style: { display: "flex", gap: "8px", justifyContent: "flex-end", borderTop: "0.5px solid var(--ios-separator)", paddingTop: "10px" } },
+                h(IOSButton, { variant: "ghost", small: true, onClick: () => setEditingEntry(entry) }, "Edit"),
+                h(IOSButton, { variant: "destructive", small: true, onClick: () => handleDeleteScorecard(entry.id) }, "Delete")
               )
             );
           })
         )
       ),
 
-      // Tab 3: Live & Fixtures
+      // 📡 View 3: Live & Fixtures
       tab === "live" && h("div", null,
-        h("div", { style: { display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "20px", flexWrap: "wrap", gap: "12px" } },
+        h("div", { style: { display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "18px", flexWrap: "wrap", gap: "10px" } },
           h("div", null,
-            h("h1", { style: { fontSize: "28px" } }, "📡 Live IPL Matches & Fixtures"),
-            lastRefreshedAt && h("div", { style: { fontSize: "12px", color: "var(--text-muted)" } }, `Last updated: ${lastRefreshedAt}`)
+            h("h1", { style: { fontSize: "28px", fontWeight: "800", letterSpacing: "-0.5px" } }, "Live Scores & Schedule"),
+            lastRefreshedAt && h("div", { style: { fontSize: "12px", color: "var(--ios-text-secondary)" } }, `Updated ${lastRefreshedAt}`)
           ),
           h("div", { style: { display: "flex", gap: "8px" } },
-            h(Btn, { variant: "warning", small: true, onClick: fetchLiveScores, disabled: liveLoading }, liveLoading ? "⏳ Loading..." : "🔄 Refresh Scores"),
-            h(Btn, { variant: autoRefresh ? "danger" : "ghost", small: true, onClick: () => setAutoRefresh(!autoRefresh) }, autoRefresh ? "⏹ Stop Auto" : "▶ Auto 30s")
+            h(IOSButton, { variant: "tinted", small: true, onClick: fetchLiveScores, loading: liveLoading }, "🔄 Refresh"),
+            h(IOSButton, { variant: autoRefresh ? "destructive" : "ghost", small: true, onClick: () => setAutoRefresh(!autoRefresh) }, autoRefresh ? "⏹ Stop Auto" : "▶ Auto 30s")
           )
         ),
-        // Live matches list or empty card
-        Object.keys(liveScores).length > 0 ? h("div", { className: "grid-responsive", style: { marginBottom: "28px" } },
+        // Live match container
+        Object.keys(liveScores).length > 0 ? h("div", { style: { display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(320px, 1fr))", gap: "16px", marginBottom: "24px" } },
           IPL_SCHEDULE.filter((m) => liveScores[m.id]).map((m) => {
             const sd = liveScores[m.id];
-            return h(Card, { key: m.id, style: { borderColor: "var(--accent-red)" } },
-              h(LiveBadge),
+            return h(IOSCard, { key: m.id, style: { borderColor: "var(--ios-red)" } },
+              h(IOSLiveBadge),
               h("div", { style: { display: "flex", justifyContent: "space-between", margin: "14px 0" } },
-                h(TeamChip, { code: m.team1, large: true }),
-                h("div", { style: { fontFamily: "var(--font-heading)", fontSize: "20px", color: "var(--text-muted)", alignSelf: "center" } }, "VS"),
-                h(TeamChip, { code: m.team2, large: true })
+                h(IOSTeamAvatar, { code: m.team1, color: IPL_TEAMS[m.team1]?.color || "#888", large: true }),
+                h("div", { style: { alignSelf: "center", fontWeight: "700", color: "var(--ios-text-tertiary)" } }, "VS"),
+                h(IOSTeamAvatar, { code: m.team2, color: IPL_TEAMS[m.team2]?.color || "#888", large: true })
               ),
-              (sd.score || []).map((s, i) => h("div", { key: i, style: { display: "flex", justifyContent: "space-between", padding: "6px 0", borderBottom: "1px solid var(--border-subtle)" } },
-                h("span", { style: { fontSize: "12px", color: "var(--text-muted)" } }, s.inning),
-                h("span", { style: { fontFamily: "var(--font-heading)", fontSize: "20px", color: "var(--accent-cyan)" } }, `${s.r}/${s.w} (${s.o} ov)`)
+              (sd.score || []).map((s, i) => h("div", { key: i, style: { display: "flex", justifyContent: "space-between", padding: "6px 0", borderBottom: "0.5px solid var(--ios-separator)" } },
+                h("span", { style: { fontSize: "13px", color: "var(--ios-text-secondary)" } }, s.inning),
+                h("span", { style: { fontWeight: "700", color: "var(--ios-teal)" } }, `${s.r}/${s.w} (${s.o} ov)`)
               )),
-              sd.status && h("div", { style: { fontSize: "12px", color: "var(--accent-amber)", marginTop: "8px" } }, sd.status)
+              sd.status && h("div", { style: { fontSize: "12px", color: "var(--ios-orange)", marginTop: "8px" } }, sd.status)
             );
           })
-        ) : h(Card, { style: { textAlign: "center", padding: "32px", marginBottom: "28px" } },
-          h("div", { style: { fontSize: "36px", marginBottom: "8px" } }, "🏏"),
-          h("h3", { style: { fontSize: "20px", marginBottom: "6px" } }, "No Live Match Right Now"),
-          h("p", { style: { fontSize: "13px", color: "var(--text-muted)" } }, "IPL 2026 tournament fixtures will update live when matches begin.")
+        ) : h(IOSCard, { style: { textAlign: "center", padding: "30px 20px", marginBottom: "24px" } },
+          h("div", { style: { fontSize: "36px", marginBottom: "6px" } }, "🏏"),
+          h("h3", { style: { fontSize: "17px", fontWeight: "600" } }, "No Live Match Active Right Now"),
+          h("p", { style: { fontSize: "13px", color: "var(--ios-text-secondary)" } }, "Real-time match scores will automatically update here when matches begin.")
         ),
-        // Tournament Fixtures Schedule
-        h("h2", { style: { fontSize: "22px", marginBottom: "14px" } }, "📅 Upcoming Tournament Fixtures"),
-        h("div", { className: "grid-responsive" },
+        // Fixture List
+        h("h2", { style: { fontSize: "20px", fontWeight: "700", marginBottom: "12px" } }, "Upcoming Fixtures"),
+        h("div", { style: { display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(300px, 1fr))", gap: "14px" } },
           IPL_SCHEDULE.map((m) => {
             const d = getDaysUntil(m.date);
-            const isCompleted = d < 0;
-            return h(Card, { key: m.id },
+            return h(IOSCard, { key: m.id },
               h("div", { style: { display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "10px" } },
-                h("div", { style: { fontSize: "12px", color: "var(--text-muted)" } }, `${fmtDate(m.date)} · ${m.time}`),
-                h(StatusBadge, { status: isCompleted ? "completed" : "upcoming", daysUntil: d })
+                h("span", { style: { fontSize: "12px", color: "var(--ios-text-secondary)" } }, `${fmtDate(m.date)} • ${m.time}`),
+                h(IOSStatusBadge, { status: d < 0 ? "completed" : "upcoming", daysUntil: d })
               ),
               h("div", { style: { display: "flex", justifyContent: "space-between", alignItems: "center", margin: "10px 0" } },
-                h(TeamChip, { code: m.team1 }),
-                h("span", { style: { fontFamily: "var(--font-heading)", fontSize: "18px", color: "var(--text-muted)" } }, "VS"),
-                h(TeamChip, { code: m.team2 })
+                h("div", { style: { display: "flex", alignItems: "center", gap: "8px" } },
+                  h(IOSTeamAvatar, { code: m.team1, color: IPL_TEAMS[m.team1]?.color || "#888", size: 30 }),
+                  h("span", { style: { fontWeight: "600", fontSize: "14px" } }, m.team1)
+                ),
+                h("span", { style: { color: "var(--ios-text-tertiary)", fontSize: "13px" } }, "vs"),
+                h("div", { style: { display: "flex", alignItems: "center", gap: "8px" } },
+                  h("span", { style: { fontWeight: "600", fontSize: "14px" } }, m.team2),
+                  h(IOSTeamAvatar, { code: m.team2, color: IPL_TEAMS[m.team2]?.color || "#888", size: 30 })
+                )
               ),
-              h("div", { style: { fontSize: "11px", color: "var(--text-muted)", borderTop: "1px solid var(--border-subtle)", paddingTop: "8px", marginTop: "8px" } },
+              h("div", { style: { fontSize: "11px", color: "var(--ios-text-secondary)", borderTop: "0.5px solid var(--ios-separator)", paddingTop: "8px", marginTop: "6px" } },
                 `📍 ${m.venue}`
               )
             );
@@ -887,34 +1211,35 @@ function App() {
         )
       ),
 
-      // Tab 4: 2025 Season Archive
+      // 📜 View 4: 2025 Archive
       tab === "archive" && h("div", null,
-        h("div", { style: { display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "20px", flexWrap: "wrap", gap: "12px" } },
+        h("div", { style: { display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "18px", flexWrap: "wrap", gap: "10px" } },
           h("div", null,
-            h("h1", { style: { fontSize: "28px" } }, "📜 2025 Historical Season Archive"),
-            h("div", { style: { fontSize: "13px", color: "var(--text-muted)" } }, "Complete 47-match historical records and scorecards from 2025")
+            h("h1", { style: { fontSize: "28px", fontWeight: "800", letterSpacing: "-0.5px" } }, "2025 Historical Archive"),
+            h("p", { style: { fontSize: "13px", color: "var(--ios-text-secondary)" } }, "47 historical match records from the 2025 tournament")
           ),
           h("select", {
-            value: histTeamFilter,
-            onChange: (e) => setHistTeamFilter(e.target.value),
-            style: { width: "180px" }
+            className: "ios-input",
+            value: histFilter,
+            onChange: (e) => setHistFilter(e.target.value),
+            style: { width: "160px" }
           },
             h("option", { value: "ALL" }, "All Teams"),
             Object.keys(D5_2025.grand || {}).map((t) => h("option", { key: t, value: t }, t))
           )
         ),
-        // 2025 Historical Standings Summary
-        h(Card, { style: { marginBottom: "24px", padding: 0, overflow: "hidden" } },
-          h("div", { className: "table-responsive" },
-            h("table", null,
+        // 2025 Standings Table
+        h(IOSCard, { style: { padding: 0, overflow: "hidden", marginBottom: "20px" } },
+          h("div", { style: { overflowX: "auto" } },
+            h("table", { className: "ios-table" },
               h("thead", null,
                 h("tr", null,
-                  h("th", { style: { textAlign: "center", width: "70px" } }, "RANK"),
+                  h("th", { style: { width: "60px", textAlign: "center" } }, "RANK"),
                   h("th", null, "HISTORICAL TEAM"),
                   h("th", { style: { textAlign: "center" } }, "MATCHES"),
                   h("th", { style: { textAlign: "center" } }, "WINS"),
                   h("th", { style: { textAlign: "center" } }, "WIN RATE"),
-                  h("th", { style: { textAlign: "center", color: "var(--accent-amber)" } }, "TOTAL 2025 POINTS")
+                  h("th", { style: { textAlign: "right", paddingRight: "20px" } }, "TOTAL POINTS")
                 )
               ),
               h("tbody", null,
@@ -924,58 +1249,52 @@ function App() {
                   const winRate = matchCount ? Math.round((wins / matchCount) * 100) : 0;
                   const cfg = D5_TEAM_CONFIG[t] || { color: "#888" };
                   return h("tr", { key: t },
-                    h("td", { style: { textAlign: "center", fontFamily: "var(--font-heading)", fontSize: "18px", color: i === 0 ? "var(--accent-amber)" : "var(--text-muted)" } },
-                      i === 0 ? "🏆 1" : `#${i + 1}`
+                    h("td", { style: { textAlign: "center", fontWeight: "700", color: i === 0 ? "var(--ios-yellow)" : "var(--ios-text-secondary)" } },
+                      i === 0 ? "🏆 1" : `${i + 1}`
                     ),
                     h("td", null,
                       h("div", { style: { display: "flex", alignItems: "center", gap: "10px" } },
                         h("span", { style: { width: "10px", height: "10px", borderRadius: "50%", background: cfg.color } }),
-                        h("span", { style: { fontFamily: "var(--font-heading)", fontSize: "17px", color: cfg.color } }, t)
+                        h("span", { style: { fontWeight: "600", color: cfg.color } }, t)
                       )
                     ),
-                    h("td", { style: { textAlign: "center", fontFamily: "var(--font-heading)", fontSize: "18px" } }, matchCount),
-                    h("td", { style: { textAlign: "center", fontFamily: "var(--font-heading)", fontSize: "18px", color: "var(--accent-green)" } }, wins),
-                    h("td", { style: { textAlign: "center", fontFamily: "var(--font-heading)", fontSize: "18px", color: "var(--accent-cyan)" } }, `${winRate}%`),
-                    h("td", { style: { textAlign: "center", fontFamily: "var(--font-heading)", fontSize: "22px", color: "var(--accent-amber)" } }, pts)
+                    h("td", { style: { textAlign: "center" } }, matchCount),
+                    h("td", { style: { textAlign: "center", fontWeight: "600", color: "var(--ios-green)" } }, wins),
+                    h("td", { style: { textAlign: "center", color: "var(--ios-teal)" } }, `${winRate}%`),
+                    h("td", { style: { textAlign: "right", paddingRight: "20px", fontWeight: "700", fontSize: "16px", color: "var(--ios-yellow)" } }, pts)
                   );
                 })
               )
             )
           )
         ),
-        // Historical Matches Grid
-        h("h2", { style: { fontSize: "22px", marginBottom: "14px" } }, "Match-by-Match History"),
-        h("div", { className: "grid-responsive" },
+        // Match Cards Grid
+        h("h2", { style: { fontSize: "20px", fontWeight: "700", marginBottom: "12px" } }, "Match Scorecards"),
+        h("div", { style: { display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(280px, 1fr))", gap: "14px" } },
           D5_2025.matches
-            .filter((m) => histTeamFilter === "ALL" || m.teams[histTeamFilter])
+            .filter((m) => histFilter === "ALL" || m.teams[histFilter])
             .map((m) => {
               const sorted = Object.entries(m.totals).sort((a, b) => b[1] - a[1]);
               const top = sorted[0];
               const topCfg = D5_TEAM_CONFIG[top?.[0]] || { color: "#888" };
-              return h(Card, {
+              return h(IOSCard, {
                 key: m.id,
                 onClick: () => setSelHistMatch(m),
-                style: { cursor: "pointer", transition: "all 0.2s ease" }
+                style: { cursor: "pointer" }
               },
-                h("div", { style: { display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "10px" } },
-                  h("div", null,
-                    h("div", { style: { fontFamily: "var(--font-heading)", fontSize: "16px" } }, m.sheet),
-                    h("div", { style: { fontSize: "11px", color: "var(--text-muted)" } }, m.date)
-                  ),
+                h("div", { style: { display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "8px" } },
+                  h("span", { style: { fontWeight: "600", fontSize: "15px" } }, m.sheet),
                   top && h("span", {
-                    style: { padding: "2px 8px", borderRadius: "10px", background: `${topCfg.color}20`, color: topCfg.color, fontFamily: "var(--font-heading)", fontSize: "12px" }
+                    style: { padding: "2px 8px", borderRadius: "var(--ios-radius-full)", background: `${topCfg.color}20`, color: topCfg.color, fontSize: "11px", fontWeight: "600" }
                   }, `🏆 ${top[0]}`)
                 ),
-                h("div", { style: { display: "flex", gap: "8px", flexWrap: "wrap" } },
+                h("div", { style: { display: "flex", gap: "6px", flexWrap: "wrap", marginTop: "10px" } },
                   sorted.map(([t, pts]) => {
                     const cfg = D5_TEAM_CONFIG[t] || { color: "#888" };
-                    return h("div", {
+                    return h("span", {
                       key: t,
-                      style: { display: "flex", gap: "6px", alignItems: "center", padding: "4px 8px", borderRadius: "8px", background: `${cfg.color}15`, border: `1px solid ${cfg.color}33` }
-                    },
-                      h("span", { style: { color: cfg.color, fontFamily: "var(--font-heading)", fontSize: "12px" } }, t),
-                      h("span", { style: { fontFamily: "var(--font-heading)", fontSize: "16px", color: "#fff" } }, pts)
-                    );
+                      style: { padding: "3px 8px", borderRadius: "8px", background: `${cfg.color}15`, color: cfg.color, fontSize: "12px", fontWeight: "500" }
+                    }, `${t}: ${pts}`);
                   })
                 )
               );
@@ -983,82 +1302,67 @@ function App() {
         )
       ),
 
-      // Tab 5: Rules & Scoring
+      // 🎯 View 5: Rules & Scoring
       tab === "rules" && h("div", null,
-        h("h1", { style: { fontSize: "28px", marginBottom: "18px" } }, "🎯 D5 Scoring Rules & Engine Architecture"),
-        h("div", { style: { display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(320px, 1fr))", gap: "18px", marginBottom: "20px" } },
-          // Base Points
-          h(Card, null,
-            h("h3", { style: { color: "var(--accent-cyan)", fontSize: "18px", marginBottom: "12px" } }, "⚡ Base Scoring Points"),
+        h("h1", { style: { fontSize: "28px", fontWeight: "800", letterSpacing: "-0.5px", marginBottom: "18px" } }, "Scoring Rules"),
+        h("div", { style: { display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(320px, 1fr))", gap: "16px", marginBottom: "20px" } },
+          h(IOSGroupedList, { title: "Base Points" },
             [
-              ["Run", "+5 pts / run"],
-              ["Wicket", "+100 pts / wkt"],
-              ["Catch", "+50 pts / catch"],
-              ["Stumping", "+50 pts / st"],
-              ["Run Out", "+50 (half) / +100 (direct)"],
-              ["Duck Penalty", "−50 pts"],
-            ].map(([k, v]) => h("div", { key: k, style: { display: "flex", justifyContent: "space-between", padding: "8px 0", borderBottom: "1px solid var(--border-subtle)" } },
-              h("span", { style: { color: "var(--text-secondary)" } }, k),
-              h("span", { style: { fontFamily: "var(--font-heading)", fontSize: "17px", color: k.includes("Duck") ? "var(--accent-red)" : "#fff" } }, v)
-            ))
+              ["Run", "+5 pts / run", "⚡"],
+              ["Wicket", "+100 pts / wkt", "🎯"],
+              ["Catch", "+50 pts / catch", "🧤"],
+              ["Stumping", "+50 pts / st", "⚡"],
+              ["Run Out", "+50 / +100 pts", "🏃"],
+              ["Duck Penalty", "−50 pts", "🦆"],
+            ].map(([k, v, icon]) => h(IOSCell, { key: k, label: k, value: v, icon }))
           ),
-          // Milestone Bonuses
-          h(Card, null,
-            h("h3", { style: { color: "var(--accent-amber)", fontSize: "18px", marginBottom: "12px" } }, "⭐ Milestone Bonuses"),
+          h(IOSGroupedList, { title: "Milestone Bonuses" },
             [
-              ["Runs 30 – 49", "+50 pts"],
-              ["Runs 50 – 99 (Half-Century)", "+150 pts"],
-              ["Runs 100+ (Century)", "+250 pts"],
-              ["2 Wickets", "+50 pts"],
-              ["3 – 4 Wickets", "+150 pts"],
-              ["5+ Wickets (Fifer)", "+200 pts"],
-              ["3 Catches", "+100 pts"],
-              ["5 Catches", "+200 pts"],
-              ["5 – 9 Sixes / 10+ Sixes", "+150 / +300 pts"],
-              ["Maiden Over / Hat-trick", "+200 / +400 pts"],
-            ].map(([k, v]) => h("div", { key: k, style: { display: "flex", justifyContent: "space-between", padding: "6px 0", borderBottom: "1px solid var(--border-subtle)" } },
-              h("span", { style: { color: "var(--text-secondary)" } }, k),
-              h("span", { style: { fontFamily: "var(--font-heading)", fontSize: "16px", color: "var(--accent-amber)" } }, v)
-            ))
+              ["Runs 30 – 49", "+50 pts", "🏏"],
+              ["Runs 50 – 99 (Half-Century)", "+150 pts", "🔥"],
+              ["Runs 100+ (Century)", "+250 pts", "💯"],
+              ["2 Wickets", "+50 pts", "🎳"],
+              ["3 – 4 Wickets", "+150 pts", "🎳"],
+              ["5+ Wickets (Fifer)", "+200 pts", "🌟"],
+              ["3 Catches / 5 Catches", "+100 / +200 pts", "🧤"],
+              ["5 – 9 Sixes / 10+ Sixes", "+150 / +300 pts", "🚀"],
+              ["Maiden Over / Hat-trick", "+200 / +400 pts", "🎩"],
+            ].map(([k, v, icon]) => h(IOSCell, { key: k, label: k, value: v, icon }))
           )
         ),
-        // Captain Multiplier & Differential Scoring
-        h(Card, { style: { borderColor: "rgba(168,255,62,0.3)" } },
-          h("h3", { style: { color: "var(--accent-green)", fontSize: "18px", marginBottom: "8px" } }, "🌟 Captain & Differential Net League Scoring"),
-          h("p", { style: { fontSize: "13.5px", color: "var(--text-secondary)", lineHeight: "1.8", marginBottom: "10px" } },
-            "1. ", h("strong", { style: { color: "#fff" } }, "Captain 2× Multiplier: "),
-            "The designated captain on each team earns double (2×) all base points and bonuses."
+        h(IOSCard, null,
+          h("h3", { style: { color: "var(--ios-green)", fontSize: "16px", fontWeight: "600", marginBottom: "6px" } }, "🌟 Captain & Differential Scoring"),
+          h("p", { style: { fontSize: "13.5px", color: "var(--ios-text-secondary)", lineHeight: "1.7", marginBottom: "8px" } },
+            "• Captain 2× Multiplier: Each team designates 1 Captain who scores double points for all actions and bonuses."
           ),
-          h("p", { style: { fontSize: "13.5px", color: "var(--text-secondary)", lineHeight: "1.8" } },
-            "2. ", h("strong", { style: { color: "#fff" } }, "Differential Net Points: "),
-            "The match winner gains the sum of differences between their total score and all losing teams. Losers lose the exact point difference against the winner."
+          h("p", { style: { fontSize: "13.5px", color: "var(--ios-text-secondary)", lineHeight: "1.7" } },
+            "• Differential Net League Points: In every match, the winning team earns the total point difference against all losing teams combined. Losers lose the exact point difference against the winner."
           )
         )
       )
     ),
 
     // Modal: Admin PIN Unlock
-    showAdminModal && h("div", {
-      style: {
-        position: "fixed", inset: 0, background: "rgba(0,0,0,0.75)",
-        backdropFilter: "blur(8px)", display: "flex", alignItems: "center", justifyContent: "center", zIndex: 1000, padding: "20px"
-      }
+    h(IOSModalSheet, {
+      isOpen: showAdminModal,
+      onClose: () => { setShowAdminModal(false); setAdminPin(""); setAdminError(""); },
+      title: "Admin Authentication",
+      maxWidth: "400px",
     },
-      h(Card, { style: { maxWidth: "400px", width: "100%" } },
-        h("h3", { style: { fontSize: "22px", marginBottom: "12px" } }, "🔒 Admin PIN Authentication"),
-        h("p", { style: { fontSize: "13px", color: "var(--text-muted)", marginBottom: "16px" } }, "Enter the league editor PIN to modify scores and teams."),
+      h("div", { style: { display: "flex", flexDirection: "column", gap: "14px" } },
+        h("p", { style: { fontSize: "13px", color: "var(--ios-text-secondary)" } }, "Enter the League Editor PIN to manage match scorecards and team settings."),
         h("input", {
+          className: "ios-input",
           type: "password",
           value: adminPin,
           onChange: (e) => { setAdminPin(e.target.value); setAdminError(""); },
           placeholder: "Enter PIN (default: ipl)",
-          style: { width: "100%", marginBottom: "12px" },
           autoFocus: true,
         }),
-        adminError && h("div", { style: { color: "var(--accent-red)", fontSize: "12px", marginBottom: "12px" } }, adminError),
-        h("div", { style: { display: "flex", gap: "10px", justifyContent: "flex-end" } },
-          h(Btn, { variant: "ghost", small: true, onClick: () => { setShowAdminModal(false); setAdminPin(""); setAdminError(""); } }, "Cancel"),
-          h(Btn, {
+        adminError && h("div", { style: { color: "var(--ios-red)", fontSize: "12px" } }, adminError),
+        h("div", { style: { display: "flex", gap: "8px", justifyContent: "flex-end", marginTop: "10px" } },
+          h(IOSButton, { variant: "ghost", small: true, onClick: () => { setShowAdminModal(false); setAdminPin(""); setAdminError(""); } }, "Cancel"),
+          h(IOSButton, {
             variant: "primary", small: true,
             onClick: () => {
               if (adminPin === (window.EDITOR_PASSWORD || "ipl")) {
@@ -1066,7 +1370,7 @@ function App() {
                 setShowAdminModal(false);
                 setAdminPin("");
               } else {
-                setAdminError("Invalid PIN / Password");
+                setAdminError("Incorrect PIN");
               }
             }
           }, "Unlock")
@@ -1075,28 +1379,60 @@ function App() {
     ),
 
     // Modal: Match Scorecard Editor
-    editingEntry && h(MatchEditorModal, {
-      entry: editingEntry,
-      teams,
-      onSave: handleSaveEntry,
+    editingEntry && h(IOSModalSheet, {
+      isOpen: Boolean(editingEntry),
       onClose: () => setEditingEntry(null),
-    }),
+      title: "Match Scorecard Editor",
+      maxWidth: "880px",
+    },
+      h(IOSMatchEditorContent, {
+        entry: editingEntry,
+        teams,
+        onSave: handleSaveScorecard,
+        onCancel: () => setEditingEntry(null),
+      })
+    ),
 
-    // Modal: Historical 2025 Match Detail
-    selHistMatch && h(HistoricalMatchModal, {
-      match: selHistMatch,
+    // Modal: 2025 Match Scorecard
+    selHistMatch && h(IOSModalSheet, {
+      isOpen: Boolean(selHistMatch),
       onClose: () => setSelHistMatch(null),
-    })
+      title: `Scorecard: ${selHistMatch.sheet}`,
+      maxWidth: "760px",
+    },
+      h("div", { style: { display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(240px, 1fr))", gap: "12px" } },
+        Object.entries(selHistMatch.totals).sort((a, b) => b[1] - a[1]).map(([tName, pts]) => {
+          const cfg = D5_TEAM_CONFIG[tName] || { color: "#888" };
+          const roster = selHistMatch.teams[tName] || [];
+          return h("div", {
+            key: tName,
+            style: { background: "var(--ios-bg-secondary)", borderRadius: "var(--ios-radius-md)", padding: "14px", border: `0.5px solid ${cfg.color}44` }
+          },
+            h("div", { style: { display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "10px" } },
+              h("span", { style: { fontWeight: "700", color: cfg.color } }, tName),
+              h("span", { style: { fontWeight: "700", fontSize: "16px", color: "#fff" } }, `${pts} pts`)
+            ),
+            roster.map((p, idx) => h("div", {
+              key: idx,
+              style: { display: "flex", justifyContent: "space-between", padding: "4px 0", fontSize: "12px", borderBottom: "0.5px solid var(--ios-separator)" }
+            },
+              h("span", { style: { color: p.cap ? "var(--ios-yellow)" : "var(--ios-text-secondary)" } }, p.cap ? `★ ${p.n}` : p.n),
+              h("span", { style: { color: "var(--ios-teal)", fontWeight: "600" } }, p.pts)
+            ))
+          );
+        })
+      )
+    )
   );
 }
 
-// ─── MATCH EDITOR MODAL COMPONENT ─────────────────────────────────────────────
+// ─── 3. iOS MATCH SCORECARD EDITOR SUBCOMPONENT ───────────────────────────────
 
-function MatchEditorModal({ entry, teams, onSave, onClose }) {
+function IOSMatchEditorContent({ entry, teams, onSave, onCancel }) {
   const [draft, setDraft] = useState(() => JSON.parse(JSON.stringify(entry)));
   const [activeTeamId, setActiveTeamId] = useState(teams[0]?.id || "T1");
 
-  const updatePlayer = (teamId, playerIdx, field, val) => {
+  const updatePlayerField = (teamId, playerIdx, field, val) => {
     setDraft((prev) => {
       const next = JSON.parse(JSON.stringify(prev));
       next.teamData[teamId][playerIdx][field] = val;
@@ -1104,7 +1440,7 @@ function MatchEditorModal({ entry, teams, onSave, onClose }) {
     });
   };
 
-  const setCaptain = (teamId, playerIdx) => {
+  const toggleCaptain = (teamId, playerIdx) => {
     setDraft((prev) => {
       const next = JSON.parse(JSON.stringify(prev));
       next.teamData[teamId].forEach((p, idx) => {
@@ -1114,175 +1450,115 @@ function MatchEditorModal({ entry, teams, onSave, onClose }) {
     });
   };
 
-  return h("div", {
-    style: {
-      position: "fixed", inset: 0, background: "rgba(0,0,0,0.8)",
-      backdropFilter: "blur(8px)", display: "flex", alignItems: "center", justifyContent: "center", zIndex: 1000, padding: "20px"
-    }
-  },
-    h(Card, { style: { maxWidth: "900px", width: "100%", maxHeight: "90vh", overflowY: "auto" } },
-      h("div", { style: { display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "18px" } },
-        h("h2", { style: { fontSize: "24px" } }, "✏️ Edit Match Scorecard"),
-        h("button", { onClick: onClose, style: { background: "none", border: "none", color: "#888", fontSize: "22px", cursor: "pointer" } }, "✕")
+  return h("div", { style: { display: "flex", flexDirection: "column", gap: "16px" } },
+    // Header Inputs
+    h("div", { style: { display: "grid", gridTemplateColumns: "1fr 1fr", gap: "12px" } },
+      h("div", null,
+        h("label", { style: { fontSize: "11px", color: "var(--ios-text-secondary)", fontWeight: "600", textTransform: "uppercase", display: "block", marginBottom: "4px" } }, "Scorecard Label"),
+        h("input", {
+          className: "ios-input",
+          type: "text",
+          value: draft.matchLabel || "",
+          onChange: (e) => setDraft({ ...draft, matchLabel: e.target.value }),
+          placeholder: "e.g. Match 1 - CSK vs RCB",
+          style: { width: "100%" }
+        })
       ),
-      // Match Header Form
-      h("div", { style: { display: "grid", gridTemplateColumns: "1fr 1fr", gap: "12px", marginBottom: "18px" } },
-        h("div", null,
-          h("label", { style: { fontSize: "11px", color: "var(--text-muted)", textTransform: "uppercase", display: "block", marginBottom: "4px" } }, "Match Label"),
-          h("input", {
-            type: "text",
-            value: draft.matchLabel || "",
-            onChange: (e) => setDraft({ ...draft, matchLabel: e.target.value }),
-            placeholder: "e.g. Match 1 - CSK vs RCB",
-            style: { width: "100%" }
-          })
-        ),
-        h("div", null,
-          h("label", { style: { fontSize: "11px", color: "var(--text-muted)", textTransform: "uppercase", display: "block", marginBottom: "4px" } }, "Match Date"),
-          h("input", {
-            type: "date",
-            value: draft.date || "",
-            onChange: (e) => setDraft({ ...draft, date: e.target.value }),
-            style: { width: "100%" }
-          })
-        )
-      ),
-      // Team Tabs
-      h("div", { style: { display: "flex", gap: "8px", borderBottom: "1px solid var(--border-subtle)", paddingBottom: "10px", marginBottom: "18px" } },
-        teams.map((t) => h("button", {
+      h("div", null,
+        h("label", { style: { fontSize: "11px", color: "var(--ios-text-secondary)", fontWeight: "600", textTransform: "uppercase", display: "block", marginBottom: "4px" } }, "Match Date"),
+        h("input", {
+          className: "ios-input",
+          type: "date",
+          value: draft.date || "",
+          onChange: (e) => setDraft({ ...draft, date: e.target.value }),
+          style: { width: "100%" }
+        })
+      )
+    ),
+
+    // iOS Team Segment Switcher
+    h("div", { style: { display: "flex", gap: "8px", overflowX: "auto", paddingBottom: "4px" } },
+      teams.map((t) => {
+        const isSel = activeTeamId === t.id;
+        const total = (draft.teamData[t.id] || []).reduce((s, p) => s + calcPts(p), 0);
+        return h("button", {
           key: t.id,
           onClick: () => setActiveTeamId(t.id),
           style: {
-            padding: "6px 14px",
-            borderRadius: "16px",
-            border: "none",
-            background: activeTeamId === t.id ? t.color : "transparent",
-            color: activeTeamId === t.id ? "#000" : t.color,
-            fontFamily: "var(--font-heading)",
-            fontSize: "14px",
+            padding: "8px 14px",
+            borderRadius: "var(--ios-radius-md)",
+            border: isSel ? `1px solid ${t.color}` : "0.5px solid var(--ios-separator)",
+            background: isSel ? `${t.color}22` : "var(--ios-bg-secondary)",
+            color: isSel ? t.color : "var(--ios-text-secondary)",
+            fontWeight: "600",
+            fontSize: "13px",
             cursor: "pointer",
-            fontWeight: "bold",
+            display: "flex",
+            alignItems: "center",
+            gap: "6px",
           }
-        }, `${t.name} (${(draft.teamData[t.id] || []).reduce((s, p) => s + calcPts(p), 0)} pts)`))
-      ),
-      // Player score entry rows
-      h("div", { style: { display: "flex", flexDirection: "column", gap: "10px", marginBottom: "20px" } },
-        (draft.teamData[activeTeamId] || []).map((player, pIdx) => {
-          const pts = calcPts(player);
-          return h("div", {
-            key: player.id || pIdx,
-            style: {
-              background: "var(--bg-surface-elevated)",
-              border: `1px solid ${player.isCaptain ? "var(--accent-amber)" : "var(--border-subtle)"}`,
-              borderRadius: "10px",
-              padding: "12px",
-              display: "grid",
-              gridTemplateColumns: "140px 1fr 1fr 1fr 1fr 1fr 60px 80px",
-              gap: "8px",
-              alignItems: "center",
-            }
-          },
-            h("div", null,
-              h("input", {
-                type: "text",
-                value: player.name || "",
-                onChange: (e) => updatePlayer(activeTeamId, pIdx, "name", e.target.value),
-                placeholder: `Player ${pIdx + 1}`,
-                style: { width: "100%" }
-              }),
-              h("button", {
-                onClick: () => setCaptain(activeTeamId, pIdx),
-                style: {
-                  background: "none", border: "none",
-                  color: player.isCaptain ? "var(--accent-amber)" : "#555",
-                  fontSize: "11px", cursor: "pointer", marginTop: "4px", display: "block"
-                }
-              }, player.isCaptain ? "★ Captain (2×)" : "☆ Set Cap")
-            ),
-            h("div", null,
-              h("label", { style: { fontSize: "9px", color: "#888", display: "block" } }, "RUNS"),
-              h("input", { type: "number", value: player.runs || 0, onChange: (e) => updatePlayer(activeTeamId, pIdx, "runs", Number(e.target.value)), style: { width: "100%" } })
-            ),
-            h("div", null,
-              h("label", { style: { fontSize: "9px", color: "#888", display: "block" } }, "WKTS"),
-              h("input", { type: "number", value: player.wkts || 0, onChange: (e) => updatePlayer(activeTeamId, pIdx, "wkts", Number(e.target.value)), style: { width: "100%" } })
-            ),
-            h("div", null,
-              h("label", { style: { fontSize: "9px", color: "#888", display: "block" } }, "CATCH"),
-              h("input", { type: "number", value: player.catch || 0, onChange: (e) => updatePlayer(activeTeamId, pIdx, "catch", Number(e.target.value)), style: { width: "100%" } })
-            ),
-            h("div", null,
-              h("label", { style: { fontSize: "9px", color: "#888", display: "block" } }, "RO/ST"),
-              h("input", { type: "number", value: (player.ro || 0) + (player.stmp || 0), onChange: (e) => updatePlayer(activeTeamId, pIdx, "ro", Number(e.target.value)), style: { width: "100%" } })
-            ),
-            h("div", null,
-              h("label", { style: { fontSize: "9px", color: "#888", display: "block" } }, "6s"),
-              h("input", { type: "number", value: player.b6s || 0, onChange: (e) => updatePlayer(activeTeamId, pIdx, "b6s", Number(e.target.value)), style: { width: "100%" } })
-            ),
-            h("div", null,
-              h("label", { style: { fontSize: "9px", color: "#888", display: "block" } }, "DUCK"),
-              h("input", { type: "number", min: 0, max: 1, value: player.duck || 0, onChange: (e) => updatePlayer(activeTeamId, pIdx, "duck", Number(e.target.value)), style: { width: "100%" } })
-            ),
-            h("div", { style: { textAlign: "right", fontFamily: "var(--font-heading)", fontSize: "20px", color: "var(--accent-green)" } }, pts)
-          );
-        })
-      ),
-      // Footer actions
-      h("div", { style: { display: "flex", gap: "10px", justifyContent: "flex-end" } },
-        h(Btn, { variant: "ghost", onClick: onClose }, "Cancel"),
-        h(Btn, { variant: "primary", onClick: () => onSave(draft) }, "💾 Save Scorecard")
-      )
+        },
+          h("span", { style: { width: "8px", height: "8px", borderRadius: "50%", background: t.color } }),
+          `${t.name} (${total} pts)`
+        );
+      })
+    ),
+
+    // Player Rows Inset Group
+    h("div", { style: { display: "flex", flexDirection: "column", gap: "10px" } },
+      (draft.teamData[activeTeamId] || []).map((player, pIdx) => {
+        const pts = calcPts(player);
+        return h("div", {
+          key: player.id || pIdx,
+          style: {
+            background: "var(--ios-bg-secondary)",
+            border: player.isCaptain ? "1px solid var(--ios-yellow)" : "0.5px solid var(--ios-separator)",
+            borderRadius: "var(--ios-radius-md)",
+            padding: "12px",
+            display: "grid",
+            gridTemplateColumns: "150px 1fr 1fr 1fr 1fr 1fr 50px 70px",
+            gap: "8px",
+            alignItems: "center",
+          }
+        },
+          h("div", null,
+            h("input", {
+              className: "ios-input",
+              type: "text",
+              value: player.name || "",
+              onChange: (e) => updatePlayerField(activeTeamId, pIdx, "name", e.target.value),
+              placeholder: `Player ${pIdx + 1}`,
+              style: { width: "100%", padding: "6px 8px", fontSize: "13px" }
+            }),
+            h("button", {
+              onClick: () => toggleCaptain(activeTeamId, pIdx),
+              style: {
+                background: "none", border: "none",
+                color: player.isCaptain ? "var(--ios-yellow)" : "var(--ios-text-tertiary)",
+                fontSize: "11px", fontWeight: "600", cursor: "pointer", marginTop: "4px", display: "block"
+              }
+            }, player.isCaptain ? "★ Captain (2×)" : "☆ Set Captain")
+          ),
+          h(IOSNumberInput, { label: "Runs", value: player.runs || 0, onChange: (v) => updatePlayerField(activeTeamId, pIdx, "runs", v) }),
+          h(IOSNumberInput, { label: "Wkts", value: player.wkts || 0, onChange: (v) => updatePlayerField(activeTeamId, pIdx, "wkts", v) }),
+          h(IOSNumberInput, { label: "Catch", value: player.catch || 0, onChange: (v) => updatePlayerField(activeTeamId, pIdx, "catch", v) }),
+          h(IOSNumberInput, { label: "RO/St", value: (player.ro || 0) + (player.stmp || 0), onChange: (v) => updatePlayerField(activeTeamId, pIdx, "ro", v) }),
+          h(IOSNumberInput, { label: "6s", value: player.b6s || 0, onChange: (v) => updatePlayerField(activeTeamId, pIdx, "b6s", v) }),
+          h(IOSNumberInput, { label: "Duck", value: player.duck || 0, min: 0, max: 1, onChange: (v) => updatePlayerField(activeTeamId, pIdx, "duck", v) }),
+          h("div", { style: { textAlign: "right", fontWeight: "700", fontSize: "17px", color: "var(--ios-green)" } }, pts)
+        );
+      })
+    ),
+
+    // Footer actions
+    h("div", { style: { display: "flex", gap: "10px", justifyContent: "flex-end", marginTop: "10px" } },
+      h(IOSButton, { variant: "ghost", onClick: onCancel }, "Cancel"),
+      h(IOSButton, { variant: "primary", onClick: () => onSave(draft) }, "Save Scorecard")
     )
   );
 }
 
-// ─── HISTORICAL 2025 MATCH DETAIL MODAL ───────────────────────────────────────
-
-function HistoricalMatchModal({ match, onClose }) {
-  const sorted = Object.entries(match.totals).sort((a, b) => b[1] - a[1]);
-  return h("div", {
-    style: {
-      position: "fixed", inset: 0, background: "rgba(0,0,0,0.8)",
-      backdropFilter: "blur(8px)", display: "flex", alignItems: "center", justifyContent: "center", zIndex: 1000, padding: "20px"
-    }
-  },
-    h(Card, { style: { maxWidth: "800px", width: "100%", maxHeight: "90vh", overflowY: "auto" } },
-      h("div", { style: { display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "16px" } },
-        h("div", null,
-          h("h2", { style: { fontSize: "24px" } }, `Match Scorecard: ${match.sheet}`),
-          h("div", { style: { fontSize: "12px", color: "var(--text-muted)" } }, `Date: ${match.date}`)
-        ),
-        h("button", { onClick: onClose, style: { background: "none", border: "none", color: "#888", fontSize: "22px", cursor: "pointer" } }, "✕")
-      ),
-      h("div", { style: { display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))", gap: "14px" } },
-        sorted.map(([tName, pts]) => {
-          const cfg = D5_TEAM_CONFIG[tName] || { color: "#888" };
-          const roster = match.teams[tName] || [];
-          return h("div", {
-            key: tName,
-            style: { background: "var(--bg-surface-elevated)", border: `1px solid ${cfg.color}44`, borderRadius: "12px", padding: "14px" }
-          },
-            h("div", { style: { display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "10px" } },
-              h("span", { style: { fontFamily: "var(--font-heading)", fontSize: "18px", color: cfg.color } }, tName),
-              h("span", { style: { fontFamily: "var(--font-heading)", fontSize: "20px", color: "#fff" } }, `${pts} pts`)
-            ),
-            roster.map((p, idx) => h("div", {
-              key: idx,
-              style: { display: "flex", justifyContent: "space-between", padding: "4px 0", fontSize: "12px", borderBottom: "1px solid rgba(255,255,255,0.05)" }
-            },
-              h("span", { style: { color: p.cap ? "var(--accent-amber)" : "var(--text-secondary)" } },
-                p.cap ? `★ ${p.n}` : p.n
-              ),
-              h("span", { style: { color: "var(--accent-cyan)", fontFamily: "var(--font-heading)", fontSize: "14px" } }, p.pts)
-            ))
-          );
-        })
-      )
-    )
-  );
-}
-
-// ─── INITIALIZE ROOT ──────────────────────────────────────────────────────────
+// ─── 4. BOOTSTRAP ─────────────────────────────────────────────────────────────
 ReactDOM.createRoot(document.getElementById("root")).render(h(App));
 const loadingEl = document.getElementById("loading");
 if (loadingEl) loadingEl.style.display = "none";
